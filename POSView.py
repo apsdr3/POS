@@ -19,10 +19,17 @@ class POS(tk.Tk):
         frame.grid(row=0, column = 0, sticky="nsew")	#sets frame structure, nsew = north south east west
         self.show_frame(StartPage)
 
+
     #shows the frame when called
     def show_frame(self,cont):
         frame = self.frames[cont]
         frame.tkraise() 
+
+
+def qf():
+    print("You clicked it!")
+
+
 
 #Start Page frame
 class StartPage(tk.Frame):
@@ -30,6 +37,10 @@ class StartPage(tk.Frame):
         tk.Frame.__init__(self,parent)
         label = tk.Label(self, text="Start Page", font=LARGE_FONT)
         label.pack(pady=10, padx=10)
+
+        button1 = tk.Button(self, text = "CLICK ME!", command=qf)
+        button1.pack()
+
 
 
 #runs program
