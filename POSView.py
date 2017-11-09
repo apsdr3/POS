@@ -1,6 +1,12 @@
 import tkinter as tk
+import pyexcel as pe
+from tkinter import filedialog
+from tkinter import *
+
 
 LARGE_FONT=("Verdana", 12)
+
+
 
 class POS(tk.Tk):
 	#initializes on startup
@@ -25,10 +31,14 @@ class POS(tk.Tk):
         frame = self.frames[cont]
         frame.tkraise() 
 
-
+#once button is clicked, it prompts user to find file then it outputs the contents of the file
 def qf():
-    print("You clicked it!")
-
+    #intializes another instance of tkinter
+    filename = filedialog.askopenfilename(initialdir = "/",title = "Select file",filetypes = (("all files","*.*"),("jpeg files","*.jpg")))
+    sheet = pe.get_sheet(file_name=filename)
+    print(sheet)
+    #need to have a check for whether or not there is an existing file name to open.
+    return
 
 
 #Start Page frame
@@ -39,6 +49,10 @@ class StartPage(tk.Frame):
         label.pack(pady=10, padx=10)
 
         button1 = tk.Button(self, text = "CLICK ME!", command=qf)
+        
+        #opens file explorer to get file name
+        #still need research on how to do        
+
         button1.pack()
 
 
