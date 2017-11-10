@@ -1,11 +1,13 @@
+import POSModel as pmodel
 import tkinter as tk
 import pyexcel as pe
+
+
 from tkinter import filedialog
 from tkinter import *
 
-
 LARGE_FONT=("Verdana", 12)
-
+SMALL_FONT=("Verdana", 10)
 
 
 class POS(tk.Tk):
@@ -20,10 +22,10 @@ class POS(tk.Tk):
 
         self.frames = {}	#creates an object to hold multiple frames i.e. more windows/tabs
 
-        frame = StartPage(container, self)
-        self.frames[StartPage] = frame	#adds frame into frames object
+        frame = MainPage(container, self)
+        self.frames[MainPage] = frame	#adds frame into frames object
         frame.grid(row=0, column = 0, sticky="nsew")	#sets frame structure, nsew = north south east west
-        self.show_frame(StartPage)
+        self.show_frame(MainPage)
 
 
     #shows the frame when called
@@ -31,27 +33,30 @@ class POS(tk.Tk):
         frame = self.frames[cont]
         frame.tkraise() 
 
-#once button is clicked, it prompts user to find file then it outputs the contents of the file
-def qf():
-    #intializes another instance of tkinter
-    filename = filedialog.askopenfilename(initialdir = "/",title = "Select file",filetypes = (("all files","*.*"),("jpeg files","*.jpg")))
-    sheet = pe.get_sheet(file_name=filename)
-    print(sheet)
-    #need to have a check for whether or not there is an existing file name to open.
-    return
 
 
-#Start Page frame
-class StartPage(tk.Frame):
+#Start frame: Prompts user to find master key file
+class StartFrame(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self,parent)
-        label = tk.Label(self, text="Start Page", font=LARGE_FONT)
-        label.pack(pady=10, padx=10)
 
-        button1 = tk.Button(self, text = "CLICK ME!", command=qf)
+        label = tk.Label(self, text="", font=SMALL_FONT)
+        label.pack(pady=50, padx=50)
+
+        button1 = tk.Button(self, text = "Please specify the product master file", command=pmodel.fileExplorer)
+
+        button1.pack()
+
+
+#Main Landing Page frame
+class MainPage(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self,parent)
         
-        #opens file explorer to get file name
-        #still need research on how to do        
+        label = tk.Label(self, text="Main Page", font=SMALL_FONT)
+        label.pack(pady=50, padx=50)
+
+        button1 = tk.Button(self, text = "CLICK ME!", command=pmodel.fileExplorer)
 
         button1.pack()
 
