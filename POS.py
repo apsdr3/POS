@@ -1,4 +1,3 @@
-import POSModel as pmodel
 import tkinter as tk
 import pyexcel as pe
 
@@ -9,6 +8,7 @@ from tkinter import *
 LARGE_FONT=("Verdana", 12)
 SMALL_FONT=("Verdana", 10)
 
+masterList = []
 
 class POS(tk.Tk):
 	#initializes on startup
@@ -43,8 +43,7 @@ class StartFrame(tk.Frame):
         label = tk.Label(self, text="", font=SMALL_FONT)
         label.pack(pady=50, padx=50)
 
-        button1 = tk.Button(self, text = "Please specify the product master file", command=pmodel.fileExplorer)
-
+        button1 = tk.Button(self, text = "Please specify the product master file", command=fileExplorer)
         button1.pack()
 
 
@@ -56,9 +55,34 @@ class MainPage(tk.Frame):
         label = tk.Label(self, text="Main Page", font=SMALL_FONT)
         label.pack(pady=50, padx=50)
 
-        button1 = tk.Button(self, text = "CLICK ME!", command=pmodel.fileExplorer)
+        button1 = tk.Button(self, text = "CLICK ME!", command=fileExplorer)
+        button1.pack(pady=10, padx=50)
 
-        button1.pack()
+
+#once button is clicked, it prompts user to find file then it outputs the contents of the file
+def fileExplorer():
+    #intializes another instance of tkinter
+    try:    
+        filename = filedialog.askopenfilename(initialdir = "/",title = "Select file",filetypes = (("XLS files","*.xls"),("XLSX files","*.xlsx")))
+        
+        if re.match("[A-Za-z0-9]",filename):
+            #sheet = pe.get_sheet(file_name=filename) #puts data into readable sheet, array is more useful
+            sheet = pe.get_array(file_name=filename) #puts data into array
+
+            masterList = sheet
+            #print(sheet[4]) #prints: everything
+            #print(sheet[4]) #prints: [20297939, 'AC EDT 75ML SPRAY TEST', 250, 0, 3605520297939]
+            #print(sheet[4][0]) #prints: 20297939
+            return
+
+        else:
+            print("Error") #need to make error frame
+    
+    except ValueError:
+        print("Error2") #need to make error frame
+        return
+    
+    return
 
 
 
