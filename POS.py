@@ -8,7 +8,16 @@ from tkinter import *
 LARGE_FONT=("Verdana", 12)
 SMALL_FONT=("Verdana", 10)
 
-masterList = []
+masterList = [] #list for Master File
+errorCode = 0
+"""
+Error Code Legend:
+0 = No error
+1 = Master File Error
+"""
+
+
+
 
 class POS(tk.Tk):
 	#initializes on startup
@@ -22,9 +31,11 @@ class POS(tk.Tk):
 
         self.frames = {}	#creates an object to hold multiple frames i.e. more windows/tabs
 
-        frame = MainPage(container, self)
-        self.frames[MainPage] = frame	#adds frame into frames object
-        frame.grid(row=0, column = 0, sticky="nsew")	#sets frame structure, nsew = north south east west
+        for F in (MainPage, MasterFilePage, ErrorPage, PaymentPage): #Adds frames onto list, to add more frames, just add it to the list
+            frame = F(container, self)
+            self.frames[F] = frame	#adds frame into frames object
+            frame.grid(row=0, column = 0, sticky="nsew")	#sets frame structure, nsew = north south east west
+        
         self.show_frame(MainPage)
 
 
@@ -35,17 +46,6 @@ class POS(tk.Tk):
 
 
 
-#Start frame: Prompts user to find master key file
-class StartFrame(tk.Frame):
-    def __init__(self, parent, controller):
-        tk.Frame.__init__(self,parent)
-
-        label = tk.Label(self, text="", font=SMALL_FONT)
-        label.pack(pady=50, padx=50)
-
-        button1 = tk.Button(self, text = "Please specify the product master file", command=fileExplorer)
-        button1.pack()
-
 
 #Main Landing Page frame
 class MainPage(tk.Frame):
@@ -53,10 +53,54 @@ class MainPage(tk.Frame):
         tk.Frame.__init__(self,parent)
         
         label = tk.Label(self, text="Main Page", font=SMALL_FONT)
-        label.pack(pady=50, padx=50)
+        label.pack(pady=10, padx=10)
 
-        button1 = tk.Button(self, text = "CLICK ME!", command=fileExplorer)
-        button1.pack(pady=10, padx=50)
+        button1 = tk.Button(self, text = "CLICK ME!", command=lambda: controller.show_frame(MasterFilePage))#command=fileExplorer)
+        button1.pack(pady=10, padx=10)
+
+
+
+
+#Start frame: Prompts user to find master key file
+class MasterFilePage(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self,parent)
+
+        label = tk.Label(self, text="Please specify the product master file", font=SMALL_FONT)
+        label.pack(pady=10, padx=10)
+
+        button1 = tk.Button(self, text = "OK", command=fileExplorer)
+        button1.pack(pady=5, padx=10)
+
+        if errorCode == 1:
+            controller.show_frame(ErrorPage)
+
+
+
+
+#Payment page where user goes to after a sale is to purchased
+class PaymentPage(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self,parent)
+
+        label = tk.Label(self, text="PAYMENT HERE!", font=SMALL_FONT)
+        label.pack(pady=10, padx=10)
+
+
+
+
+#error page for when there is a possible error
+class ErrorPage(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self,parent)
+        
+        if errorCode == 1:
+            label = tk.Label(self, text="Error! Please input a correct Master File Document", font=SMALL_FONT)
+            label.pack(pady=10, padx=10)
+
+        button1 = tk.Button(self, text = "OK", command=lambda: controller.show_frame(MasterFilePage))
+        button1.pack(pady=5, padx=10)
+
 
 
 #once button is clicked, it prompts user to find file then it outputs the contents of the file
@@ -73,18 +117,17 @@ def fileExplorer():
             #print(sheet[4]) #prints: everything
             #print(sheet[4]) #prints: [20297939, 'AC EDT 75ML SPRAY TEST', 250, 0, 3605520297939]
             #print(sheet[4][0]) #prints: 20297939
+
+            errorCode = 0 #resets errorCode
             return
 
         else:
-            print("Error") #need to make error frame
+            errorCode = 1
+            return
     
     except ValueError:
-        print("Error2") #need to make error frame
+        errorCode = 1
         return
-    
-    return
-
-
 
 #runs program
 app = POS()
