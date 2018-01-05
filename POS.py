@@ -71,14 +71,29 @@ class POS(tk.Tk):
 class MainPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self,parent)
-        
+
+        itemScanNumber = StringVar()    #creates the object itemScanNumber with a string variable type
+
         label = tk.Label(self, text="Main Page", font=SMALL_FONT)
         label.pack(pady=10, padx=10)
 
-        button1 = ttk.Button(self, text = "CLICK ME!", command=lambda: controller.show_frame(MasterFilePage))#command=fileExplorer)
+        EntryBox = ttk.Entry(self, textvariable = itemScanNumber)   #creates an entry box and allows the entry of a string variable
+        EntryBox.pack(pady=10, padx=10)
+        print(itemScanNumber.get())
+
+        def printNumber():
+            print("Your Number: " + itemScanNumber.get())
+            return
+        
+        button = ttk.Button(self, text = "CLICK ME FOR SCAN NUMBER!", command = printNumber)#command=fileExplorer)
+        button.pack(pady=10, padx=10)
+
+        button1 = ttk.Button(self, text = "CLICK ME!", command = lambda: controller.show_frame(MasterFilePage))#command=fileExplorer)
         button1.pack(pady=10, padx=10)
+        #need to use .place instead of .pack, for next iteration
 
 
+   
 
 
 #Start frame: Prompts user to find master key file
@@ -169,5 +184,5 @@ def popupmsg(msg):
 
 #runs program
 app = POS()
-app.geometry("1280x720") #makes app into a 1280x720p screen, can change size to liking
+app.geometry("640x500") #makes app into a 1280x720p screen, can change size to liking
 app.mainloop()
