@@ -19,6 +19,9 @@ Error Code Legend:
 """
 
 
+"""
+NEED TO LEARN HOW TO MAKE GRID VIEW OR TABLE LIST ON PYTHON
+"""
 
 
 class POS(tk.Tk):
@@ -37,6 +40,7 @@ class POS(tk.Tk):
 
         menubar = tk.Menu(container)    #adds menu
         
+        #NEED TO CHECK IF I CAN USE MENU BUTTONS INSTEAD OF MENU!
         filemenu = tk.Menu(menubar, tearoff = 0)    #creates a menubar on the app
         filemenu.add_command(label = "Main", command = lambda: popupmsg("Not supported just yet!"))    #need to create this to change windows between frames
         filemenu.add_separator()    #adds separator between different file menus
@@ -72,28 +76,71 @@ class MainPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self,parent)
 
+        #First frame inside the current MainPage Window Frame
+        frame1 = Frame(self, bg = "red")
+        frame1.grid(row = 0, column = 0, sticky = W)
+        
+        frame1.label = tk.Label(self, text="Main Page", font=SMALL_FONT)
+        frame1.label.grid(row = 0, column = 0, sticky = W)
+
         itemScanNumber = StringVar()    #creates the object itemScanNumber with a string variable type
+        frame1.EntryBox = ttk.Entry(self, textvariable = itemScanNumber)   #creates an entry box and allows the entry of a string variable
+        frame1.EntryBox.grid(row = 0, column = 1, sticky = W)
 
-        label = tk.Label(self, text="Main Page", font=SMALL_FONT)
-        label.pack(pady=10, padx=10)
-
-        EntryBox = ttk.Entry(self, textvariable = itemScanNumber)   #creates an entry box and allows the entry of a string variable
-        EntryBox.pack(pady=10, padx=10)
         print(itemScanNumber.get())
 
         def printNumber():
             print("Your Number: " + itemScanNumber.get())
             return
-        
-        button = ttk.Button(self, text = "CLICK ME FOR SCAN NUMBER!", command = printNumber)#command=fileExplorer)
-        button.pack(pady=10, padx=10)
 
-        button1 = ttk.Button(self, text = "CLICK ME!", command = lambda: controller.show_frame(MasterFilePage))#command=fileExplorer)
-        button1.pack(pady=10, padx=10)
+        frame1.button = ttk.Button(self, text = "CLICK ME FOR SCAN NUMBER!", command = printNumber)#command=fileExplorer)
+        frame1.button.grid(row = 0, column = 2, sticky = W)
+
+        frame1.button1 = ttk.Button(self, text = "CLICK ME!", command = lambda: controller.show_frame(MasterFilePage))#command=fileExplorer)
+        frame1.button1.grid(row = 0, column = 3, sticky = W)
         #need to use .place instead of .pack, for next iteration
 
 
-   
+
+        #Second frame inside the current MainPage Window Frame
+        frame2 = Frame(self, bg = "blue")
+        frame2.grid(row = 1, column = 0, sticky = W)
+        
+        frame2.label = tk.Label(self, text="Main Page2", font=SMALL_FONT)
+        frame2.label.grid(row = 0, column = 0, sticky = W)
+        #THIS CREATES THE GRID TO OUTPUT THE DATA QUERIED FROM THE MASTER FILE
+        #Description of Box: 'X' amount goind down, i.e. number of items, 6 descriptive columns: Bar Code, Product Description, Amount, Quantity, Additional Discount, Total Amount
+        #Created a frame within the MainPage Frame
+        #frame2.canvasGrid = Canvas(self, height = 300, width = 300, bg = "white")
+        #frame2.canvasGrid.grid(row = 0, column = 0, sticky = W)
+
+
+"""        
+        gridFrame = Frame(self)
+        gridFrame.pack()    #need to fix these into a grid later on
+        #gridFrame.labelGF = tk.Label(self, text="TEST FRAME", font=SMALL_FONT, relief = SUNKEN) #SUNKENS MAKES IT GO BEHIND
+        #gridFrame.labelGF.pack(pady=10, padx=10)
+        
+        #Created the "Dynamically allocated grid view entry boxes"
+        gridFrame.labelGF1 = tk.Label(self, text="Bar Code", font=LARGE_FONT, relief = SUNKEN)
+        gridFrame.labelGF1.grid(row = 0, column = 0, sticky = W)
+
+        gridFrame.labelGF2 = tk.Label(self, text="Product Description", font=LARGE_FONT, relief = SUNKEN)
+        gridFrame.labelGF2.grid(row = 0, column = 1, sticky = W)
+
+        gridFrame.labelGF3 = tk.Label(self, text="Amount", font=LARGE_FONT, relief = SUNKEN)
+        gridFrame.labelGF3.grid(row = 0, column = 2, sticky = W)
+
+        gridFrame.labelGF4 = tk.Label(self, text="Quantity", font=LARGE_FONT, relief = SUNKEN)
+        gridFrame.labelGF4.grid(row = 0, column = 3, sticky = W)
+
+        gridFrame.labelGF5 = tk.Label(self, text="Discount", font=LARGE_FONT, relief = SUNKEN)
+        gridFrame.labelGF5.grid(row = 0, column = 4, sticky = W)
+
+        gridFrame.labelGF6 = tk.Label(self, text="Total", font=LARGE_FONT, relief = SUNKEN)
+        gridFrame.labelGF6.grid(row = 0, column = 5, sticky = W)
+
+"""
 
 
 #Start frame: Prompts user to find master key file
