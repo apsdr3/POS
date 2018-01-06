@@ -84,100 +84,125 @@ class MainPage(tk.Frame):
 
         #First frame inside the current MainPage Window Frame
         frame1 = Frame(self, bg = "green")
-        frame1.pack()#grid(row = 0, column = 0, sticky = W)
+        frame1.pack()
         
 #CUSTOMER NAME
-        frame1.label = tk.Label(frame1, text="Customer Name", font=SMALL_FONT)
-        frame1.label.grid(row = 0, column = 0, padx=5, pady=5, sticky = W)
+        frame1Label = tk.Label(frame1, text="Customer Name", font=SMALL_FONT)
+        frame1Label.grid(row = 0, column = 0, padx=5, pady=5, sticky = W)
 
         customerName = StringVar()    #creates the object customerName with a string variable type
-        frame1.EntryBox1 = ttk.Entry(frame1, textvariable = customerName, width = 40)   #creates an entry box and allows the entry of a string variable
-        frame1.EntryBox1.grid(row = 0, column = 1, padx=5, pady=5, sticky = W)
+        frame1EntryBox1 = ttk.Entry(frame1, textvariable = customerName, width = 40)   #creates an entry box and allows the entry of a string variable
+        frame1EntryBox1.grid(row = 0, column = 1, padx=5, pady=5, sticky = W)
         #print(customerName.get())
 
 #PHONE
-        frame1.label2 = tk.Label(frame1, text="Phone", font=SMALL_FONT)
-        frame1.label2.grid(row = 0, column = 2, padx=5, pady=5, sticky = W)
+        frame1Label2 = tk.Label(frame1, text="Phone", font=SMALL_FONT)
+        frame1Label2.grid(row = 0, column = 2, padx=5, pady=5, sticky = W)
         
         phone = StringVar()    #creates the object phone with a string variable type
-        frame1.EntryBox2 = ttk.Entry(frame1, textvariable = phone, width = 40)   #creates an entry box and allows the entry of a string variable
-        frame1.EntryBox2.grid(row = 0, column = 3, padx=5, pady=5, sticky = W)
-###################################################################################
+        frame1EntryBox2 = ttk.Entry(frame1, textvariable = phone, width = 40)   #creates an entry box and allows the entry of a string variable
+        frame1EntryBox2.grid(row = 0, column = 3, padx=5, pady=5, sticky = W)
+#-----------------------------------------------------------------------------#
 
 
 # FRAME2 ########################## ADDRESS #####################################
         
         #Secibd frame inside the current MainPage Window Frame
         frame2 = Frame(self, bg = "red")
-        frame2.pack()#grid(row = 1, column = 0, sticky = W)
+        frame2.pack()
 
 #ADDRESS
         frame2.label = tk.Label(frame2, text="Address", font=SMALL_FONT)
         frame2.label.grid(row = 1, column = 0, padx=5, pady=5, sticky = W)
 
         address = StringVar()    #creates the object address with a string variable type
-        frame2.EntryBox = ttk.Entry(frame2, textvariable = address, width = 99)   #creates an entry box and allows the entry of a string variable
-        frame2.EntryBox.grid(row = 1, column = 1, padx=5, pady=5, sticky = W)
-###################################################################################
+        frame2EntryBox = ttk.Entry(frame2, textvariable = address, width = 99)   #creates an entry box and allows the entry of a string variable
+        frame2EntryBox.grid(row = 1, column = 1, padx=5, pady=5, sticky = W)
+#-----------------------------------------------------------------------------------#
 
 
 # FRAME3 ########################## ENTRY BOX GRID #####################################
         #Third frame inside the current MainPage Window Frame
-        frame3 = Frame(self, bg = "black")
-        frame3.pack()#grid(row = 2, column = 0)
-        
+        frame3 = Frame(self, bg = "black", width = 690, height = 400, borderwidth = 1)
+        frame3.pack()
+            
+        #frame3Canvas = Canvas(frame3, width = 680, height = 400)
+        #frame3Canvas.pack()
+
+
         #THIS CREATES THE GRID TO OUTPUT THE DATA QUERIED FROM THE MASTER FILE
         #Description of Box: 'X' amount goind down, i.e. number of items, 6 descriptive columns: Bar Code, Product Description, Amount, Quantity, Additional Discount, Total Amount
         #This is the header GRID VIEW Labels
-        frame3.labelGF1 = tk.Label(frame3, text="Bar Code", font=NORMAL_FONT, relief = SUNKEN, width = 16)
-        frame3.labelGF1.grid(row = 0, column = 0)
+        frame3Label1 = tk.Label(frame3, text="Bar Code", font=NORMAL_FONT, relief = SUNKEN, width = 16)
+        frame3Label1.grid(row = 0, column = 0)
 
-        frame3.labelGF2 = tk.Label(frame3, text="Product Description", font=NORMAL_FONT, relief = SUNKEN, width = 30)
-        frame3.labelGF2.grid(row = 0, column = 1)
+        frame3Label2 = tk.Label(frame3, text="Product Description", font=NORMAL_FONT, relief = SUNKEN, width = 30)
+        frame3Label2.grid(row = 0, column = 1)
 
-        frame3.labelGF3 = tk.Label(frame3, text="Price", font=NORMAL_FONT, relief = SUNKEN, width = 10)
-        frame3.labelGF3.grid(row = 0, column = 2)
+        frame3Label3 = tk.Label(frame3, text="Price", font=NORMAL_FONT, relief = SUNKEN, width = 10)
+        frame3Label3.grid(row = 0, column = 2)
 
-        frame3.labelGF4 = tk.Label(frame3, text="Quantity", font=NORMAL_FONT, relief = SUNKEN, width = 8)
-        frame3.labelGF4.grid(row = 0, column = 3)
+        frame3Label4 = tk.Label(frame3, text="Quantity", font=NORMAL_FONT, relief = SUNKEN, width = 8)
+        frame3Label4.grid(row = 0, column = 3)
 
-        frame3.labelGF5 = tk.Label(frame3, text="Discount", font=NORMAL_FONT, relief = SUNKEN, width = 8)
-        frame3.labelGF5.grid(row = 0, column = 4)
+        frame3Label5 = tk.Label(frame3, text="Discount", font=NORMAL_FONT, relief = SUNKEN, width = 8)
+        frame3Label5.grid(row = 0, column = 4)
 
-        frame3.labelGF6 = tk.Label(frame3, text="Cost", font=NORMAL_FONT, relief = SUNKEN, width = 10)
-        frame3.labelGF6.grid(row = 0, column = 5)
+        frame3Label6 = tk.Label(frame3, text="Cost", font=NORMAL_FONT, relief = SUNKEN, width = 10)
+        frame3Label6.grid(row = 0, column = 5)
 
         #Need to create a "Dynamically allocated grid view entry boxes" for next boxes with scroll wheel
-###################################################################################
+#--------------------------------------------------------------------------------------#
 
 
 # FRAME4 ########################## TOTAL QUANTITY AND AMOUNT #####################################
-        #Third frame inside the current MainPage Window Frame
+        #Fourth frame inside the current MainPage Window Frame
         frame4 = Frame(self, bg = "blue")
-        frame4.pack()#grid(row = 3, column = 0)
+        frame4.pack()
 
-        frame4.label1 = tk.Label(frame4, text="Total Quantity", font=NORMAL_FONT)
-        frame4.label1.grid(row = 0, column = 0, padx=5, pady=5, sticky = W)
+        frame4Label1 = tk.Label(frame4, text="Total Quantity", font=NORMAL_FONT)
+        frame4Label1.grid(row = 0, column = 0, padx=5, pady=5, sticky = W)
 
-        frame4.label2 = tk.Label(frame4, text="TQ For Now", font=NORMAL_FONT, relief = SUNKEN, width = 16)  #NEED TO GET SUM OF TOTAL QUANTITY
-        frame4.label2.grid(row = 0, column = 1)
+        frame4Label2 = tk.Label(frame4, text="TQ For Now", font=NORMAL_FONT, relief = SUNKEN, width = 16)  #NEED TO GET SUM OF TOTAL QUANTITY
+        frame4Label2.grid(row = 0, column = 1)
 
-        frame4.label3 = tk.Label(frame4, text="Total Amount", font=NORMAL_FONT)
-        frame4.label3.grid(row = 0, column = 3, padx=5, pady=5, sticky = W)
+        frame4Label3 = tk.Label(frame4, text="Total Amount", font=NORMAL_FONT)
+        frame4Label3.grid(row = 0, column = 3, padx=5, pady=5, sticky = W)
 
-        frame4.label4 = tk.Label(frame4, text="TA For Now", font=NORMAL_FONT, relief = SUNKEN, width = 16)  #NEED TO GET SUM OF TOTAL COST
-        frame4.label4.grid(row = 0, column = 4)
-#############################################################################################
+        frame4Label4 = tk.Label(frame4, text="TA For Now", font=NORMAL_FONT, relief = SUNKEN, width = 16)  #NEED TO GET SUM OF TOTAL COST
+        frame4Label4.grid(row = 0, column = 4)
+#-------------------------------------------------------------------------------------------------#
 
 
 # FRAME5 ########################## BAR CODE AND ADD ITEM #####################################
+        #Fifth frame inside the current MainPage Window Frame
+        frame5 = Frame(self, bg = "pink")
+        frame5.pack()
 
-#############################################################################################
+        frame5Label1 = tk.Label(frame5, text="Product Bar Code", font=NORMAL_FONT)
+        frame5Label1.grid(row = 0, column = 0, padx=5, pady=5, sticky = W)
+
+        barCode = StringVar()    #creates the object barCode with a string variable type
+        frame5EntryBox = ttk.Entry(frame5, textvariable = barCode, width = 40)   #creates an entry box and allows the entry of a string variable
+        frame5EntryBox.grid(row = 0, column = 1, padx=5, pady=5, sticky = W)
+
+        frame5Button = ttk.Button(frame5, text = "Add Item", command=MainPage) #NEED TO CHECK IF BAR CODE WORKS FIRST!!! MAY NEED TO GO SOMEWHERE OTHER THAN MAIN PAGE
+        frame5Button.grid(row = 0, column = 2, padx = 50, pady = 10)
+
+#---------------------------------------------------------------------------------------------#
 
 
 # FRAME6 ########################## PROCESS AND REFRESH #####################################
+        #Sixth frame inside the current MainPage Window Frame
+        frame6 = Frame(self, bg = "yellow")
+        frame6.pack()
 
-#############################################################################################
+        frame6Button = ttk.Button(frame6, text = "Refresh", command=MainPage)
+        frame6Button.grid(row = 0, column = 0, padx = 50, pady = 10)
+
+        frame6Button = ttk.Button(frame6, text = "Process", command=MainPage)
+        frame6Button.grid(row = 0, column = 1, padx = 50, pady = 10)
+#--------------------------------------------------------------------------------------------#
 
 
 
