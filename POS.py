@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 import pyexcel as pe
-
+import datetime
 
 from tkinter import filedialog
 from tkinter import *
@@ -23,6 +23,10 @@ Error Code Legend:
 NEED TO LEARN HOW TO MAKE GRID VIEW OR TABLE LIST ON PYTHON
 """
 
+"""
+#time = datetime.datetime.now() #time.time()
+"""
+
 
 class POS(tk.Tk):
 	#initializes on startup
@@ -30,7 +34,7 @@ class POS(tk.Tk):
         tk.Tk.__init__(self, *args, **kwargs)	#initializes tk module
 
         #tk.Tk.iconbitmap(self, default="<image-file-name.ico>") #gives an icon for the program, top left corner, has to be an ICON
-        tk.Tk.wm_title(self, "FONZY POS Program")   #Gives name to program client application
+        tk.Tk.wm_title(self, "FONZY")   #Gives name to program client application
 
         container = tk.Frame(self)
         container.pack(side="top", fill="both", expand = True)	#"packs" or pushes the container to the top
@@ -55,7 +59,7 @@ class POS(tk.Tk):
 
         self.frames = {}	#creates an object to hold multiple frames i.e. more windows/tabs
 
-        for F in (MainPage, MasterFilePage, ErrorPage, PaymentPage): #Adds frames onto list, to add more frames, just add it to the list
+        for F in (MainPage, ErrorPage, PaymentPage): #Adds frames onto list, to add more frames, just add it to the list
             frame = F(container, self)
             self.frames[F] = frame	#adds frame into frames object
             frame.grid(row=0, column = 0, sticky="nsew")	#sets frame structure, nsew = north south east west
@@ -76,86 +80,105 @@ class MainPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self,parent)
 
+# FRAME1 ################## CUSTOMER NAME, TELEPHONE NUMBER ######################
+
         #First frame inside the current MainPage Window Frame
-        frame1 = Frame(self, bg = "red")
-        frame1.grid(row = 0, column = 0, sticky = W)
+        frame1 = Frame(self, bg = "green")
+        frame1.pack()#grid(row = 0, column = 0, sticky = W)
         
-        frame1.label = tk.Label(frame1, text="Main Page", font=SMALL_FONT)
-        frame1.label.grid(row = 0, column = 0, sticky = W)
+#CUSTOMER NAME
+        frame1.label = tk.Label(frame1, text="Customer Name", font=SMALL_FONT)
+        frame1.label.grid(row = 0, column = 0, padx=5, pady=5, sticky = W)
 
-        itemScanNumber = StringVar()    #creates the object itemScanNumber with a string variable type
-        frame1.EntryBox = ttk.Entry(frame1, textvariable = itemScanNumber)   #creates an entry box and allows the entry of a string variable
-        frame1.EntryBox.grid(row = 0, column = 1, sticky = W)
+        customerName = StringVar()    #creates the object customerName with a string variable type
+        frame1.EntryBox1 = ttk.Entry(frame1, textvariable = customerName, width = 40)   #creates an entry box and allows the entry of a string variable
+        frame1.EntryBox1.grid(row = 0, column = 1, padx=5, pady=5, sticky = W)
+        #print(customerName.get())
 
-        print(itemScanNumber.get())
-
-        def printNumber():
-            print("Your Number: " + itemScanNumber.get())
-            return
-
-        frame1.button = ttk.Button(frame1, text = "CLICK ME FOR SCAN NUMBER!", command = printNumber)#command=fileExplorer)
-        frame1.button.grid(row = 0, column = 2, sticky = W)
-
-        frame1.button1 = ttk.Button(frame1, text = "CLICK ME!", command = lambda: controller.show_frame(MasterFilePage))#command=fileExplorer)
-        frame1.button1.grid(row = 0, column = 3, sticky = W)
-        #need to use .place instead of .pack, for next iteration
-
-
-
-        #Second frame inside the current MainPage Window Frame
-        frame2 = Frame(self, bg = "blue")
-        frame2.grid(row = 1, column = 0, sticky = W)
+#PHONE
+        frame1.label2 = tk.Label(frame1, text="Phone", font=SMALL_FONT)
+        frame1.label2.grid(row = 0, column = 2, padx=5, pady=5, sticky = W)
         
-        frame2.label = tk.Label(frame2, text="Main Page2", font=SMALL_FONT)
-        frame2.label.grid(row = 0, column = 0, sticky = W)
+        phone = StringVar()    #creates the object phone with a string variable type
+        frame1.EntryBox2 = ttk.Entry(frame1, textvariable = phone, width = 40)   #creates an entry box and allows the entry of a string variable
+        frame1.EntryBox2.grid(row = 0, column = 3, padx=5, pady=5, sticky = W)
+###################################################################################
+
+
+# FRAME2 ########################## ADDRESS #####################################
+        
+        #Secibd frame inside the current MainPage Window Frame
+        frame2 = Frame(self, bg = "red")
+        frame2.pack()#grid(row = 1, column = 0, sticky = W)
+
+#ADDRESS
+        frame2.label = tk.Label(frame2, text="Address", font=SMALL_FONT)
+        frame2.label.grid(row = 1, column = 0, padx=5, pady=5, sticky = W)
+
+        address = StringVar()    #creates the object address with a string variable type
+        frame2.EntryBox = ttk.Entry(frame2, textvariable = address, width = 99)   #creates an entry box and allows the entry of a string variable
+        frame2.EntryBox.grid(row = 1, column = 1, padx=5, pady=5, sticky = W)
+###################################################################################
+
+
+# FRAME3 ########################## ENTRY BOX GRID #####################################
+        #Third frame inside the current MainPage Window Frame
+        frame3 = Frame(self, bg = "black")
+        frame3.pack()#grid(row = 2, column = 0)
+        
         #THIS CREATES THE GRID TO OUTPUT THE DATA QUERIED FROM THE MASTER FILE
         #Description of Box: 'X' amount goind down, i.e. number of items, 6 descriptive columns: Bar Code, Product Description, Amount, Quantity, Additional Discount, Total Amount
-        #Created a frame within the MainPage Frame
-        frame2.canvasGrid = Canvas(frame2, height = 300, width = 300, bg = "white")
-        frame2.canvasGrid.grid(row = 0, column = 1, sticky = W)
+        #This is the header GRID VIEW Labels
+        frame3.labelGF1 = tk.Label(frame3, text="Bar Code", font=NORMAL_FONT, relief = SUNKEN, width = 16)
+        frame3.labelGF1.grid(row = 0, column = 0)
+
+        frame3.labelGF2 = tk.Label(frame3, text="Product Description", font=NORMAL_FONT, relief = SUNKEN, width = 30)
+        frame3.labelGF2.grid(row = 0, column = 1)
+
+        frame3.labelGF3 = tk.Label(frame3, text="Price", font=NORMAL_FONT, relief = SUNKEN, width = 10)
+        frame3.labelGF3.grid(row = 0, column = 2)
+
+        frame3.labelGF4 = tk.Label(frame3, text="Quantity", font=NORMAL_FONT, relief = SUNKEN, width = 8)
+        frame3.labelGF4.grid(row = 0, column = 3)
+
+        frame3.labelGF5 = tk.Label(frame3, text="Discount", font=NORMAL_FONT, relief = SUNKEN, width = 8)
+        frame3.labelGF5.grid(row = 0, column = 4)
+
+        frame3.labelGF6 = tk.Label(frame3, text="Cost", font=NORMAL_FONT, relief = SUNKEN, width = 10)
+        frame3.labelGF6.grid(row = 0, column = 5)
+
+        #Need to create a "Dynamically allocated grid view entry boxes" for next boxes with scroll wheel
+###################################################################################
 
 
-"""        
-        gridFrame = Frame(self)
-        gridFrame.pack()    #need to fix these into a grid later on
-        #gridFrame.labelGF = tk.Label(self, text="TEST FRAME", font=SMALL_FONT, relief = SUNKEN) #SUNKENS MAKES IT GO BEHIND
-        #gridFrame.labelGF.pack(pady=10, padx=10)
-        
-        #Created the "Dynamically allocated grid view entry boxes"
-        gridFrame.labelGF1 = tk.Label(self, text="Bar Code", font=LARGE_FONT, relief = SUNKEN)
-        gridFrame.labelGF1.grid(row = 0, column = 0, sticky = W)
+# FRAME4 ########################## TOTAL QUANTITY AND AMOUNT #####################################
+        #Third frame inside the current MainPage Window Frame
+        frame4 = Frame(self, bg = "blue")
+        frame4.pack()#grid(row = 3, column = 0)
 
-        gridFrame.labelGF2 = tk.Label(self, text="Product Description", font=LARGE_FONT, relief = SUNKEN)
-        gridFrame.labelGF2.grid(row = 0, column = 1, sticky = W)
+        frame4.label1 = tk.Label(frame4, text="Total Quantity", font=NORMAL_FONT)
+        frame4.label1.grid(row = 0, column = 0, padx=5, pady=5, sticky = W)
 
-        gridFrame.labelGF3 = tk.Label(self, text="Amount", font=LARGE_FONT, relief = SUNKEN)
-        gridFrame.labelGF3.grid(row = 0, column = 2, sticky = W)
+        frame4.label2 = tk.Label(frame4, text="TQ For Now", font=NORMAL_FONT, relief = SUNKEN, width = 16)  #NEED TO GET SUM OF TOTAL QUANTITY
+        frame4.label2.grid(row = 0, column = 1)
 
-        gridFrame.labelGF4 = tk.Label(self, text="Quantity", font=LARGE_FONT, relief = SUNKEN)
-        gridFrame.labelGF4.grid(row = 0, column = 3, sticky = W)
+        frame4.label3 = tk.Label(frame4, text="Total Amount", font=NORMAL_FONT)
+        frame4.label3.grid(row = 0, column = 3, padx=5, pady=5, sticky = W)
 
-        gridFrame.labelGF5 = tk.Label(self, text="Discount", font=LARGE_FONT, relief = SUNKEN)
-        gridFrame.labelGF5.grid(row = 0, column = 4, sticky = W)
-
-        gridFrame.labelGF6 = tk.Label(self, text="Total", font=LARGE_FONT, relief = SUNKEN)
-        gridFrame.labelGF6.grid(row = 0, column = 5, sticky = W)
-
-"""
+        frame4.label4 = tk.Label(frame4, text="TA For Now", font=NORMAL_FONT, relief = SUNKEN, width = 16)  #NEED TO GET SUM OF TOTAL COST
+        frame4.label4.grid(row = 0, column = 4)
+#############################################################################################
 
 
-#Start frame: Prompts user to find master key file
-class MasterFilePage(tk.Frame):
-    def __init__(self, parent, controller):
-        tk.Frame.__init__(self,parent)
+# FRAME5 ########################## BAR CODE AND ADD ITEM #####################################
 
-        label = tk.Label(self, text="Please specify the product master file", font=SMALL_FONT)
-        label.pack(pady=10, padx=10)
+#############################################################################################
 
-        button1 = ttk.Button(self, text = "OK", command=fileExplorer)
-        button1.pack(pady=5, padx=10)
 
-        if errorCode == 1:
-            controller.show_frame(ErrorPage)
+# FRAME6 ########################## PROCESS AND REFRESH #####################################
+
+#############################################################################################
+
 
 
 
@@ -180,8 +203,28 @@ class ErrorPage(tk.Frame):
             label = tk.Label(self, text="Error! Please input a correct Master File Document", font=SMALL_FONT)
             label.pack(pady=10, padx=10)
 
-        button1 = ttk.Button(self, text = "OK", command=lambda: controller.show_frame(MasterFilePage)) #One can also do command=quit to quit out of the program
+        button1 = ttk.Button(self, text = "OK", command=MasterFilePopUp) #One can also do command=quit to quit out of the program
         button1.pack(pady=5, padx=10)
+
+
+
+
+def MasterFilePopUp():
+    popup = tk.Tk()
+
+    popup.wm_title("FONZY")
+    label = ttk.Label(popup, text = "Please specify the product master file", font = NORMAL_FONT)
+    label.pack(side = "top", fill = "x", pady = 10)
+
+    button1 = ttk.Button(popup, text = "Okay", command = fileExplorer)
+    button1.pack()
+
+    if errorCode == 0:
+        return 1
+    else:
+        popupmsg("Please input the correct Master File")
+        MasterFilePopUp()
+
 
 
 
@@ -196,6 +239,7 @@ def fileExplorer():
             sheet = pe.get_array(file_name=filename) #puts data into array
 
             masterList = sheet
+            print(sheet)
             #print(sheet[4]) #prints: everything
             #print(sheet[4]) #prints: [20297939, 'AC EDT 75ML SPRAY TEST', 250, 0, 3605520297939]
             #print(sheet[4][0]) #prints: 20297939
@@ -213,11 +257,12 @@ def fileExplorer():
 
 
 
+
 #Creates popup message bars
 def popupmsg(msg):
     popup = tk.Tk()
 
-    popup.wm_title("!")
+    popup.wm_title("FONZY")
     label = ttk.Label(popup, text = msg, font = NORMAL_FONT)
     label.pack(side = "top", fill = "x", pady = 10)
 
@@ -226,10 +271,13 @@ def popupmsg(msg):
     popup.mainloop()
 
 
+################################ START OF PROGRAM #########################################
+
+#finds Master File first
+MasterFilePopUp()
 
 
-
-#runs program
+#runs tkinter program
 app = POS()
-app.geometry("640x500") #makes app into a 1280x720p screen, can change size to liking
+app.geometry("700x700") #makes app into a 1280x720p screen, can change size to liking
 app.mainloop()
