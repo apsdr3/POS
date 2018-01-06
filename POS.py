@@ -80,11 +80,11 @@ class MainPage(tk.Frame):
         frame1 = Frame(self, bg = "red")
         frame1.grid(row = 0, column = 0, sticky = W)
         
-        frame1.label = tk.Label(self, text="Main Page", font=SMALL_FONT)
+        frame1.label = tk.Label(frame1, text="Main Page", font=SMALL_FONT)
         frame1.label.grid(row = 0, column = 0, sticky = W)
 
         itemScanNumber = StringVar()    #creates the object itemScanNumber with a string variable type
-        frame1.EntryBox = ttk.Entry(self, textvariable = itemScanNumber)   #creates an entry box and allows the entry of a string variable
+        frame1.EntryBox = ttk.Entry(frame1, textvariable = itemScanNumber)   #creates an entry box and allows the entry of a string variable
         frame1.EntryBox.grid(row = 0, column = 1, sticky = W)
 
         print(itemScanNumber.get())
@@ -93,10 +93,10 @@ class MainPage(tk.Frame):
             print("Your Number: " + itemScanNumber.get())
             return
 
-        frame1.button = ttk.Button(self, text = "CLICK ME FOR SCAN NUMBER!", command = printNumber)#command=fileExplorer)
+        frame1.button = ttk.Button(frame1, text = "CLICK ME FOR SCAN NUMBER!", command = printNumber)#command=fileExplorer)
         frame1.button.grid(row = 0, column = 2, sticky = W)
 
-        frame1.button1 = ttk.Button(self, text = "CLICK ME!", command = lambda: controller.show_frame(MasterFilePage))#command=fileExplorer)
+        frame1.button1 = ttk.Button(frame1, text = "CLICK ME!", command = lambda: controller.show_frame(MasterFilePage))#command=fileExplorer)
         frame1.button1.grid(row = 0, column = 3, sticky = W)
         #need to use .place instead of .pack, for next iteration
 
@@ -106,13 +106,13 @@ class MainPage(tk.Frame):
         frame2 = Frame(self, bg = "blue")
         frame2.grid(row = 1, column = 0, sticky = W)
         
-        frame2.label = tk.Label(self, text="Main Page2", font=SMALL_FONT)
+        frame2.label = tk.Label(frame2, text="Main Page2", font=SMALL_FONT)
         frame2.label.grid(row = 0, column = 0, sticky = W)
         #THIS CREATES THE GRID TO OUTPUT THE DATA QUERIED FROM THE MASTER FILE
         #Description of Box: 'X' amount goind down, i.e. number of items, 6 descriptive columns: Bar Code, Product Description, Amount, Quantity, Additional Discount, Total Amount
         #Created a frame within the MainPage Frame
-        #frame2.canvasGrid = Canvas(self, height = 300, width = 300, bg = "white")
-        #frame2.canvasGrid.grid(row = 0, column = 0, sticky = W)
+        frame2.canvasGrid = Canvas(frame2, height = 300, width = 300, bg = "white")
+        frame2.canvasGrid.grid(row = 0, column = 1, sticky = W)
 
 
 """        
