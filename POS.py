@@ -75,7 +75,7 @@ class POS(tk.Tk):
 
 
 
-#Main Landing Page frame
+#MAIN FRAME THAT THE USER WILL BE ON! Showcases customer information and purchase details
 class MainPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self,parent)
@@ -84,7 +84,7 @@ class MainPage(tk.Frame):
 
         #First frame inside the current MainPage Window Frame
         frame1 = Frame(self, bg = "green")
-        frame1.pack()
+        frame1.pack(fill = BOTH)
         
 #CUSTOMER NAME
         frame1Label = tk.Label(frame1, text="Customer Name", font=SMALL_FONT)
@@ -109,7 +109,7 @@ class MainPage(tk.Frame):
         
         #Secibd frame inside the current MainPage Window Frame
         frame2 = Frame(self, bg = "red")
-        frame2.pack()
+        frame2.pack(fill = BOTH)
 
 #ADDRESS
         frame2.label = tk.Label(frame2, text="Address", font=SMALL_FONT)
@@ -123,32 +123,40 @@ class MainPage(tk.Frame):
 
 # FRAME3 ########################## ENTRY BOX GRID #####################################
         #Third frame inside the current MainPage Window Frame
-        frame3 = Frame(self, bg = "black", width = 690, height = 400, borderwidth = 1)
-        frame3.pack()
+        frame3 = Frame(self, bg = "grey", width = 690, height = 400, borderwidth = 1)
+        frame3.pack(expand = True, fill=BOTH)
             
-        #frame3Canvas = Canvas(frame3, width = 680, height = 400)
-        #frame3Canvas.pack()
+        frame3ListBox = Listbox(frame3, width = 690, height = 400, borderwidth = 1, bg = "white")
+        frame3ListBox.config(state = DISABLED)
+        frame3ListBox.pack(expand = True, fill = BOTH)
+
+        #Scrollbar: Still need to fix
+        frame3ScrollBar = Scrollbar(frame3ListBox)
+        frame3ScrollBar.grid(column = 6)
+        frame3ListBox['yscrollcommand'] = frame3ScrollBar.sets  #STILL NEED TO CHECK AND VERIFY!!!
+        #frame3ScrollBar.config(yscrollcommand=frame3ScrollBar.set)
+        #frame3ScrollBar.config(command=frame3ListBox.yview)
 
 
         #THIS CREATES THE GRID TO OUTPUT THE DATA QUERIED FROM THE MASTER FILE
         #Description of Box: 'X' amount goind down, i.e. number of items, 6 descriptive columns: Bar Code, Product Description, Amount, Quantity, Additional Discount, Total Amount
         #This is the header GRID VIEW Labels
-        frame3Label1 = tk.Label(frame3, text="Bar Code", font=NORMAL_FONT, relief = SUNKEN, width = 16)
+        frame3Label1 = tk.Label(frame3ListBox, text="Bar Code", font=NORMAL_FONT, relief = SUNKEN, width = 15)
         frame3Label1.grid(row = 0, column = 0)
 
-        frame3Label2 = tk.Label(frame3, text="Product Description", font=NORMAL_FONT, relief = SUNKEN, width = 30)
+        frame3Label2 = tk.Label(frame3ListBox, text="Product Description", font=NORMAL_FONT, relief = SUNKEN, width = 30)
         frame3Label2.grid(row = 0, column = 1)
 
-        frame3Label3 = tk.Label(frame3, text="Price", font=NORMAL_FONT, relief = SUNKEN, width = 10)
+        frame3Label3 = tk.Label(frame3ListBox, text="Price", font=NORMAL_FONT, relief = SUNKEN, width = 9)
         frame3Label3.grid(row = 0, column = 2)
 
-        frame3Label4 = tk.Label(frame3, text="Quantity", font=NORMAL_FONT, relief = SUNKEN, width = 8)
+        frame3Label4 = tk.Label(frame3ListBox, text="Quantity", font=NORMAL_FONT, relief = SUNKEN, width = 8)
         frame3Label4.grid(row = 0, column = 3)
 
-        frame3Label5 = tk.Label(frame3, text="Discount", font=NORMAL_FONT, relief = SUNKEN, width = 8)
+        frame3Label5 = tk.Label(frame3ListBox, text="Discount", font=NORMAL_FONT, relief = SUNKEN, width = 8)
         frame3Label5.grid(row = 0, column = 4)
 
-        frame3Label6 = tk.Label(frame3, text="Cost", font=NORMAL_FONT, relief = SUNKEN, width = 10)
+        frame3Label6 = tk.Label(frame3ListBox, text="Cost", font=NORMAL_FONT, relief = SUNKEN, width = 10)
         frame3Label6.grid(row = 0, column = 5)
 
         #Need to create a "Dynamically allocated grid view entry boxes" for next boxes with scroll wheel
@@ -158,16 +166,20 @@ class MainPage(tk.Frame):
 # FRAME4 ########################## TOTAL QUANTITY AND AMOUNT #####################################
         #Fourth frame inside the current MainPage Window Frame
         frame4 = Frame(self, bg = "blue")
-        frame4.pack()
+        frame4.pack(fill = BOTH)
 
         frame4Label1 = tk.Label(frame4, text="Total Quantity", font=NORMAL_FONT)
-        frame4Label1.grid(row = 0, column = 0, padx=5, pady=5, sticky = W)
+        frame4Label1.grid(row = 0, column = 0, padx=5, pady=5)
 
         frame4Label2 = tk.Label(frame4, text="TQ For Now", font=NORMAL_FONT, relief = SUNKEN, width = 16)  #NEED TO GET SUM OF TOTAL QUANTITY
         frame4Label2.grid(row = 0, column = 1)
 
+        #Frame block to separate the first set of labels above from the second set of labels below
+        frame4LabelBlock = tk.Label(frame4, width = 16, bg = "blue")
+        frame4LabelBlock.grid(row = 0, column = 2, padx=45, pady=5)
+
         frame4Label3 = tk.Label(frame4, text="Total Amount", font=NORMAL_FONT)
-        frame4Label3.grid(row = 0, column = 3, padx=5, pady=5, sticky = W)
+        frame4Label3.grid(row = 0, column = 3, padx=5, pady=5)
 
         frame4Label4 = tk.Label(frame4, text="TA For Now", font=NORMAL_FONT, relief = SUNKEN, width = 16)  #NEED TO GET SUM OF TOTAL COST
         frame4Label4.grid(row = 0, column = 4)
@@ -177,7 +189,7 @@ class MainPage(tk.Frame):
 # FRAME5 ########################## BAR CODE AND ADD ITEM #####################################
         #Fifth frame inside the current MainPage Window Frame
         frame5 = Frame(self, bg = "pink")
-        frame5.pack()
+        frame5.pack(fill = BOTH)
 
         frame5Label1 = tk.Label(frame5, text="Product Bar Code", font=NORMAL_FONT)
         frame5Label1.grid(row = 0, column = 0, padx=5, pady=5, sticky = W)
@@ -187,21 +199,20 @@ class MainPage(tk.Frame):
         frame5EntryBox.grid(row = 0, column = 1, padx=5, pady=5, sticky = W)
 
         frame5Button = ttk.Button(frame5, text = "Add Item", command=MainPage) #NEED TO CHECK IF BAR CODE WORKS FIRST!!! MAY NEED TO GO SOMEWHERE OTHER THAN MAIN PAGE
-        frame5Button.grid(row = 0, column = 2, padx = 50, pady = 10)
-
+        frame5Button.grid(row = 0, column = 2, padx = 130, pady = 10)
 #---------------------------------------------------------------------------------------------#
 
 
 # FRAME6 ########################## PROCESS AND REFRESH #####################################
         #Sixth frame inside the current MainPage Window Frame
         frame6 = Frame(self, bg = "yellow")
-        frame6.pack()
+        frame6.pack(fill = BOTH)
 
         frame6Button = ttk.Button(frame6, text = "Refresh", command=MainPage)
-        frame6Button.grid(row = 0, column = 0, padx = 50, pady = 10)
+        frame6Button.grid(row = 0, column = 0, padx = 125, pady = 10)
 
         frame6Button = ttk.Button(frame6, text = "Process", command=MainPage)
-        frame6Button.grid(row = 0, column = 1, padx = 50, pady = 10)
+        frame6Button.grid(row = 0, column = 1, padx = 125, pady = 10)
 #--------------------------------------------------------------------------------------------#
 
 
@@ -304,5 +315,6 @@ MasterFilePopUp()
 
 #runs tkinter program
 app = POS()
-app.geometry("700x700") #makes app into a 1280x720p screen, can change size to liking
+app.geometry("700x700") #makes app into a 700x700p screen, can change size to liking
+app.resizable(False, False) #window isn't resizable. Makes it easier for the cashier to manage
 app.mainloop()
