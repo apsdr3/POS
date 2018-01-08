@@ -13,7 +13,7 @@ SMALL_FONT = ("Verdana", 8)
 
 #GLOBAL VARIABLES
 masterList = [] #list of objects from Master File
-customerList = [[20297939, 'AC EDT 75ML SPRAY TEST', 250, 0, 3605520297939],[20297123, 'AC EDC 75ML SPRAY TEST', 550, 10, 3605520217939]]   #list for customer pruchases taken from Master File
+customerList = [[20297939, 'AC EDT 75ML SPRAY TEST', 250, 0, 3605520297939, 1]]   #list for customer pruchases taken from Master File
 errorCode = 0
 
 """
@@ -162,7 +162,7 @@ class MainPage(tk.Frame):
         rowNum = 1
         for i in range(len(customerList)):
 
-            barCodeString = str(customerList[i][0])
+            barCodeString = str(customerList[i][4])
             frame3BarCode = tk.Label(frame3ListBox, text = barCodeString, font = NORMAL_FONT, relief = SUNKEN, width = 15)
             frame3BarCode.grid(row = rowNum, column = 0)
 
@@ -174,18 +174,17 @@ class MainPage(tk.Frame):
             frame3Price = tk.Label(frame3ListBox, text = priceString, font = NORMAL_FONT, relief = SUNKEN, width = 9)
             frame3Price.grid(row = rowNum, column = 2)
 
-            quantity = IntVar()
-            quantity.set(1)
-            frame3Quantity = ttk.Entry(frame3ListBox, textvariable = quantity.get(), font = NORMAL_FONT, width = 8)   #creates an entry box and allows the entry of a string variable
+            quantityString = str(customerList[i][5])
+            frame3Quantity = ttk.Label(frame3ListBox, text = quantityString, font = NORMAL_FONT, relief = SUNKEN, width = 8)   #creates an entry box and allows the entry of a string variable
             frame3Quantity.grid(row = rowNum, column = 3)
 
             discountString = str(customerList[i][3])
             frame3Discount = tk.Label(frame3ListBox, text = discountString, font = NORMAL_FONT, relief = SUNKEN, width = 8)
             frame3Discount.grid(row = rowNum, column = 4)
 
-            cost = (quantity.get()*customerList[i][2])-((customerList[i][3]/100)*(quantity.get()*customerList[i][2]))
+            cost = (customerList[i][5]*customerList[i][2])-((customerList[i][3]/100)*(customerList[i][5]*customerList[i][2]))   #gets cost estimate with given mathematical values
             costString = str(cost)
-            frame3Cost = ttk.Label(frame3ListBox, text = costString, font = NORMAL_FONT, relief = SUNKEN, width = 10)
+            frame3Cost = tk.Label(frame3ListBox, text = costString, font = NORMAL_FONT, relief = SUNKEN, width = 10)
             frame3Cost.grid(row = rowNum, column = 5)
 
             rowNum += 1
@@ -228,11 +227,22 @@ class MainPage(tk.Frame):
         frame5Label1.grid(row = 0, column = 0, padx=5, pady=5, sticky = W)
 
         barCode = tk.StringVar()    #creates the object barCode with a string variable type
-        frame5EntryBox = ttk.Entry(frame5, textvariable = barCode, width = 40)   #creates an entry box and allows the entry of a string variable
+        frame5EntryBox = ttk.Entry(frame5, textvariable = barCode, width = 22)   #creates an entry box and allows the entry of a string variable
         frame5EntryBox.grid(row = 0, column = 1, padx = 5, pady = 5)
 
-        frame5Button = ttk.Button(frame5, text = "Add Item", command = lambda: updateCustomerList(barCode)) #NEED TO CHECK IF BAR CODE WORKS FIRST!!! MAY NEED TO GO SOMEWHERE OTHER THAN MAIN PAGE
-        frame5Button.grid(row = 0, column = 2, padx = 130, pady = 10)
+        frame5Spacer = tk.Label(frame5, text = "", font = NORMAL_FONT, bg = "pink")
+        frame5Spacer.grid(row = 0, column = 2, padx=20, pady=5, sticky = W)
+
+        frame5Label2 = tk.Label(frame5, text = "Quantity", font = NORMAL_FONT)
+        frame5Label2.grid(row = 0, column = 3, padx=5, pady=5, sticky = W)
+
+        quantity = tk.IntVar()    #creates the object barCode with a string variable type
+        quantity.set(1)
+        frame5EntryBox2 = ttk.Entry(frame5, textvariable = quantity, width = 8)   #creates an entry box and allows the entry of a string variable
+        frame5EntryBox2.grid(row = 0, column = 4, padx = 5, pady = 5)
+
+        frame5Button = ttk.Button(frame5, text = "Add Item", command = lambda: updateCustomerList(barCode, quantity)) #NEED TO CHECK IF BAR CODE WORKS FIRST!!! MAY NEED TO GO SOMEWHERE OTHER THAN MAIN PAGE
+        frame5Button.grid(row = 0, column = 5, padx = 90, pady = 10)
 #---------------------------------------------------------------------------------------------#
 
 
@@ -342,24 +352,58 @@ def popupmsg(msg):
 
 
 
-def updateCustomerList(barCode):
-    global updateCustomerList   #global variable to allow user to update updateCustomerList
+def updateCustomerList(barCode, quantity):
+    global customerList   #global variable to allow user to update updateCustomerList
     
     if not barCode.get():   #checks if barCode is empty
+        print("Bar Code is empty")
         return  
     else:   #finds barCode inside masterList
-        for i in range(len(masterList)):
-            if int(barCode.get()) == masterList[i][0]:
-                customerList.append(masterList[i])
-        
+        print("Bar Code is not empty")
+        for i in range(len(masterList)):    #searches through master list to see if barCode is inside masterList
+            if int(barCode.get()) == masterList[i][4]:   #if bar code is inside the masterList
+                print("Bar Code is inside masterList")
+
+                if len(customerList) == 0:   #if customerList is empty
+                    print("Customer List is empty")
+                    customerList.append(masterList[i])  #adds a masterList object inside customerList
+
+                    customerList[0].append(quantity.get())   #gives a quantifiable value to number of products the customer wants to purchase
+                    
+
+                    print(customerList)
+
+                    #show_frame(MainPage)
+
+
+                # NEED TO FIX!
+                else:   #if customerList is not empty
+                    print("Customer List is not empty")
+                    for j in range(len(customerList)):    #searches through customerList to see if item is already inside; checks for repeats
+                        if int(barCode.get()) == customerList[j][4]:   #if is a repeated barCode
+                            print("Customer List has a repeated Bar Code")
+                            customerList[j][5] += quantity.get()
+                            #sends back to MainPage Frame
+                            print(customerList)
+                            return
+
+                    #Does not have a repeated bar code
+                    print("Customer List does not have a repeated Bar Code")
+                    #if quantity.get() > 0:    #checks if quantity to be added is at least greater than 0
+                        #print("Quantity is more than :" + str(quantity.get()))
+                    customerList.append(masterList[i])  #adds a masterList object inside customerList
+                    customerList[len(customerList)-1].append(quantity.get())   #gives a quantifiable value to number of products the customer wants to purchase
+                    #sends back to MainPage Frame
+
+                    print(customerList)
+
+                #masterList
+                #prints: [20297939, 'AC EDT 75ML SPRAY TEST', 250, 0, 3605520297939]
                 #print("BAR CODE: " + barCode.get())
                 #print("CUSTOMER LIST CODE: ")
-                print(customerList)
+                #print(customerList)
     return            
 
-
-#masterList
-#prints: [20297939, 'AC EDT 75ML SPRAY TEST', 250, 0, 3605520297939]
 
 
 
