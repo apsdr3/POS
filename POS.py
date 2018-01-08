@@ -13,18 +13,13 @@ SMALL_FONT = ("Verdana", 8)
 
 #GLOBAL VARIABLES
 masterList = [] #list of objects from Master File
-customerList = []   #list for customer pruchases taken from Master File
+customerList = [[20297939, 'AC EDT 75ML SPRAY TEST', 250, 0, 3605520297939],[20297123, 'AC EDC 75ML SPRAY TEST', 550, 10, 3605520217939]]   #list for customer pruchases taken from Master File
 errorCode = 0
 
 """
 Error Code Legend:
 0 = No error
 1 = Master File Error
-"""
-
-
-"""
-NEED TO LEARN HOW TO MAKE GRID VIEW OR TABLE LIST ON PYTHON
 """
 
 """
@@ -162,8 +157,42 @@ class MainPage(tk.Frame):
         frame3Label6 = tk.Label(frame3ListBox, text = "Cost", font = NORMAL_FONT, relief = SUNKEN, width = 10)
         frame3Label6.grid(row = 0, column = 5)
 
+        
         #Need to create a "Dynamically allocated grid view entry boxes" for next boxes with scroll wheel
+        rowNum = 1
+        for i in range(len(customerList)):
 
+            barCodeString = str(customerList[i][0])
+            frame3BarCode = tk.Label(frame3ListBox, text = barCodeString, font = NORMAL_FONT, relief = SUNKEN, width = 15)
+            frame3BarCode.grid(row = rowNum, column = 0)
+
+            prodDesc = customerList[i][1]
+            frame3ProdDesc = tk.Label(frame3ListBox, text = prodDesc, font = NORMAL_FONT, relief = SUNKEN, width = 30)
+            frame3ProdDesc.grid(row = rowNum, column = 1)
+
+            priceString = str(customerList[i][2])
+            frame3Price = tk.Label(frame3ListBox, text = priceString, font = NORMAL_FONT, relief = SUNKEN, width = 9)
+            frame3Price.grid(row = rowNum, column = 2)
+
+            quantity = IntVar()
+            quantity.set(1)
+            frame3Quantity = ttk.Entry(frame3ListBox, textvariable = quantity.get(), font = NORMAL_FONT, width = 8)   #creates an entry box and allows the entry of a string variable
+            frame3Quantity.grid(row = rowNum, column = 3)
+
+            discountString = str(customerList[i][3])
+            frame3Discount = tk.Label(frame3ListBox, text = discountString, font = NORMAL_FONT, relief = SUNKEN, width = 8)
+            frame3Discount.grid(row = rowNum, column = 4)
+
+            cost = (quantity.get()*customerList[i][2])-((customerList[i][3]/100)*(quantity.get()*customerList[i][2]))
+            costString = str(cost)
+            frame3Cost = ttk.Label(frame3ListBox, text = costString, font = NORMAL_FONT, relief = SUNKEN, width = 10)
+            frame3Cost.grid(row = rowNum, column = 5)
+
+            rowNum += 1
+
+            #frame3EANCode = tk.Label(frame3ListBox, text = customerList[i][4], font = NORMAL_FONT, relief = SUNKEN, width = 15)
+            #frame3EANCode = grid(row = row, column = 4)
+        
 #--------------------------------------------------------------------------------------#
 
 
@@ -204,7 +233,6 @@ class MainPage(tk.Frame):
 
         frame5Button = ttk.Button(frame5, text = "Add Item", command = lambda: updateCustomerList(barCode)) #NEED TO CHECK IF BAR CODE WORKS FIRST!!! MAY NEED TO GO SOMEWHERE OTHER THAN MAIN PAGE
         frame5Button.grid(row = 0, column = 2, padx = 130, pady = 10)
-
 #---------------------------------------------------------------------------------------------#
 
 
@@ -218,11 +246,7 @@ class MainPage(tk.Frame):
 
         frame6Button = ttk.Button(frame6, text = "Process", command=MainPage)   #DOESN'T WORKS           #STILL NEED TO MAKE PROCESS FRAME
         frame6Button.grid(row = 0, column = 1, padx = 125, pady = 10)
-#--------------------------------------------------------------------------------------------#
-        
-#STILL NEED TO FIX
-def updateCustomerList(barCode):
-    print(len(barCode.get()))      
+#--------------------------------------------------------------------------------------------#   
 
 
 
@@ -234,6 +258,9 @@ class PaymentPage(tk.Frame):
 
         label = tk.Label(self, text="PAYMENT HERE!", font=SMALL_FONT)
         label.pack(pady=10, padx=10)
+
+
+
 
 #error page for when there is a possible error
 class ErrorPage(tk.Frame):
@@ -247,21 +274,26 @@ class ErrorPage(tk.Frame):
         button1 = ttk.Button(self, text = "OK", command = MasterFilePopUp) #One can also do command=quit to quit out of the program
         button1.pack(pady=5, padx=10)
 
+
+
+
 #once button is clicked, it prompts user to find file then it outputs the contents of the file
 def fileExplorer():
     #intializes another instance of tkinter
+    global masterList   #allows user to add item to masterList global variable
     try:    
         filename = filedialog.askopenfilename(initialdir = "/",title = "Select file",filetypes = (("XLS files","*.xls"),("XLSX files","*.xlsx")))
         
         if re.match("[A-Za-z0-9]",filename):
             #sheet = pe.get_sheet(file_name=filename) #puts data into readable sheet, array is more useful
             sheet = pe.get_array(file_name=filename) #puts data into array
-
             masterList = sheet
-            print(sheet)
-            #print(sheet[4]) #prints: everything
+            #print(sheet)   #prints: everything
             #print(sheet[4]) #prints: [20297939, 'AC EDT 75ML SPRAY TEST', 250, 0, 3605520297939]
+            #print(type(sheet[4][0]))
             #print(sheet[4][0]) #prints: 20297939
+            #print(len(masterList))
+            
 
             errorCode = 0 #resets errorCode
             return
@@ -273,6 +305,9 @@ def fileExplorer():
     except ValueError:
         errorCode = 1
         return
+
+
+
 
 def MasterFilePopUp():
     popup = tk.Toplevel() # <-- Toplevel instead of Tk
@@ -290,6 +325,9 @@ def MasterFilePopUp():
         popupmsg("Please input the correct Master File")
         MasterFilePopUp()
 
+
+
+
 #Creates popup message bars
 def popupmsg(msg):
     popup = tk.Toplevel() # <-- Toplevel instead of Tk
@@ -300,7 +338,34 @@ def popupmsg(msg):
 
     button1 = ttk.Button(popup, text = "Okay", command = popup.destroy)
     button1.pack()
-    #popup.mainloop()  # without mainloop
+
+
+
+
+def updateCustomerList(barCode):
+    global updateCustomerList   #global variable to allow user to update updateCustomerList
+    
+    if not barCode.get():   #checks if barCode is empty
+        return  
+    else:   #finds barCode inside masterList
+        for i in range(len(masterList)):
+            if int(barCode.get()) == masterList[i][0]:
+                customerList.append(masterList[i])
+        
+                #print("BAR CODE: " + barCode.get())
+                #print("CUSTOMER LIST CODE: ")
+                print(customerList)
+    return            
+
+
+#masterList
+#prints: [20297939, 'AC EDT 75ML SPRAY TEST', 250, 0, 3605520297939]
+
+
+
+
+
+
 
 #-------------------------------- START OF PROGRAM ----------------------------------------#
 
@@ -308,10 +373,9 @@ def popupmsg(msg):
 app = POS()
 
 app.geometry("700x700") #makes app into a 700x700p screen, can change size to liking
-app.resizable(False, False) #window isn't resizable. Makes it easier for the cashier to manage
+app.resizable(False, False) #window isn't resizable. Makes it easier for the owner to manage
 
 #finds Master File first
 # run after `POS` will be created and `app.mainloop()` will start
 app.after(100, MasterFilePopUp)
-        
 app.mainloop()
