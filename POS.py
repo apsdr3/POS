@@ -13,9 +13,9 @@ SMALL_FONT = ("Verdana", 8)
 
 #GLOBAL VARIABLES
 masterList = [] #list of objects from Master File
-customerList = [[20297939, 'AC EDT 75ML SPRAY TEST', 250, 0, 3605520297939, 1]]   #list for customer pruchases taken from Master File
+customerList = []   #list for customer pruchases taken from Master File
 errorCode = 0
-
+container = 0
 """
 Error Code Legend:
 0 = No error
@@ -34,7 +34,8 @@ class POS(tk.Tk):
 
         #tk.Tk.iconbitmap(self, default="<image-file-name.ico>") #gives an icon for the program, top left corner, has to be an ICON
         tk.Tk.wm_title(self, "FONZY")   #Gives name to program client application
-
+        
+        global container
         container = tk.Frame(self)
         container.pack(side = "top", fill = "both", expand = True)  #"packs" or pushes the container to the top
 
@@ -58,7 +59,7 @@ class POS(tk.Tk):
 
         self.frames = {}    #creates an object to hold multiple frames i.e. more windows/tabs
 
-        for F in (MainPage, ErrorPage, PaymentPage): #Adds frames onto list, to add more frames, just add it to the list
+        for F in (ErrorPage, PaymentPage, MainPage): #Adds frames onto list, to add more frames, just add it to the list
             frame = F(container, self)
             self.frames[F] = frame  #adds frame into frames object
             frame.grid(row=0, column = 0, sticky = "nsew")  #sets frame structure, nsew = north south east west
@@ -354,58 +355,57 @@ def popupmsg(msg):
 
 def updateCustomerList(barCode, quantity):
     global customerList   #global variable to allow user to update updateCustomerList
-    
     if not barCode.get():   #checks if barCode is empty
-        print("Bar Code is empty")
         return  
     else:   #finds barCode inside masterList
-        print("Bar Code is not empty")
+        
         for i in range(len(masterList)):    #searches through master list to see if barCode is inside masterList
+           
             if int(barCode.get()) == masterList[i][4]:   #if bar code is inside the masterList
-                print("Bar Code is inside masterList")
 
                 if len(customerList) == 0:   #if customerList is empty
-                    print("Customer List is empty")
                     customerList.append(masterList[i])  #adds a masterList object inside customerList
-
                     customerList[0].append(quantity.get())   #gives a quantifiable value to number of products the customer wants to purchase
-                    
 
-                    print(customerList)
+                    #sends back to MainPage Frame
+                    refreshMainFrame()
 
-                    #show_frame(MainPage)
-
-
-                # NEED TO FIX!
                 else:   #if customerList is not empty
-                    print("Customer List is not empty")
+                    
                     for j in range(len(customerList)):    #searches through customerList to see if item is already inside; checks for repeats
+                        
                         if int(barCode.get()) == customerList[j][4]:   #if is a repeated barCode
-                            print("Customer List has a repeated Bar Code")
                             customerList[j][5] += quantity.get()
+
                             #sends back to MainPage Frame
-                            print(customerList)
+                            refreshMainFrame()
                             return
 
-                    #Does not have a repeated bar code
-                    print("Customer List does not have a repeated Bar Code")
                     #if quantity.get() > 0:    #checks if quantity to be added is at least greater than 0
                         #print("Quantity is more than :" + str(quantity.get()))
+
                     customerList.append(masterList[i])  #adds a masterList object inside customerList
                     customerList[len(customerList)-1].append(quantity.get())   #gives a quantifiable value to number of products the customer wants to purchase
+                   
                     #sends back to MainPage Frame
-
-                    print(customerList)
+                    refreshMainFrame()
+                    
 
                 #masterList
                 #prints: [20297939, 'AC EDT 75ML SPRAY TEST', 250, 0, 3605520297939]
                 #print("BAR CODE: " + barCode.get())
                 #print("CUSTOMER LIST CODE: ")
                 #print(customerList)
+    refreshMainFrame()
     return            
 
 
-
+def refreshMainFrame():
+    global app
+    app.frames[MainPage].destroy()
+    app.frames[MainPage] = MainPage(container, app)
+    app.frames[MainPage].grid(row=0, column = 0, sticky = "nsew")
+    app.frames[MainPage].tkraise()
 
 
 
