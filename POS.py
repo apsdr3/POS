@@ -16,6 +16,7 @@ masterList = [] #list of objects from Master File
 customerList = []   #list for customer pruchases taken from Master File
 errorCode = 0
 container = 0
+
 """
 Error Code Legend:
 0 = No error
@@ -171,21 +172,18 @@ class MainPage(tk.Frame):
             frame3ProdDesc = tk.Label(frame3ListBox, text = prodDesc, font = NORMAL_FONT, relief = SUNKEN, width = 30)
             frame3ProdDesc.grid(row = rowNum, column = 1)
 
-            priceString = str(customerList[i][2])
-            frame3Price = tk.Label(frame3ListBox, text = priceString, font = NORMAL_FONT, relief = SUNKEN, width = 9)
+            frame3Price = tk.Label(frame3ListBox, text = "{:,}".format(customerList[i][2]), font = NORMAL_FONT, relief = SUNKEN, width = 9)
             frame3Price.grid(row = rowNum, column = 2)
 
-            quantityString = str(customerList[i][5])
-            frame3Quantity = ttk.Label(frame3ListBox, text = quantityString, font = NORMAL_FONT, relief = SUNKEN, width = 8)   #creates an entry box and allows the entry of a string variable
+            frame3Quantity = ttk.Label(frame3ListBox, text = "{:,}".format(customerList[i][5]), font = NORMAL_FONT, relief = SUNKEN, width = 8)   #creates an entry box and allows the entry of a string variable
             frame3Quantity.grid(row = rowNum, column = 3)
 
             discountString = str(customerList[i][3])
-            frame3Discount = tk.Label(frame3ListBox, text = discountString, font = NORMAL_FONT, relief = SUNKEN, width = 8)
+            frame3Discount = tk.Label(frame3ListBox, text = discountString+"%", font = NORMAL_FONT, relief = SUNKEN, width = 8)
             frame3Discount.grid(row = rowNum, column = 4)
 
             cost = (customerList[i][5]*customerList[i][2])-((customerList[i][3]/100)*(customerList[i][5]*customerList[i][2]))   #gets cost estimate with given mathematical values
-            costString = str(cost)
-            frame3Cost = tk.Label(frame3ListBox, text = costString, font = NORMAL_FONT, relief = SUNKEN, width = 10)
+            frame3Cost = tk.Label(frame3ListBox, text = "{:,}".format(cost), font = NORMAL_FONT, relief = SUNKEN, width = 10)
             frame3Cost.grid(row = rowNum, column = 5)
 
             rowNum += 1
@@ -252,7 +250,7 @@ class MainPage(tk.Frame):
         frame6 = Frame(self, bg = "yellow")
         frame6.pack(fill = BOTH)
 
-        frame6Button = ttk.Button(frame6, text = "Refresh", command=MainPage)   #DOESN'T WORK
+        frame6Button = ttk.Button(frame6, text = "Refresh", command=refreshMainFrame)
         frame6Button.grid(row = 0, column = 0, padx = 125, pady = 10)
 
         frame6Button = ttk.Button(frame6, text = "Process", command=MainPage)   #DOESN'T WORKS           #STILL NEED TO MAKE PROCESS FRAME
@@ -296,16 +294,8 @@ def fileExplorer():
         filename = filedialog.askopenfilename(initialdir = "/",title = "Select file",filetypes = (("XLS files","*.xls"),("XLSX files","*.xlsx")))
         
         if re.match("[A-Za-z0-9]",filename):
-            #sheet = pe.get_sheet(file_name=filename) #puts data into readable sheet, array is more useful
             sheet = pe.get_array(file_name=filename) #puts data into array
             masterList = sheet
-            #print(sheet)   #prints: everything
-            #print(sheet[4]) #prints: [20297939, 'AC EDT 75ML SPRAY TEST', 250, 0, 3605520297939]
-            #print(type(sheet[4][0]))
-            #print(sheet[4][0]) #prints: 20297939
-            #print(len(masterList))
-            
-
             errorCode = 0 #resets errorCode
             return
 
@@ -364,31 +354,33 @@ def updateCustomerList(barCode, quantity):
             if int(barCode.get()) == masterList[i][4]:   #if bar code is inside the masterList
 
                 if len(customerList) == 0:   #if customerList is empty
-                    customerList.append(masterList[i])  #adds a masterList object inside customerList
+                    customerList.append(masterList[i][:])  #adds a masterList object inside customerList
                     customerList[0].append(quantity.get())   #gives a quantifiable value to number of products the customer wants to purchase
-
-                    #sends back to MainPage Frame
-                    refreshMainFrame()
+                    
+                    if customerList[0][5] <= 0: #deletes element if item quantity value is 0 or less than 0
+                        del customerList[0]
+                    refreshMainFrame()  #sends back to MainPage Frame
 
                 else:   #if customerList is not empty
-                    
                     for j in range(len(customerList)):    #searches through customerList to see if item is already inside; checks for repeats
                         
                         if int(barCode.get()) == customerList[j][4]:   #if is a repeated barCode
                             customerList[j][5] += quantity.get()
-
-                            #sends back to MainPage Frame
-                            refreshMainFrame()
+                            
+                            if customerList[j][5] <= 0: #deletes element if item quantity value is 0 or less than 0
+                                del customerList[j]
+                            refreshMainFrame()  #sends back to MainPage Frame
                             return
 
                     #if quantity.get() > 0:    #checks if quantity to be added is at least greater than 0
                         #print("Quantity is more than :" + str(quantity.get()))
 
-                    customerList.append(masterList[i])  #adds a masterList object inside customerList
+                    customerList.append(masterList[i][:])  #adds a masterList object inside customerList
                     customerList[len(customerList)-1].append(quantity.get())   #gives a quantifiable value to number of products the customer wants to purchase
-                   
-                    #sends back to MainPage Frame
-                    refreshMainFrame()
+                    
+                    if customerList[len(customerList)-1][5] <= 0: #deletes element if item quantity value is 0 or less than 0
+                        del customerList[len(customerList)-1]
+                    refreshMainFrame()  #sends back to MainPage Frame
                     
 
                 #masterList
