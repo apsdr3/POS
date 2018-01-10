@@ -13,10 +13,9 @@ SMALL_FONT = ("Verdana", 8)
 
 #GLOBAL VARIABLES
 masterList = [] #list of objects from Master File
-customerList = []   #list for customer pruchases taken from Master File
+customerList = [[36218745, 'KER ELIX ULTI CH FINS 100ML US V315', 350, 0, 3474636218745, 1], [36382682, 'NUT BAIN SATIN 2 250ML', 400, 0, 3474636382682, 1], [36397983, 'RES THERAPISTE MASQ 200ML', 550, 0, 3474636397983, 1], [36398850, 'REF CHROMACAPTIVE MASQ 200ML', 550, 0, 3474636398850, 2], [36382668, 'NUT OLEO RELAX MASQ 200ML', 550, 0, 3474636382668, 1], [36397952, 'RES FORCE ARCH MASQ 200ML', 550, 0, 3474636397952, 2], [30458222, 'REF FONDANT CHROMACAPTIVE 1000ML', 800, 0, 3474630458222, 2], [30458062, 'REF CHROMACAPTIVE MASQ 500ML', 950, 0, 3474630458062, 1], [36356003, 'DENSIFIQUE FEMME 30X6ML', 1500, 0, 3474636356003, 3], [30525658, 'SE PRO KERATIN REFILL SHMP 250ML        ', 55, 0, 3474630525658, 2], [26404810, 'HAIR SPA OIL 100ML                      ', 70, 0, 8901526404810, 1], [30641044, 'SE ABS REPAIR LIPIDIUM THER CRM 125ML   ', 85, 0, 3474630641044, 1], [30525870, 'SE PRO KERATIN REFILL COND 150ML        ', 85, 0, 3474630525870, 1], [30640702, 'SE ABS REPAIR LIPIDIUM MASQ 200ML       ', 90, 0, 3474630640702, 2], [30640504, 'SE ABS REPAIR LIPIDIUM SHMP 250ML       ', 90, 0, 3474630640504, 1], [30714946, 'SE VITAMINO COLOR AOX SULFAT FREE 150ML ', 110, 0, 3474630714946, 4], [36202430, 'SE VITAMINO COLOR AOX FRESH MASQ 150ML  ', 115, 0, 3474636202430, 2], [30632196, 'TNA PLAYBALL DEVIATION PASTE 100ML      ', 125, 0, 3474630632196, 1], [36501960, 'MYTHIC OIL HUILE ORIGINAL 100ML         ', 150, 0, 3474636501960, 1], [30643659, 'SERIOXYL THICKER HAIR 90ML              ', 170, 0, 3474630643659, 1], [30633629, 'MYTHIC OIL SERUM DE FORCE 50ML          ', 180, 0, 3474630633629, 2], [36494859, 'REF CHROMACAPTIVE MASQ CX FINS 200ML', 550, 0, 3474636494859, 1], [18251615, 'HAIR SPA NOURISHING MASQ 1000ML         ', 350, 0, 6955818251615, 2], [86130594, 'FIBERSTRONG BRILT MASQ 150ML            ', 90, 0, 884486130594, 1]]
 errorCode = 0
 container = 0
-
 """
 Error Code Legend:
 0 = No error
@@ -107,7 +106,7 @@ class MainPage(tk.Frame):
 
 # FRAME2 -------------------------- ADDRESS ------------------------------------#
         
-        #Secibd frame inside the current MainPage Window Frame
+        #Second frame inside the current MainPage Window Frame
         frame2 = Frame(self, bg = "red")
         frame2.pack(fill = BOTH)
 
@@ -123,72 +122,79 @@ class MainPage(tk.Frame):
 
 # FRAME3 -------------------------- ENTRY BOX GRID ------------------------------------#
         #Third frame inside the current MainPage Window Frame
-        frame3 = Frame(self, bg = "grey", width = 690, height = 400, borderwidth = 1)
-        frame3.pack(expand = True, fill=BOTH)
-            
-        frame3ListBox = Listbox(frame3, width = 690, height = 400, borderwidth = 1, bg = "white")
-        frame3ListBox.config(state = DISABLED)
-        frame3ListBox.pack(expand = True, fill = BOTH)
 
-        #Scrollbar: Still need to fix
-        #frame3ScrollBar = Scrollbar(frame3ListBox)
-        #frame3ScrollBar.grid(column = 6)
-        #frame3ListBox['yscrollcommand'] = frame3ScrollBar.set  #STILL NEED TO CHECK AND VERIFY!!!
-        ##frame3ScrollBar.config(yscrollcommand=frame3ScrollBar.set)
-        ##frame3ScrollBar.config(command=frame3ListBox.yview)
+        frame3 = Frame(self, bg = "white", width = 690, height = 400, borderwidth = 1)
+        frame3.pack(expand = True, fill = Y)
+
+        frame3Canvas = tk.Canvas(frame3, width = 690, height = 400, bg = "white")
+
+        frame3ScrollBar = tk.Scrollbar(frame3, orient = "vertical", command = frame3Canvas.yview)
+        
+        frame3Frame = tk.Frame(frame3Canvas, bg = "white", width = 690, height = 400, borderwidth = 1)
+        frame3Frame.pack(expand = True, fill = Y)
+
+
+        frame3Canvas.configure(yscrollcommand=frame3ScrollBar.set)
+
+        frame3Canvas.pack(side = LEFT, fill = Y)
+        frame3ScrollBar.pack(side = RIGHT, fill = Y)
 
 
         #THIS CREATES THE GRID TO OUTPUT THE DATA QUERIED FROM THE MASTER FILE
         #Description of Box: 'X' amount goind down, i.e. number of items, 6 descriptive columns: Bar Code, Product Description, Amount, Quantity, Additional Discount, Total Amount
         #This is the header GRID VIEW Labels
-        frame3Label1 = tk.Label(frame3ListBox, text = "Bar Code", font = NORMAL_FONT, relief = SUNKEN, width = 15)
+        frame3Label1 = tk.Label(frame3Frame, text = "Bar Code", font = NORMAL_FONT, relief = SUNKEN, width = 15)
         frame3Label1.grid(row = 0, column = 0)
 
-        frame3Label2 = tk.Label(frame3ListBox, text = "Product Description", font = NORMAL_FONT, relief = SUNKEN, width = 30)
+        frame3Label2 = tk.Label(frame3Frame, text = "Product Description", font = NORMAL_FONT, relief = SUNKEN, width = 30)
         frame3Label2.grid(row = 0, column = 1)
 
-        frame3Label3 = tk.Label(frame3ListBox, text = "Price", font = NORMAL_FONT, relief = SUNKEN, width = 9)
+        frame3Label3 = tk.Label(frame3Frame, text = "Price", font = NORMAL_FONT, relief = SUNKEN, width = 9)
         frame3Label3.grid(row = 0, column = 2)
 
-        frame3Label4 = tk.Label(frame3ListBox, text = "Quantity", font = NORMAL_FONT, relief = SUNKEN, width = 8)
+        frame3Label4 = tk.Label(frame3Frame, text = "Quantity", font = NORMAL_FONT, relief = SUNKEN, width = 8)
         frame3Label4.grid(row = 0, column = 3)
 
-        frame3Label5 = tk.Label(frame3ListBox, text = "Discount", font = NORMAL_FONT, relief = SUNKEN, width = 8)
+        frame3Label5 = tk.Label(frame3Frame, text = "Discount", font = NORMAL_FONT, relief = SUNKEN, width = 8)
         frame3Label5.grid(row = 0, column = 4)
 
-        frame3Label6 = tk.Label(frame3ListBox, text = "Cost", font = NORMAL_FONT, relief = SUNKEN, width = 10)
+        frame3Label6 = tk.Label(frame3Frame, text = "Cost", font = NORMAL_FONT, relief = SUNKEN, width = 10)
         frame3Label6.grid(row = 0, column = 5)
 
         
         #Need to create a "Dynamically allocated grid view entry boxes" for next boxes with scroll wheel
         rowNum = 1
+        totalCost = 0
+        totalQuantity = 0
         for i in range(len(customerList)):
 
             barCodeString = str(customerList[i][4])
-            frame3BarCode = tk.Label(frame3ListBox, text = barCodeString, font = NORMAL_FONT, relief = SUNKEN, width = 15)
+            frame3BarCode = tk.Label(frame3Frame, text = barCodeString, font = NORMAL_FONT, relief = SUNKEN, width = 15)
             frame3BarCode.grid(row = rowNum, column = 0)
 
             prodDesc = customerList[i][1]
-            frame3ProdDesc = tk.Label(frame3ListBox, text = prodDesc, font = NORMAL_FONT, relief = SUNKEN, width = 30)
+            frame3ProdDesc = tk.Label(frame3Frame, text = prodDesc, font = NORMAL_FONT, relief = SUNKEN, width = 30)
             frame3ProdDesc.grid(row = rowNum, column = 1)
 
-            frame3Price = tk.Label(frame3ListBox, text = "{:,}".format(customerList[i][2]), font = NORMAL_FONT, relief = SUNKEN, width = 9)
+            frame3Price = tk.Label(frame3Frame, text = "{:,}".format(customerList[i][2]), font = NORMAL_FONT, relief = SUNKEN, width = 9)
             frame3Price.grid(row = rowNum, column = 2)
 
-            frame3Quantity = ttk.Label(frame3ListBox, text = "{:,}".format(customerList[i][5]), font = NORMAL_FONT, relief = SUNKEN, width = 8)   #creates an entry box and allows the entry of a string variable
+            totalQuantity += customerList[i][5]
+            frame3Quantity = ttk.Label(frame3Frame, text = "{:,}".format(customerList[i][5]), font = NORMAL_FONT, relief = SUNKEN, width = 8)   #creates an entry box and allows the entry of a string variable
             frame3Quantity.grid(row = rowNum, column = 3)
 
             discountString = str(customerList[i][3])
-            frame3Discount = tk.Label(frame3ListBox, text = discountString+"%", font = NORMAL_FONT, relief = SUNKEN, width = 8)
+            frame3Discount = tk.Label(frame3Frame, text = discountString+"%", font = NORMAL_FONT, relief = SUNKEN, width = 8)
             frame3Discount.grid(row = rowNum, column = 4)
 
             cost = (customerList[i][5]*customerList[i][2])-((customerList[i][3]/100)*(customerList[i][5]*customerList[i][2]))   #gets cost estimate with given mathematical values
-            frame3Cost = tk.Label(frame3ListBox, text = "{:,}".format(cost), font = NORMAL_FONT, relief = SUNKEN, width = 10)
+            totalCost += cost
+            frame3Cost = tk.Label(frame3Frame, text = "{:,}".format(cost), font = NORMAL_FONT, relief = SUNKEN, width = 10)
             frame3Cost.grid(row = rowNum, column = 5)
 
             rowNum += 1
 
-            #frame3EANCode = tk.Label(frame3ListBox, text = customerList[i][4], font = NORMAL_FONT, relief = SUNKEN, width = 15)
+            #frame3EANCode = tk.Label(frame3ListBox, text = customerList[i][4, 1] font = NORMAL_FONT, relief = SUNKEN, width = 15)
             #frame3EANCode = grid(row = row, column = 4)
         
 #--------------------------------------------------------------------------------------#
@@ -202,17 +208,20 @@ class MainPage(tk.Frame):
         frame4Label1 = tk.Label(frame4, text="Total Quantity", font = NORMAL_FONT)
         frame4Label1.grid(row = 0, column = 0, padx = 5, pady = 5)
 
-        frame4Label2 = tk.Label(frame4, text = "TQ For Now", font = NORMAL_FONT, relief = SUNKEN, width = 16)  #NEED TO GET SUM OF TOTAL QUANTITY
+
+        frame4Label2 = tk.Label(frame4, text = "{:,}".format(totalQuantity), font = NORMAL_FONT, relief = SUNKEN, width = 16)  #NEED TO GET SUM OF TOTAL QUANTITY
         frame4Label2.grid(row = 0, column = 1)
+
 
         #Frame block to separate the first set of labels above from the second set of labels below
         frame4LabelBlock = tk.Label(frame4, width = 16, bg = "blue")
         frame4LabelBlock.grid(row = 0, column = 2, padx = 45, pady = 5)
 
-        frame4Label3 = tk.Label(frame4, text="Total Amount", font=NORMAL_FONT)
+
+        frame4Label3 = tk.Label(frame4, text = "Total Cost", font=NORMAL_FONT)
         frame4Label3.grid(row = 0, column = 3, padx = 5, pady = 5)
 
-        frame4Label4 = tk.Label(frame4, text="TA For Now", font = NORMAL_FONT, relief = SUNKEN, width = 16)  #NEED TO GET SUM OF TOTAL COST
+        frame4Label4 = tk.Label(frame4, text = "{:,}".format(totalCost), font = NORMAL_FONT, relief = SUNKEN, width = 16)  #NEED TO GET SUM OF TOTAL COST
         frame4Label4.grid(row = 0, column = 4)
 #-------------------------------------------------------------------------------------------------#
 
@@ -348,7 +357,7 @@ def updateCustomerList(barCode, quantity):
     if not barCode.get():   #checks if barCode is empty
         return  
     else:   #finds barCode inside masterList
-        
+        #print(masterList)
         for i in range(len(masterList)):    #searches through master list to see if barCode is inside masterList
            
             if int(barCode.get()) == masterList[i][4]:   #if bar code is inside the masterList
@@ -392,8 +401,15 @@ def updateCustomerList(barCode, quantity):
     return            
 
 
+
+
 def refreshMainFrame():
     global app
+
+    print(str(customerList))
+    print(" ")
+    print(" ")
+
     app.frames[MainPage].destroy()
     app.frames[MainPage] = MainPage(container, app)
     app.frames[MainPage].grid(row=0, column = 0, sticky = "nsew")
