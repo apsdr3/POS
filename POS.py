@@ -13,7 +13,7 @@ SMALL_FONT = ("Verdana", 8)
 
 #GLOBAL VARIABLES
 masterList = [] #list of objects from Master File
-customerList = [[36218745, 'KER ELIX ULTI CH FINS 100ML US V315', 350, 0, 3474636218745, 1], [36382682, 'NUT BAIN SATIN 2 250ML', 400, 0, 3474636382682, 1], [36397983, 'RES THERAPISTE MASQ 200ML', 550, 0, 3474636397983, 1], [36398850, 'REF CHROMACAPTIVE MASQ 200ML', 550, 0, 3474636398850, 2], [36382668, 'NUT OLEO RELAX MASQ 200ML', 550, 0, 3474636382668, 1], [36397952, 'RES FORCE ARCH MASQ 200ML', 550, 0, 3474636397952, 2], [30458222, 'REF FONDANT CHROMACAPTIVE 1000ML', 800, 0, 3474630458222, 2], [30458062, 'REF CHROMACAPTIVE MASQ 500ML', 950, 0, 3474630458062, 1], [36356003, 'DENSIFIQUE FEMME 30X6ML', 1500, 0, 3474636356003, 3], [30525658, 'SE PRO KERATIN REFILL SHMP 250ML        ', 55, 0, 3474630525658, 2], [26404810, 'HAIR SPA OIL 100ML                      ', 70, 0, 8901526404810, 1], [30641044, 'SE ABS REPAIR LIPIDIUM THER CRM 125ML   ', 85, 0, 3474630641044, 1], [30525870, 'SE PRO KERATIN REFILL COND 150ML        ', 85, 0, 3474630525870, 1], [30640702, 'SE ABS REPAIR LIPIDIUM MASQ 200ML       ', 90, 0, 3474630640702, 2], [30640504, 'SE ABS REPAIR LIPIDIUM SHMP 250ML       ', 90, 0, 3474630640504, 1], [30714946, 'SE VITAMINO COLOR AOX SULFAT FREE 150ML ', 110, 0, 3474630714946, 4], [36202430, 'SE VITAMINO COLOR AOX FRESH MASQ 150ML  ', 115, 0, 3474636202430, 2], [30632196, 'TNA PLAYBALL DEVIATION PASTE 100ML      ', 125, 0, 3474630632196, 1], [36501960, 'MYTHIC OIL HUILE ORIGINAL 100ML         ', 150, 0, 3474636501960, 1], [30643659, 'SERIOXYL THICKER HAIR 90ML              ', 170, 0, 3474630643659, 1], [30633629, 'MYTHIC OIL SERUM DE FORCE 50ML          ', 180, 0, 3474630633629, 2], [36494859, 'REF CHROMACAPTIVE MASQ CX FINS 200ML', 550, 0, 3474636494859, 1], [18251615, 'HAIR SPA NOURISHING MASQ 1000ML         ', 350, 0, 6955818251615, 2], [86130594, 'FIBERSTRONG BRILT MASQ 150ML            ', 90, 0, 884486130594, 1]]
+customerList = []#[36218745, 'KER ELIX ULTI CH FINS 100ML US V315', 350, 0, 3474636218745, 1], [36382682, 'NUT BAIN SATIN 2 250ML', 400, 0, 3474636382682, 1], [36397983, 'RES THERAPISTE MASQ 200ML', 550, 0, 3474636397983, 1], [36398850, 'REF CHROMACAPTIVE MASQ 200ML', 550, 0, 3474636398850, 2], [36382668, 'NUT OLEO RELAX MASQ 200ML', 550, 0, 3474636382668, 1], [36397952, 'RES FORCE ARCH MASQ 200ML', 550, 0, 3474636397952, 2], [30458222, 'REF FONDANT CHROMACAPTIVE 1000ML', 800, 0, 3474630458222, 2], [30458062, 'REF CHROMACAPTIVE MASQ 500ML', 950, 0, 3474630458062, 1], [36356003, 'DENSIFIQUE FEMME 30X6ML', 1500, 0, 3474636356003, 3], [30525658, 'SE PRO KERATIN REFILL SHMP 250ML        ', 55, 0, 3474630525658, 2], [26404810, 'HAIR SPA OIL 100ML                      ', 70, 0, 8901526404810, 1], [30641044, 'SE ABS REPAIR LIPIDIUM THER CRM 125ML   ', 85, 0, 3474630641044, 1], [30525870, 'SE PRO KERATIN REFILL COND 150ML        ', 85, 0, 3474630525870, 1], [30640702, 'SE ABS REPAIR LIPIDIUM MASQ 200ML       ', 90, 0, 3474630640702, 2], [30640504, 'SE ABS REPAIR LIPIDIUM SHMP 250ML       ', 90, 0, 3474630640504, 1], [30714946, 'SE VITAMINO COLOR AOX SULFAT FREE 150ML ', 110, 0, 3474630714946, 4], [36202430, 'SE VITAMINO COLOR AOX FRESH MASQ 150ML  ', 115, 0, 3474636202430, 2], [30632196, 'TNA PLAYBALL DEVIATION PASTE 100ML      ', 125, 0, 3474630632196, 1], [36501960, 'MYTHIC OIL HUILE ORIGINAL 100ML         ', 150, 0, 3474636501960, 1], [30643659, 'SERIOXYL THICKER HAIR 90ML              ', 170, 0, 3474630643659, 1], [30633629, 'MYTHIC OIL SERUM DE FORCE 50ML          ', 180, 0, 3474630633629, 2], [36494859, 'REF CHROMACAPTIVE MASQ CX FINS 200ML', 550, 0, 3474636494859, 1], [18251615, 'HAIR SPA NOURISHING MASQ 1000ML         ', 350, 0, 6955818251615, 2], [86130594, 'FIBERSTRONG BRILT MASQ 150ML            ', 90, 0, 884486130594, 1]]
 errorCode = 0
 container = 0
 """
@@ -22,9 +22,6 @@ Error Code Legend:
 1 = Master File Error
 """
 
-"""
-#time = datetime.datetime.now() #time.time()
-"""
 
 
 class POS(tk.Tk):
@@ -59,7 +56,7 @@ class POS(tk.Tk):
 
         self.frames = {}    #creates an object to hold multiple frames i.e. more windows/tabs
 
-        for F in (ErrorPage, PaymentPage, MainPage): #Adds frames onto list, to add more frames, just add it to the list
+        for F in (ErrorPage, MainPage): #Adds frames onto list, to add more frames, just add it to the list
             frame = F(container, self)
             self.frames[F] = frame  #adds frame into frames object
             frame.grid(row=0, column = 0, sticky = "nsew")  #sets frame structure, nsew = north south east west
@@ -126,18 +123,17 @@ class MainPage(tk.Frame):
         frame3 = Frame(self, bg = "white", width = 690, height = 400, borderwidth = 1)
         frame3.pack(expand = True, fill = Y)
 
-        frame3Canvas = tk.Canvas(frame3, width = 690, height = 400, bg = "white")
-
+        #Creates a canvas-frame scrollable widget
+        frame3Canvas = tk.Canvas(frame3, width = 690, height = 400, borderwidth = 0, bg="white")
+        frame3Frame = tk.Frame(frame3Canvas, bg = "white")
         frame3ScrollBar = tk.Scrollbar(frame3, orient = "vertical", command = frame3Canvas.yview)
-        
-        frame3Frame = tk.Frame(frame3Canvas, bg = "white", width = 690, height = 400, borderwidth = 1)
-        frame3Frame.pack(expand = True, fill = Y)
+        frame3Canvas.configure(yscrollcommand = frame3ScrollBar.set)
 
+        frame3ScrollBar.pack(side = "right", fill = "y")
+        frame3Canvas.pack(side = "left", fill = "both", expand = True)
+        frame3Canvas.create_window((4,4), window = frame3Frame, anchor = "nw")
 
-        frame3Canvas.configure(yscrollcommand=frame3ScrollBar.set)
-
-        frame3Canvas.pack(side = LEFT, fill = Y)
-        frame3ScrollBar.pack(side = RIGHT, fill = Y)
+        frame3Frame.bind("<Configure>", lambda event, canvas = frame3Canvas: frame3Canvas.configure(scrollregion = frame3Canvas.bbox("all")))
 
 
         #THIS CREATES THE GRID TO OUTPUT THE DATA QUERIED FROM THE MASTER FILE
@@ -192,11 +188,7 @@ class MainPage(tk.Frame):
             frame3Cost = tk.Label(frame3Frame, text = "{:,}".format(cost), font = NORMAL_FONT, relief = SUNKEN, width = 10)
             frame3Cost.grid(row = rowNum, column = 5)
 
-            rowNum += 1
-
-            #frame3EANCode = tk.Label(frame3ListBox, text = customerList[i][4, 1] font = NORMAL_FONT, relief = SUNKEN, width = 15)
-            #frame3EANCode = grid(row = row, column = 4)
-        
+            rowNum += 1        
 #--------------------------------------------------------------------------------------#
 
 
@@ -262,40 +254,51 @@ class MainPage(tk.Frame):
         frame6Button = ttk.Button(frame6, text = "Refresh", command=refreshMainFrame)
         frame6Button.grid(row = 0, column = 0, padx = 125, pady = 10)
 
-        frame6Button = ttk.Button(frame6, text = "Process", command=MainPage)   #DOESN'T WORKS           #STILL NEED TO MAKE PROCESS FRAME
+        frame6Button = ttk.Button(frame6, text = "Process", command=ProcessPage)   #DOESN'T WORKS           #STILL NEED TO MAKE PROCESS FRAME
         frame6Button.grid(row = 0, column = 1, padx = 125, pady = 10)
 #--------------------------------------------------------------------------------------------#   
 
 
 
 
-#Payment page where user goes to after a sale is to purchased
-class PaymentPage(tk.Frame):
-    def __init__(self, parent, controller):
-        tk.Frame.__init__(self,parent)
-
-        label = tk.Label(self, text="PAYMENT HERE!", font=SMALL_FONT)
-        label.pack(pady=10, padx=10)
-
-
-
-
 #error page for when there is a possible error
-class ErrorPage(tk.Frame):
+class ErrorPage(tk.Frame):          #NEED TO CHANGE THIS INTO A POP UP WINDOW INSTEAD OF A FRAME
     def __init__(self, parent, controller):
         tk.Frame.__init__(self,parent)
         
+        frame = Frame(self, bg = "green")
+        frame.pack(fill = BOTH)
+
         if errorCode == 1:
-            label = tk.Label(self, text="Error! Please input a correct Master File Document", font=SMALL_FONT)
+            label = tk.Label(frame, text="Error! Please input a correct Master File Document", font=SMALL_FONT)
             label.pack(pady=10, padx=10)
 
-        button1 = ttk.Button(self, text = "OK", command = MasterFilePopUp) #One can also do command=quit to quit out of the program
+        button1 = ttk.Button(frame, text = "OK", command = MasterFilePopUp) #One can also do command=quit to quit out of the program
         button1.pack(pady=5, padx=10)
 
 
 
 
-#once button is clicked, it prompts user to find file then it outputs the contents of the file
+#process purchase page for when a purchase is to be made
+def ProcessPage():
+    processPopup = tk.Toplevel()
+
+    #NEED TO FIGURE OUT SIZE
+    processPopup.geometry("400x150")
+
+    processPopup.wm_title("FONZY")
+
+    label = ttk.Label(processPopup, text="PAYMENT HERE!", font=SMALL_FONT)
+    label.pack(pady=10, padx=10)
+
+    #to get exact time, used for invoicing
+    time = datetime.datetime.now() #time.time()
+    print(time.time())
+    #once button is clicked, it prompts user to find file then it outputs the contents of the file
+
+
+
+
 def fileExplorer():
     #intializes another instance of tkinter
     global masterList   #allows user to add item to masterList global variable
@@ -306,28 +309,25 @@ def fileExplorer():
             sheet = pe.get_array(file_name=filename) #puts data into array
             masterList = sheet
             errorCode = 0 #resets errorCode
-            return
 
         else:
             errorCode = 1
-            return
     
     except ValueError:
         errorCode = 1
-        return
 
 
 
 
 def MasterFilePopUp():
-    popup = tk.Toplevel() # <-- Toplevel instead of Tk
+    masterPopup = tk.Toplevel()
 
-    popup.wm_title("FONZY")
-    label = ttk.Label(popup, text = "Please specify the product master file", font = NORMAL_FONT)
-    label.pack(side = "top", fill = "x", pady = 10)
+    masterPopup.wm_title("FONZY")
+    label = ttk.Label(masterPopup, text = "Please specify the product master file", font = NORMAL_FONT)
+    label.pack(side = "top", fill = "x", padx = 5)
 
-    button1 = ttk.Button(popup, text = "Okay", command = fileExplorer)
-    button1.pack()
+    button1 = ttk.Button(masterPopup, text = "Okay", command = lambda: fileExplorer() or masterPopup.destroy())
+    button1.pack(pady = 10)
 
     if errorCode == 0:
         return 1
@@ -340,7 +340,7 @@ def MasterFilePopUp():
 
 #Creates popup message bars
 def popupmsg(msg):
-    popup = tk.Toplevel() # <-- Toplevel instead of Tk
+    popup = tk.Toplevel()
 
     popup.wm_title("FONZY")
     label = ttk.Label(popup, text = msg, font = NORMAL_FONT)
@@ -405,11 +405,6 @@ def updateCustomerList(barCode, quantity):
 
 def refreshMainFrame():
     global app
-
-    print(str(customerList))
-    print(" ")
-    print(" ")
-
     app.frames[MainPage].destroy()
     app.frames[MainPage] = MainPage(container, app)
     app.frames[MainPage].grid(row=0, column = 0, sticky = "nsew")
@@ -423,7 +418,7 @@ def refreshMainFrame():
 
 #runs tkinter program
 app = POS()
-
+#"width x height"
 app.geometry("700x700") #makes app into a 700x700p screen, can change size to liking
 app.resizable(False, False) #window isn't resizable. Makes it easier for the owner to manage
 
