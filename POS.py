@@ -1,3 +1,6 @@
+#NEED TO PIP INSTALL PYEXCEL
+#NEED TO PIP INSTALL PYEXCEL-XLS
+
 import tkinter as tk
 from tkinter import ttk
 import pyexcel as pe
