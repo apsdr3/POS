@@ -19,6 +19,8 @@ masterList = [] #list of objects from Master File
 customerList = []#[36218745, 'KER ELIX ULTI CH FINS 100ML US V315', 350, 0, 3474636218745, 1], [36382682, 'NUT BAIN SATIN 2 250ML', 400, 0, 3474636382682, 1], [36397983, 'RES THERAPISTE MASQ 200ML', 550, 0, 3474636397983, 1], [36398850, 'REF CHROMACAPTIVE MASQ 200ML', 550, 0, 3474636398850, 2], [36382668, 'NUT OLEO RELAX MASQ 200ML', 550, 0, 3474636382668, 1], [36397952, 'RES FORCE ARCH MASQ 200ML', 550, 0, 3474636397952, 2], [30458222, 'REF FONDANT CHROMACAPTIVE 1000ML', 800, 0, 3474630458222, 2], [30458062, 'REF CHROMACAPTIVE MASQ 500ML', 950, 0, 3474630458062, 1], [36356003, 'DENSIFIQUE FEMME 30X6ML', 1500, 0, 3474636356003, 3], [30525658, 'SE PRO KERATIN REFILL SHMP 250ML        ', 55, 0, 3474630525658, 2], [26404810, 'HAIR SPA OIL 100ML                      ', 70, 0, 8901526404810, 1], [30641044, 'SE ABS REPAIR LIPIDIUM THER CRM 125ML   ', 85, 0, 3474630641044, 1], [30525870, 'SE PRO KERATIN REFILL COND 150ML        ', 85, 0, 3474630525870, 1], [30640702, 'SE ABS REPAIR LIPIDIUM MASQ 200ML       ', 90, 0, 3474630640702, 2], [30640504, 'SE ABS REPAIR LIPIDIUM SHMP 250ML       ', 90, 0, 3474630640504, 1], [30714946, 'SE VITAMINO COLOR AOX SULFAT FREE 150ML ', 110, 0, 3474630714946, 4], [36202430, 'SE VITAMINO COLOR AOX FRESH MASQ 150ML  ', 115, 0, 3474636202430, 2], [30632196, 'TNA PLAYBALL DEVIATION PASTE 100ML      ', 125, 0, 3474630632196, 1], [36501960, 'MYTHIC OIL HUILE ORIGINAL 100ML         ', 150, 0, 3474636501960, 1], [30643659, 'SERIOXYL THICKER HAIR 90ML              ', 170, 0, 3474630643659, 1], [30633629, 'MYTHIC OIL SERUM DE FORCE 50ML          ', 180, 0, 3474630633629, 2], [36494859, 'REF CHROMACAPTIVE MASQ CX FINS 200ML', 550, 0, 3474636494859, 1], [18251615, 'HAIR SPA NOURISHING MASQ 1000ML         ', 350, 0, 6955818251615, 2], [86130594, 'FIBERSTRONG BRILT MASQ 150ML            ', 90, 0, 884486130594, 1]]
 errorCode = 0
 container = 0
+excelString = " "
+
 """
 Error Code Legend:
 0 = No error
@@ -42,6 +44,7 @@ class POS(tk.Tk):
         container.grid_rowconfigure(0, weight = 1)
         container.grid_columnconfigure(0, weight = 1)
 
+        """
         menubar = tk.Menu(container)    #adds menu
         
         #NEED TO CHECK IF I CAN USE MENU BUTTONS INSTEAD OF MENU!
@@ -56,6 +59,7 @@ class POS(tk.Tk):
         menubar.add_cascade(label= "Reports", menu = filemenu2)
 
         tk.Tk.config(self, menu = menubar)
+        """
 
         self.frames = {}    #creates an object to hold multiple frames i.e. more windows/tabs
 
@@ -286,10 +290,9 @@ class ErrorPage(tk.Frame):          #NEED TO CHANGE THIS INTO A POP UP WINDOW IN
 def ProcessPage():
     processPopup = tk.Toplevel()
 
-    #NEED TO FIGURE OUT SIZE
-    processPopup.geometry("400x150")
-
     processPopup.wm_title("FONZY")
+
+    #Need to include check box
 
     label = ttk.Label(processPopup, text="PAYMENT HERE!", font=SMALL_FONT)
     label.pack(pady=10, padx=10)
@@ -337,6 +340,44 @@ def MasterFilePopUp():
     else:
         popupmsg("Please input the correct Master File")
         MasterFilePopUp()
+
+
+
+
+#Creates popup frame to get Cashier name, Event name and date
+def programStart():
+    startPopup = tk.Toplevel()
+
+    #startPopup.geometry("200x150")
+    startPopup.wm_title("FONZY")
+
+    global excelString
+
+    #For cashier name
+    label = ttk.Label(startPopup, text = "Cashier Name: ", font = NORMAL_FONT)
+    label.grid(row = 0, column = 0, sticky = "nsew", padx = 5, pady = 5)
+
+    cashierString = tk.StringVar()
+    cashierEntryBox = ttk.Entry(startPopup, textvariable = cashierString, width = 25)
+    cashierEntryBox.grid(row = 0, column = 1, padx = 5, pady = 5)
+
+    #For event name
+    label2 = ttk.Label(startPopup, text = "Event Name:  ", font = NORMAL_FONT)
+    label2.grid(row = 1, column = 0, sticky = "nsew", padx = 5, pady = 5)
+
+    eventString = tk.StringVar()
+    eventEntryBox = ttk.Entry(startPopup, textvariable = eventString, width = 25)
+    eventEntryBox.grid(row = 1, column = 1, padx = 5, pady = 5)
+
+    #gets excel string to create excel file for the day
+    print(cashierString.get())
+    print(eventString.get())
+    excelString = cashierString.get() + "." + eventString.get() + "." + str(datetime.datetime.today().strftime('%d/%m/%Y'))
+    print(excelString)
+
+    #To exit program, goes to masterFilePopup
+    button1 = ttk.Button(startPopup, text = "Okay", command = lambda: MasterFilePopUp() or startPopup.destroy())
+    button1.grid(row = 2, padx = 5, pady = 5, sticky = "nsew")
 
 
 
@@ -427,5 +468,5 @@ app.resizable(False, False) #window isn't resizable. Makes it easier for the own
 
 #finds Master File first
 # run after `POS` will be created and `app.mainloop()` will start
-app.after(100, MasterFilePopUp)
+app.after(100, programStart)
 app.mainloop()
