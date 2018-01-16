@@ -348,10 +348,7 @@ def MasterFilePopUp():
 def programStart():
     startPopup = tk.Toplevel()
 
-    #startPopup.geometry("200x150")
     startPopup.wm_title("FONZY")
-
-    global excelString
 
     #For cashier name
     label = ttk.Label(startPopup, text = "Cashier Name: ", font = NORMAL_FONT)
@@ -369,16 +366,18 @@ def programStart():
     eventEntryBox = ttk.Entry(startPopup, textvariable = eventString, width = 25)
     eventEntryBox.grid(row = 1, column = 1, padx = 5, pady = 5)
 
-    #gets excel string to create excel file for the day
-    print(cashierString.get())
-    print(eventString.get())
-    excelString = cashierString.get() + "." + eventString.get() + "." + str(datetime.datetime.today().strftime('%d/%m/%Y'))
-    print(excelString)
-
     #To exit program, goes to masterFilePopup
-    button1 = ttk.Button(startPopup, text = "Okay", command = lambda: MasterFilePopUp() or startPopup.destroy())
+    button1 = ttk.Button(startPopup, text = "Okay", command = lambda: setProgramStartData() or startPopup.destroy())
     button1.grid(row = 2, padx = 5, pady = 5, sticky = "nsew")
 
+    #sets the data taken from the entry boes and sets it into the appropriate objects
+    def setProgramStartData():
+        global excelString
+        #gets excel string to create excel file for the day
+        excelString = cashierString.get() + "." + eventString.get() + "." + str(datetime.datetime.today().strftime('%d/%m/%Y'))
+        #goes to MasterFilePopUp()
+        MasterFilePopUp()
+        return 1
 
 
 
