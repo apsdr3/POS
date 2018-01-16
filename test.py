@@ -1,6 +1,9 @@
+import xlsxwriter as xw
 import tkinter as tk
 from tkinter import ttk
 import datetime
+
+#rootdir = r'C:/Users/hedce/OneDrive/Desktop/POS'
 
 def programStart():
     startPopup = tk.Toplevel()
@@ -19,14 +22,18 @@ def programStart():
     eventEntryBox = ttk.Entry(startPopup, textvariable = eventString, width = 25)
     eventEntryBox.grid(row = 1, column = 1, padx = 5, pady = 5)
 
-    print(cashierString.get())
-    print(eventString.get())
-    excelString = cashierString.get() + "." + eventString.get() + "." + str(datetime.datetime.today().strftime('%d/%m/%Y'))
-    print(excelString)
-
-    button1 = ttk.Button(startPopup, text = "Okay", command = lambda: startPopup.destroy())
+    button1 = ttk.Button(startPopup, text = "Okay", command = lambda: setProgramStartData() or startPopup.destroy())
     button1.grid(row = 2, padx = 5, pady = 5, sticky = "nsew")
 
+    def setProgramStartData():
+        global excelString
+        #gets excel string to create excel file for the day
+        excelString = cashierString.get() + "-" + eventString.get() + "-" + str(datetime.datetime.today().strftime('%d,%m,%Y') + ".xlsx")
+        #goes to MasterFilePopUp()
+        workbook = xw.Workbook("C:/Users/hedce/OneDrive/Desktop/" + excelString)
+        worksheet = workbook.add_worksheet()
+
+        workbook.close()
 
 app = tk.Frame()
 app.after(100, programStart)

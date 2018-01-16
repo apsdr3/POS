@@ -1,9 +1,11 @@
-#NEED TO PIP INSTALL PYEXCEL
-#NEED TO PIP INSTALL PYEXCEL-XLS
-
+#NEED TO pip install pyexcel
+#NEED TO pip install pyexcel-xls
+#NEED TO pip install XlsxWriter    allows user to create excel files
+#NEED TO pip install openpyxl   allows user to modify excel files
 import tkinter as tk
 from tkinter import ttk
 import pyexcel as pe
+import xlsxwriter as xw
 import datetime
 import time
 
@@ -20,7 +22,7 @@ customerList = []#[36218745, 'KER ELIX ULTI CH FINS 100ML US V315', 350, 0, 3474
 errorCode = 0
 container = 0
 excelString = " "
-
+filename = " "
 """
 Error Code Legend:
 0 = No error
@@ -308,13 +310,15 @@ def ProcessPage():
 def fileExplorer():
     #intializes another instance of tkinter
     global masterList   #allows user to add item to masterList global variable
+    global filename
     try:    
         filename = filedialog.askopenfilename(initialdir = "/",title = "Select file",filetypes = (("XLS files","*.xls"),("XLSX files","*.xlsx")))
-        
+            
         if re.match("[A-Za-z0-9]",filename):
             sheet = pe.get_array(file_name=filename) #puts data into array
             masterList = sheet
             errorCode = 0 #resets errorCode
+            cashierStartPopup()
 
         else:
             errorCode = 1
@@ -345,39 +349,41 @@ def MasterFilePopUp():
 
 
 #Creates popup frame to get Cashier name, Event name and date
-def programStart():
-    startPopup = tk.Toplevel()
+def cashierStartPopup():
+    cashierPopup = tk.Toplevel()
 
-    startPopup.wm_title("FONZY")
+    cashierPopup.wm_title("FONZY")
 
     #For cashier name
-    label = ttk.Label(startPopup, text = "Cashier Name: ", font = NORMAL_FONT)
+    label = ttk.Label(cashierPopup, text = "Cashier Name: ", font = NORMAL_FONT)
     label.grid(row = 0, column = 0, sticky = "nsew", padx = 5, pady = 5)
 
     cashierString = tk.StringVar()
-    cashierEntryBox = ttk.Entry(startPopup, textvariable = cashierString, width = 25)
+    cashierEntryBox = ttk.Entry(cashierPopup, textvariable = cashierString, width = 25)
     cashierEntryBox.grid(row = 0, column = 1, padx = 5, pady = 5)
 
     #For event name
-    label2 = ttk.Label(startPopup, text = "Event Name:  ", font = NORMAL_FONT)
+    label2 = ttk.Label(cashierPopup, text = "Event Name:  ", font = NORMAL_FONT)
     label2.grid(row = 1, column = 0, sticky = "nsew", padx = 5, pady = 5)
 
     eventString = tk.StringVar()
-    eventEntryBox = ttk.Entry(startPopup, textvariable = eventString, width = 25)
+    eventEntryBox = ttk.Entry(cashierPopup, textvariable = eventString, width = 25)
     eventEntryBox.grid(row = 1, column = 1, padx = 5, pady = 5)
 
     #To exit program, goes to masterFilePopup
-    button1 = ttk.Button(startPopup, text = "Okay", command = lambda: setProgramStartData() or startPopup.destroy())
+    button1 = ttk.Button(cashierPopup, text = "Okay", command = lambda: setProgramStartData() or cashierPopup.destroy())
     button1.grid(row = 2, padx = 5, pady = 5, sticky = "nsew")
 
     #sets the data taken from the entry boes and sets it into the appropriate objects
     def setProgramStartData():
         global excelString
         #gets excel string to create excel file for the day
-        excelString = cashierString.get() + "." + eventString.get() + "." + str(datetime.datetime.today().strftime('%d/%m/%Y'))
-        #goes to MasterFilePopUp()
-        MasterFilePopUp()
-        return 1
+        excelString = cashierString.get() + "-" + eventString.get() + "-" + str(datetime.datetime.today().strftime('%d,%m,%Y') + ".xlsx")
+        #creates work book inside the filepath given, need to fix filename to imitate the same filepath of the materfilePopup using .split()
+        workbook = xw.Workbook("C:/Users/hedce/OneDrive/Desktop/" + excelString)
+        worksheet = workbook.add_worksheet()
+
+        workbook.close()
 
 
 
@@ -424,22 +430,13 @@ def updateCustomerList(barCode, quantity):
                             refreshMainFrame()  #sends back to MainPage Frame
                             return
 
-                    #if quantity.get() > 0:    #checks if quantity to be added is at least greater than 0
-                        #print("Quantity is more than :" + str(quantity.get()))
-
                     customerList.append(masterList[i][:])  #adds a masterList object inside customerList
                     customerList[len(customerList)-1].append(quantity.get())   #gives a quantifiable value to number of products the customer wants to purchase
                     
                     if customerList[len(customerList)-1][5] <= 0: #deletes element if item quantity value is 0 or less than 0
                         del customerList[len(customerList)-1]
                     refreshMainFrame()  #sends back to MainPage Frame
-                    
 
-                #masterList
-                #prints: [20297939, 'AC EDT 75ML SPRAY TEST', 250, 0, 3605520297939]
-                #print("BAR CODE: " + barCode.get())
-                #print("CUSTOMER LIST CODE: ")
-                #print(customerList)
     refreshMainFrame()
     return            
 
@@ -467,5 +464,5 @@ app.resizable(False, False) #window isn't resizable. Makes it easier for the own
 
 #finds Master File first
 # run after `POS` will be created and `app.mainloop()` will start
-app.after(100, programStart)
+app.after(100, MasterFilePopUp)
 app.mainloop()
