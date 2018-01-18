@@ -19,10 +19,17 @@ SMALL_FONT = ("Verdana", 8)
 #GLOBAL VARIABLES
 masterList = [] #list of objects from Master File
 customerList = []#[36218745, 'KER ELIX ULTI CH FINS 100ML US V315', 350, 0, 3474636218745, 1], [36382682, 'NUT BAIN SATIN 2 250ML', 400, 0, 3474636382682, 1], [36397983, 'RES THERAPISTE MASQ 200ML', 550, 0, 3474636397983, 1], [36398850, 'REF CHROMACAPTIVE MASQ 200ML', 550, 0, 3474636398850, 2], [36382668, 'NUT OLEO RELAX MASQ 200ML', 550, 0, 3474636382668, 1], [36397952, 'RES FORCE ARCH MASQ 200ML', 550, 0, 3474636397952, 2], [30458222, 'REF FONDANT CHROMACAPTIVE 1000ML', 800, 0, 3474630458222, 2], [30458062, 'REF CHROMACAPTIVE MASQ 500ML', 950, 0, 3474630458062, 1], [36356003, 'DENSIFIQUE FEMME 30X6ML', 1500, 0, 3474636356003, 3], [30525658, 'SE PRO KERATIN REFILL SHMP 250ML        ', 55, 0, 3474630525658, 2], [26404810, 'HAIR SPA OIL 100ML                      ', 70, 0, 8901526404810, 1], [30641044, 'SE ABS REPAIR LIPIDIUM THER CRM 125ML   ', 85, 0, 3474630641044, 1], [30525870, 'SE PRO KERATIN REFILL COND 150ML        ', 85, 0, 3474630525870, 1], [30640702, 'SE ABS REPAIR LIPIDIUM MASQ 200ML       ', 90, 0, 3474630640702, 2], [30640504, 'SE ABS REPAIR LIPIDIUM SHMP 250ML       ', 90, 0, 3474630640504, 1], [30714946, 'SE VITAMINO COLOR AOX SULFAT FREE 150ML ', 110, 0, 3474630714946, 4], [36202430, 'SE VITAMINO COLOR AOX FRESH MASQ 150ML  ', 115, 0, 3474636202430, 2], [30632196, 'TNA PLAYBALL DEVIATION PASTE 100ML      ', 125, 0, 3474630632196, 1], [36501960, 'MYTHIC OIL HUILE ORIGINAL 100ML         ', 150, 0, 3474636501960, 1], [30643659, 'SERIOXYL THICKER HAIR 90ML              ', 170, 0, 3474630643659, 1], [30633629, 'MYTHIC OIL SERUM DE FORCE 50ML          ', 180, 0, 3474630633629, 2], [36494859, 'REF CHROMACAPTIVE MASQ CX FINS 200ML', 550, 0, 3474636494859, 1], [18251615, 'HAIR SPA NOURISHING MASQ 1000ML         ', 350, 0, 6955818251615, 2], [86130594, 'FIBERSTRONG BRILT MASQ 150ML            ', 90, 0, 884486130594, 1]]
-errorCode = 0
 container = 0
 excelString = " "
 filename = " "
+modeCode = 0
+"""
+modeCode Legend:
+0 = Inventory Mode
+1 = Transaction Mode
+"""
+
+errorCode = 0
 """
 Error Code Legend:
 0 = No error
@@ -85,187 +92,355 @@ class MainPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self,parent)
 
-# FRAME1 ------------------ CUSTOMER NAME, TELEPHONE NUMBER ----------------------#
+        if modeCode == 1: #Transaction mode
+    # FRAME1 ------------------ CUSTOMER NAME, TELEPHONE NUMBER ----------------------#
 
-        #First frame inside the current MainPage Window Frame
-        frame1 = Frame(self, bg = "green")
-        frame1.pack(fill = BOTH)
-        
-#CUSTOMER NAME
-        frame1Label = tk.Label(frame1, text = "Customer Name", font = SMALL_FONT)
-        frame1Label.grid(row = 0, column = 0, padx = 5, pady = 5, sticky = W)
+            #First frame inside the current MainPage Window Frame
+            frame1 = Frame(self, bg = "green")
+            frame1.pack(fill = BOTH)
+            
+    #CUSTOMER NAME
+            frame1Label = tk.Label(frame1, text = "Customer Name", font = SMALL_FONT)
+            frame1Label.grid(row = 0, column = 0, padx = 5, pady = 5, sticky = W)
 
-        customerName = StringVar()    #creates the object customerName with a string variable type
-        frame1EntryBox1 = ttk.Entry(frame1, textvariable = customerName, width = 40)   #creates an entry box and allows the entry of a string variable
-        frame1EntryBox1.grid(row = 0, column = 1, padx = 5, pady = 5, sticky = W)
-        #print(customerName.get())
+            customerName = StringVar()    #creates the object customerName with a string variable type
+            frame1EntryBox1 = ttk.Entry(frame1, textvariable = customerName, width = 40)   #creates an entry box and allows the entry of a string variable
+            frame1EntryBox1.grid(row = 0, column = 1, padx = 5, pady = 5, sticky = W)
 
-#PHONE
-        frame1Label2 = tk.Label(frame1, text="Phone", font=SMALL_FONT)
-        frame1Label2.grid(row = 0, column = 2, padx = 5, pady = 5, sticky = W)
-        
-        phone = StringVar()    #creates the object phone with a string variable type
-        frame1EntryBox2 = ttk.Entry(frame1, textvariable = phone, width = 40)   #creates an entry box and allows the entry of a string variable
-        frame1EntryBox2.grid(row = 0, column = 3, padx = 5, pady = 5, sticky = W)
-#-----------------------------------------------------------------------------#
-
-
-# FRAME2 -------------------------- ADDRESS ------------------------------------#
-        
-        #Second frame inside the current MainPage Window Frame
-        frame2 = Frame(self, bg = "red")
-        frame2.pack(fill = BOTH)
-
-#ADDRESS
-        frame2.label = tk.Label(frame2, text="Address", font=SMALL_FONT)
-        frame2.label.grid(row = 1, column = 0, padx=5, pady=5, sticky = W)
-
-        address = StringVar()    #creates the object address with a string variable type
-        frame2EntryBox = ttk.Entry(frame2, textvariable = address, width = 99)   #creates an entry box and allows the entry of a string variable
-        frame2EntryBox.grid(row = 1, column = 1, padx = 5, pady = 5, sticky = W)
-#-----------------------------------------------------------------------------------#
+    #PHONE
+            frame1Label2 = tk.Label(frame1, text="Phone", font=SMALL_FONT)
+            frame1Label2.grid(row = 0, column = 2, padx = 5, pady = 5, sticky = W)
+            
+            phone = StringVar()    #creates the object phone with a string variable type
+            frame1EntryBox2 = ttk.Entry(frame1, textvariable = phone, width = 40)   #creates an entry box and allows the entry of a string variable
+            frame1EntryBox2.grid(row = 0, column = 3, padx = 5, pady = 5, sticky = W)
+    #-----------------------------------------------------------------------------#
 
 
-# FRAME3 -------------------------- ENTRY BOX GRID ------------------------------------#
-        #Third frame inside the current MainPage Window Frame
+    # FRAME2 -------------------------- ADDRESS ------------------------------------#
+            
+            #Second frame inside the current MainPage Window Frame
+            frame2 = Frame(self, bg = "red")
+            frame2.pack(fill = BOTH)
 
-        frame3 = Frame(self, bg = "white", width = 690, height = 400, borderwidth = 1)
-        frame3.pack(expand = True, fill = Y)
+    #ADDRESS
+            frame2.label = tk.Label(frame2, text="Address", font=SMALL_FONT)
+            frame2.label.grid(row = 1, column = 0, padx=5, pady=5, sticky = W)
 
-        #Creates a canvas-frame scrollable widget
-        frame3Canvas = tk.Canvas(frame3, width = 690, height = 400, borderwidth = 0, bg="white")
-        frame3Frame = tk.Frame(frame3Canvas, bg = "white")
-        frame3ScrollBar = tk.Scrollbar(frame3, orient = "vertical", command = frame3Canvas.yview)
-        frame3Canvas.configure(yscrollcommand = frame3ScrollBar.set)
-
-        frame3ScrollBar.pack(side = "right", fill = "y")
-        frame3Canvas.pack(side = "left", fill = "both", expand = True)
-        frame3Canvas.create_window((4,4), window = frame3Frame, anchor = "nw")
-
-        frame3Frame.bind("<Configure>", lambda event, canvas = frame3Canvas: frame3Canvas.configure(scrollregion = frame3Canvas.bbox("all")))
+            address = StringVar()    #creates the object address with a string variable type
+            frame2EntryBox = ttk.Entry(frame2, textvariable = address, width = 99)   #creates an entry box and allows the entry of a string variable
+            frame2EntryBox.grid(row = 1, column = 1, padx = 5, pady = 5, sticky = W)
+    #-----------------------------------------------------------------------------------#
 
 
-        #THIS CREATES THE GRID TO OUTPUT THE DATA QUERIED FROM THE MASTER FILE
-        #Description of Box: 'X' amount goind down, i.e. number of items, 6 descriptive columns: Bar Code, Product Description, Amount, Quantity, Additional Discount, Total Amount
-        #This is the header GRID VIEW Labels
-        frame3Label1 = tk.Label(frame3Frame, text = "Bar Code", font = NORMAL_FONT, relief = SUNKEN, width = 15)
-        frame3Label1.grid(row = 0, column = 0)
+    # FRAME3 -------------------------- ENTRY BOX GRID ------------------------------------#
+            #Third frame inside the current MainPage Window Frame
 
-        frame3Label2 = tk.Label(frame3Frame, text = "Product Description", font = NORMAL_FONT, relief = SUNKEN, width = 30)
-        frame3Label2.grid(row = 0, column = 1)
+            frame3 = Frame(self, bg = "white", width = 690, height = 400, borderwidth = 1)
+            frame3.pack(expand = True, fill = Y)
 
-        frame3Label3 = tk.Label(frame3Frame, text = "Price", font = NORMAL_FONT, relief = SUNKEN, width = 9)
-        frame3Label3.grid(row = 0, column = 2)
+            #Creates a canvas-frame scrollable widget
+            frame3Canvas = tk.Canvas(frame3, width = 690, height = 400, borderwidth = 0, bg="white")
+            frame3Frame = tk.Frame(frame3Canvas, bg = "white")
+            frame3ScrollBar = tk.Scrollbar(frame3, orient = "vertical", command = frame3Canvas.yview)
+            frame3Canvas.configure(yscrollcommand = frame3ScrollBar.set)
 
-        frame3Label4 = tk.Label(frame3Frame, text = "Quantity", font = NORMAL_FONT, relief = SUNKEN, width = 8)
-        frame3Label4.grid(row = 0, column = 3)
+            frame3ScrollBar.pack(side = "right", fill = "y")
+            frame3Canvas.pack(side = "left", fill = "both", expand = True)
+            frame3Canvas.create_window((4,4), window = frame3Frame, anchor = "nw")
 
-        frame3Label5 = tk.Label(frame3Frame, text = "Discount", font = NORMAL_FONT, relief = SUNKEN, width = 8)
-        frame3Label5.grid(row = 0, column = 4)
-
-        frame3Label6 = tk.Label(frame3Frame, text = "Cost", font = NORMAL_FONT, relief = SUNKEN, width = 10)
-        frame3Label6.grid(row = 0, column = 5)
-
-        
-        #Need to create a "Dynamically allocated grid view entry boxes" for next boxes with scroll wheel
-        rowNum = 1
-        totalCost = 0
-        totalQuantity = 0
-        for i in range(len(customerList)):
-
-            barCodeString = str(customerList[i][4])
-            frame3BarCode = tk.Label(frame3Frame, text = barCodeString, font = NORMAL_FONT, relief = SUNKEN, width = 15)
-            frame3BarCode.grid(row = rowNum, column = 0)
-
-            prodDesc = customerList[i][1]
-            frame3ProdDesc = tk.Label(frame3Frame, text = prodDesc, font = NORMAL_FONT, relief = SUNKEN, width = 30)
-            frame3ProdDesc.grid(row = rowNum, column = 1)
-
-            frame3Price = tk.Label(frame3Frame, text = "{:,}".format(customerList[i][2]), font = NORMAL_FONT, relief = SUNKEN, width = 9)
-            frame3Price.grid(row = rowNum, column = 2)
-
-            totalQuantity += customerList[i][5]
-            frame3Quantity = ttk.Label(frame3Frame, text = "{:,}".format(customerList[i][5]), font = NORMAL_FONT, relief = SUNKEN, width = 8)   #creates an entry box and allows the entry of a string variable
-            frame3Quantity.grid(row = rowNum, column = 3)
-
-            discountString = str(customerList[i][3])
-            frame3Discount = tk.Label(frame3Frame, text = discountString+"%", font = NORMAL_FONT, relief = SUNKEN, width = 8)
-            frame3Discount.grid(row = rowNum, column = 4)
-
-            cost = (customerList[i][5]*customerList[i][2])-((customerList[i][3]/100)*(customerList[i][5]*customerList[i][2]))   #gets cost estimate with given mathematical values
-            totalCost += cost
-            frame3Cost = tk.Label(frame3Frame, text = "{:,}".format(cost), font = NORMAL_FONT, relief = SUNKEN, width = 10)
-            frame3Cost.grid(row = rowNum, column = 5)
-
-            rowNum += 1        
-#--------------------------------------------------------------------------------------#
+            frame3Frame.bind("<Configure>", lambda event, canvas = frame3Canvas: frame3Canvas.configure(scrollregion = frame3Canvas.bbox("all")))
 
 
-# FRAME4 -------------------------- TOTAL QUANTITY AND AMOUNT ------------------------------------#
-        #Fourth frame inside the current MainPage Window Frame
-        frame4 = Frame(self, bg = "blue")
-        frame4.pack(fill = BOTH)
+            #THIS CREATES THE GRID TO OUTPUT THE DATA QUERIED FROM THE MASTER FILE
+            #Description of Box: 'X' amount goind down, i.e. number of items, 6 descriptive columns: Bar Code, Product Description, Amount, Quantity, Additional Discount, Total Amount
+            #This is the header GRID VIEW Labels
+            frame3Label1 = tk.Label(frame3Frame, text = "Bar Code", font = NORMAL_FONT, relief = SUNKEN, width = 15)
+            frame3Label1.grid(row = 0, column = 0)
 
-        frame4Label1 = tk.Label(frame4, text="Total Quantity", font = NORMAL_FONT)
-        frame4Label1.grid(row = 0, column = 0, padx = 5, pady = 5)
+            frame3Label2 = tk.Label(frame3Frame, text = "Product Description", font = NORMAL_FONT, relief = SUNKEN, width = 30)
+            frame3Label2.grid(row = 0, column = 1)
+
+            frame3Label3 = tk.Label(frame3Frame, text = "Price", font = NORMAL_FONT, relief = SUNKEN, width = 9)
+            frame3Label3.grid(row = 0, column = 2)
+
+            frame3Label4 = tk.Label(frame3Frame, text = "Quantity", font = NORMAL_FONT, relief = SUNKEN, width = 8)
+            frame3Label4.grid(row = 0, column = 3)
+
+            frame3Label5 = tk.Label(frame3Frame, text = "Discount", font = NORMAL_FONT, relief = SUNKEN, width = 8)
+            frame3Label5.grid(row = 0, column = 4)
+
+            frame3Label6 = tk.Label(frame3Frame, text = "Cost", font = NORMAL_FONT, relief = SUNKEN, width = 10)
+            frame3Label6.grid(row = 0, column = 5)
+
+            
+            #Need to create a "Dynamically allocated grid view entry boxes" for next boxes with scroll wheel
+            rowNum = 1
+            totalCost = 0
+            totalQuantity = 0
+            for i in range(len(customerList)):
+
+                barCodeString = str(customerList[i][4])
+                frame3BarCode = tk.Label(frame3Frame, text = barCodeString, font = NORMAL_FONT, relief = SUNKEN, width = 15)
+                frame3BarCode.grid(row = rowNum, column = 0)
+
+                prodDesc = customerList[i][1]
+                frame3ProdDesc = tk.Label(frame3Frame, text = prodDesc, font = NORMAL_FONT, relief = SUNKEN, width = 30)
+                frame3ProdDesc.grid(row = rowNum, column = 1)
+
+                frame3Price = tk.Label(frame3Frame, text = "{:,}".format(customerList[i][2]), font = NORMAL_FONT, relief = SUNKEN, width = 9)
+                frame3Price.grid(row = rowNum, column = 2)
+
+                totalQuantity += customerList[i][6]
+                frame3Quantity = ttk.Label(frame3Frame, text = "{:,}".format(customerList[i][6]), font = NORMAL_FONT, relief = SUNKEN, width = 8)   #creates an entry box and allows the entry of a string variable
+                frame3Quantity.grid(row = rowNum, column = 3)
+
+                discountString = str(customerList[i][3])
+                frame3Discount = tk.Label(frame3Frame, text = discountString+"%", font = NORMAL_FONT, relief = SUNKEN, width = 8)
+                frame3Discount.grid(row = rowNum, column = 4)
+
+                cost = (customerList[i][6]*customerList[i][2])-((customerList[i][3]/100)*(customerList[i][6]*customerList[i][2]))   #gets cost estimate with given mathematical values
+                totalCost += cost
+                frame3Cost = tk.Label(frame3Frame, text = "{:,}".format(cost), font = NORMAL_FONT, relief = SUNKEN, width = 10)
+                frame3Cost.grid(row = rowNum, column = 5)
+
+                rowNum += 1        
+    #--------------------------------------------------------------------------------------#
 
 
-        frame4Label2 = tk.Label(frame4, text = "{:,}".format(totalQuantity), font = NORMAL_FONT, relief = SUNKEN, width = 16)  #NEED TO GET SUM OF TOTAL QUANTITY
-        frame4Label2.grid(row = 0, column = 1)
+    # FRAME4 -------------------------- TOTAL QUANTITY AND AMOUNT ------------------------------------#
+            #Fourth frame inside the current MainPage Window Frame
+            frame4 = Frame(self, bg = "blue")
+            frame4.pack(fill = BOTH)
+
+            frame4Label1 = tk.Label(frame4, text="Total Quantity", font = NORMAL_FONT)
+            frame4Label1.grid(row = 0, column = 0, padx = 5, pady = 5)
 
 
-        #Frame block to separate the first set of labels above from the second set of labels below
-        frame4LabelBlock = tk.Label(frame4, width = 16, bg = "blue")
-        frame4LabelBlock.grid(row = 0, column = 2, padx = 45, pady = 5)
+            frame4Label2 = tk.Label(frame4, text = "{:,}".format(totalQuantity), font = NORMAL_FONT, relief = SUNKEN, width = 16)  #NEED TO GET SUM OF TOTAL QUANTITY
+            frame4Label2.grid(row = 0, column = 1)
 
 
-        frame4Label3 = tk.Label(frame4, text = "Total Cost", font=NORMAL_FONT)
-        frame4Label3.grid(row = 0, column = 3, padx = 5, pady = 5)
-
-        frame4Label4 = tk.Label(frame4, text = "{:,}".format(totalCost), font = NORMAL_FONT, relief = SUNKEN, width = 16)  #NEED TO GET SUM OF TOTAL COST
-        frame4Label4.grid(row = 0, column = 4)
-#-------------------------------------------------------------------------------------------------#
+            #Frame block to separate the first set of labels above from the second set of labels below
+            frame4LabelBlock = tk.Label(frame4, width = 16, bg = "blue")
+            frame4LabelBlock.grid(row = 0, column = 2, padx = 45, pady = 5)
 
 
-# FRAME5 -------------------------- BAR CODE AND ADD ITEM ------------------------------------#
-        #Fifth frame inside the current MainPage Window Frame
-        frame5 = Frame(self, bg = "pink")
-        frame5.pack(fill = BOTH)
+            frame4Label3 = tk.Label(frame4, text = "Total Cost", font=NORMAL_FONT)
+            frame4Label3.grid(row = 0, column = 3, padx = 5, pady = 5)
 
-        frame5Label1 = tk.Label(frame5, text = "Product Bar Code", font = NORMAL_FONT)
-        frame5Label1.grid(row = 0, column = 0, padx=5, pady=5, sticky = W)
-
-        barCode = tk.StringVar()    #creates the object barCode with a string variable type
-        frame5EntryBox = ttk.Entry(frame5, textvariable = barCode, width = 22)   #creates an entry box and allows the entry of a string variable
-        frame5EntryBox.grid(row = 0, column = 1, padx = 5, pady = 5)
-
-        frame5Spacer = tk.Label(frame5, text = "", font = NORMAL_FONT, bg = "pink")
-        frame5Spacer.grid(row = 0, column = 2, padx=20, pady=5, sticky = W)
-
-        frame5Label2 = tk.Label(frame5, text = "Quantity", font = NORMAL_FONT)
-        frame5Label2.grid(row = 0, column = 3, padx=5, pady=5, sticky = W)
-
-        quantity = tk.IntVar()    #creates the object barCode with a string variable type
-        quantity.set(1)
-        frame5EntryBox2 = ttk.Entry(frame5, textvariable = quantity, width = 8)   #creates an entry box and allows the entry of a string variable
-        frame5EntryBox2.grid(row = 0, column = 4, padx = 5, pady = 5)
-
-        frame5Button = ttk.Button(frame5, text = "Add Item", command = lambda: updateCustomerList(barCode, quantity)) #NEED TO CHECK IF BAR CODE WORKS FIRST!!! MAY NEED TO GO SOMEWHERE OTHER THAN MAIN PAGE
-        frame5Button.grid(row = 0, column = 5, padx = 90, pady = 10)
-#---------------------------------------------------------------------------------------------#
+            frame4Label4 = tk.Label(frame4, text = "{:,}".format(totalCost), font = NORMAL_FONT, relief = SUNKEN, width = 16)  #NEED TO GET SUM OF TOTAL COST
+            frame4Label4.grid(row = 0, column = 4)
+    #-------------------------------------------------------------------------------------------------#
 
 
-# FRAME6 -------------------------- PROCESS AND REFRESH ------------------------------------#
-        #Sixth frame inside the current MainPage Window Frame
-        frame6 = Frame(self, bg = "yellow")
-        frame6.pack(fill = BOTH)
+    # FRAME5 -------------------------- BAR CODE AND ADD ITEM ------------------------------------#
+            #Fifth frame inside the current MainPage Window Frame
+            frame5 = Frame(self, bg = "pink")
+            frame5.pack(fill = BOTH)
 
-        frame6Button = ttk.Button(frame6, text = "Refresh", command=refreshMainFrame)
-        frame6Button.grid(row = 0, column = 0, padx = 125, pady = 10)
+            frame5Label1 = tk.Label(frame5, text = "Product Bar Code", font = NORMAL_FONT)
+            frame5Label1.grid(row = 0, column = 0, padx=5, pady=5, sticky = W)
 
-        frame6Button = ttk.Button(frame6, text = "Process", command=ProcessPage)   #DOESN'T WORKS           #STILL NEED TO MAKE PROCESS FRAME
-        frame6Button.grid(row = 0, column = 1, padx = 125, pady = 10)
-#--------------------------------------------------------------------------------------------#   
+            barCode = tk.StringVar()    #creates the object barCode with a string variable type
+            frame5EntryBox = ttk.Entry(frame5, textvariable = barCode, width = 22)   #creates an entry box and allows the entry of a string variable
+            frame5EntryBox.grid(row = 0, column = 1, padx = 5, pady = 5)
+
+            frame5Spacer = tk.Label(frame5, text = "", font = NORMAL_FONT, bg = "pink")
+            frame5Spacer.grid(row = 0, column = 2, padx=20, pady=5, sticky = W)
+
+            frame5Label2 = tk.Label(frame5, text = "Quantity", font = NORMAL_FONT)
+            frame5Label2.grid(row = 0, column = 3, padx=5, pady=5, sticky = W)
+
+            quantity = tk.IntVar()    #creates the object barCode with a string variable type
+            quantity.set(1)
+            frame5EntryBox2 = ttk.Entry(frame5, textvariable = quantity, width = 8)   #creates an entry box and allows the entry of a string variable
+            frame5EntryBox2.grid(row = 0, column = 4, padx = 5, pady = 5)
+
+            frame5Button = ttk.Button(frame5, text = "Add Item", command = lambda: updateCustomerList(barCode, quantity)) #NEED TO CHECK IF BAR CODE WORKS FIRST!!! MAY NEED TO GO SOMEWHERE OTHER THAN MAIN PAGE
+            frame5Button.grid(row = 0, column = 5, padx = 90, pady = 10)
+    #---------------------------------------------------------------------------------------------#
+
+
+    # FRAME6 -------------------------- PROCESS AND REFRESH ------------------------------------#
+            #Sixth frame inside the current MainPage Window Frame
+            frame6 = Frame(self, bg = "yellow")
+            frame6.pack(fill = BOTH)
+
+            frame6Button = ttk.Button(frame6, text = "Refresh", command=refreshMainFrame)
+            frame6Button.grid(row = 0, column = 0, padx = 125, pady = 10)
+
+            frame6Button = ttk.Button(frame6, text = "Process", command=ProcessPage)   #DOESN'T WORKS           #STILL NEED TO MAKE PROCESS FRAME
+            frame6Button.grid(row = 0, column = 1, padx = 125, pady = 10)
+    #--------------------------------------------------------------------------------------------#   
+
+        else: #Inventory mode
+    # FRAME1 ------------------ CUSTOMER NAME, TELEPHONE NUMBER ----------------------#
+
+            #First frame inside the current MainPage Window Frame
+            frame1 = Frame(self, bg = "green")
+            frame1.pack(fill = BOTH)
+            
+    #CUSTOMER NAME
+            frame1Label = tk.Label(frame1, text = "Customer Name", font = SMALL_FONT)
+            frame1Label.grid(row = 0, column = 0, padx = 5, pady = 5, sticky = W)
+
+            customerName = StringVar()    #creates the object customerName with a string variable type
+            frame1EntryBox1 = ttk.Entry(frame1, textvariable = customerName, width = 40, state = tk.DISABLED)   #creates an entry box and allows the entry of a string variable
+            frame1EntryBox1.grid(row = 0, column = 1, padx = 5, pady = 5, sticky = W)
+
+    #PHONE
+            frame1Label2 = tk.Label(frame1, text="Phone", font=SMALL_FONT)
+            frame1Label2.grid(row = 0, column = 2, padx = 5, pady = 5, sticky = W)
+            
+            phone = StringVar()    #creates the object phone with a string variable type
+            frame1EntryBox2 = ttk.Entry(frame1, textvariable = phone, width = 40, state = tk.DISABLED)   #creates an entry box and allows the entry of a string variable
+            frame1EntryBox2.grid(row = 0, column = 3, padx = 5, pady = 5, sticky = W)
+    #-----------------------------------------------------------------------------#
+
+
+    # FRAME2 -------------------------- ADDRESS ------------------------------------#
+            
+            #Second frame inside the current MainPage Window Frame
+            frame2 = Frame(self, bg = "red")
+            frame2.pack(fill = BOTH)
+
+    #ADDRESS
+            frame2.label = tk.Label(frame2, text="Address", font=SMALL_FONT)
+            frame2.label.grid(row = 1, column = 0, padx=5, pady=5, sticky = W)
+
+            address = StringVar()    #creates the object address with a string variable type
+            frame2EntryBox = ttk.Entry(frame2, textvariable = address, width = 99, state = tk.DISABLED)   #creates an entry box and allows the entry of a string variable
+            frame2EntryBox.grid(row = 1, column = 1, padx = 5, pady = 5, sticky = W)
+    #-----------------------------------------------------------------------------------#
+
+
+    # FRAME3 -------------------------- ENTRY BOX GRID ------------------------------------#
+            #Third frame inside the current MainPage Window Frame
+
+            frame3 = Frame(self, bg = "white", width = 690, height = 400, borderwidth = 1)
+            frame3.pack(expand = True, fill = Y)
+
+            #Creates a canvas-frame scrollable widget
+            frame3Canvas = tk.Canvas(frame3, width = 690, height = 400, borderwidth = 0, bg="white")
+            frame3Frame = tk.Frame(frame3Canvas, bg = "white")
+            frame3ScrollBar = tk.Scrollbar(frame3, orient = "vertical", command = frame3Canvas.yview)
+            frame3Canvas.configure(yscrollcommand = frame3ScrollBar.set)
+
+            frame3ScrollBar.pack(side = "right", fill = "y")
+            frame3Canvas.pack(side = "left", fill = "both", expand = True)
+            frame3Canvas.create_window((4,4), window = frame3Frame, anchor = "nw")
+
+            frame3Frame.bind("<Configure>", lambda event, canvas = frame3Canvas: frame3Canvas.configure(scrollregion = frame3Canvas.bbox("all")))
+
+
+            #THIS CREATES THE GRID TO OUTPUT THE DATA QUERIED FROM THE MASTER FILE
+            #Description of Box: 'X' amount goind down, i.e. number of items, 6 descriptive columns: Bar Code, Product Description, Amount, Quantity, Additional Discount, Total Amount
+            #This is the header GRID VIEW Labels
+            frame3Label1 = tk.Label(frame3Frame, text = "Bar Code", font = NORMAL_FONT, relief = SUNKEN, width = 15)
+            frame3Label1.grid(row = 0, column = 0)
+
+            frame3Label2 = tk.Label(frame3Frame, text = "Product Description", font = NORMAL_FONT, relief = SUNKEN, width = 40)
+            frame3Label2.grid(row = 0, column = 1)
+
+            frame3Label3 = tk.Label(frame3Frame, text = "Price", font = NORMAL_FONT, relief = SUNKEN, width = 13)
+            frame3Label3.grid(row = 0, column = 2)
+
+            frame3Label4 = tk.Label(frame3Frame, text = "Quantity", font = NORMAL_FONT, relief = SUNKEN, width = 12)
+            frame3Label4.grid(row = 0, column = 3)
+
+            
+            #Need to create a "Dynamically allocated grid view entry boxes" for next boxes with scroll wheel
+            rowNum = 1
+            totalCost = 0
+            totalQuantity = 0
+            for i in range(len(customerList)):
+
+                barCodeString = str(customerList[i][4])
+                frame3BarCode = tk.Label(frame3Frame, text = barCodeString, font = NORMAL_FONT, relief = SUNKEN, width = 15)
+                frame3BarCode.grid(row = rowNum, column = 0)
+
+                prodDesc = customerList[i][1]
+                frame3ProdDesc = tk.Label(frame3Frame, text = prodDesc, font = NORMAL_FONT, relief = SUNKEN, width = 40)
+                frame3ProdDesc.grid(row = rowNum, column = 1)
+
+                frame3Price = tk.Label(frame3Frame, text = "{:,}".format(customerList[i][2]), font = NORMAL_FONT, relief = SUNKEN, width = 13)
+                frame3Price.grid(row = rowNum, column = 2)
+
+                #NEED TO MAKE THIS SO THAT ANY UPDATE HERE WOULD CHANGE THE QUANTITY IN THE EXCEL DOCUMENT
+                totalQuantity += customerList[i][5]
+                frame3Quantity = ttk.Label(frame3Frame, text = "{:,}".format(customerList[i][5]), font = NORMAL_FONT, relief = SUNKEN, width = 12)   #creates an entry box and allows the entry of a string variable
+                frame3Quantity.grid(row = rowNum, column = 3)
+
+                rowNum += 1        
+    #--------------------------------------------------------------------------------------#
+
+
+    # FRAME4 -------------------------- TOTAL QUANTITY AND AMOUNT ------------------------------------#
+            #Fourth frame inside the current MainPage Window Frame
+            frame4 = Frame(self, bg = "blue")
+            frame4.pack(fill = BOTH)
+
+            frame4Label1 = tk.Label(frame4, text="Total Quantity", font = NORMAL_FONT)
+            frame4Label1.grid(row = 0, column = 0, padx = 5, pady = 5)
+
+
+            frame4Label2 = tk.Label(frame4, text = "{:,}".format(totalQuantity), font = NORMAL_FONT, relief = SUNKEN, width = 16)  #NEED TO GET SUM OF TOTAL QUANTITY
+            frame4Label2.grid(row = 0, column = 1)
+
+
+            #Frame block to separate the first set of labels above from the second set of labels below
+            frame4LabelBlock = tk.Label(frame4, width = 16, bg = "blue")
+            frame4LabelBlock.grid(row = 0, column = 2, padx = 45, pady = 5)
+
+
+            frame4Label3 = tk.Label(frame4, text = "Total Cost", font=NORMAL_FONT)
+            frame4Label3.grid(row = 0, column = 3, padx = 5, pady = 5)
+
+            frame4Label4 = tk.Label(frame4, text = "N/A", font = NORMAL_FONT, relief = SUNKEN, width = 16)  #NEED TO GET SUM OF TOTAL COST
+            frame4Label4.grid(row = 0, column = 4)
+    #-------------------------------------------------------------------------------------------------#
+
+
+    # FRAME5 -------------------------- BAR CODE AND ADD ITEM ------------------------------------#
+            #Fifth frame inside the current MainPage Window Frame
+            frame5 = Frame(self, bg = "pink")
+            frame5.pack(fill = BOTH)
+
+            frame5Label1 = tk.Label(frame5, text = "Product Bar Code", font = NORMAL_FONT)
+            frame5Label1.grid(row = 0, column = 0, padx=5, pady=5, sticky = W)
+
+            barCode = tk.StringVar()    #creates the object barCode with a string variable type
+            frame5EntryBox = ttk.Entry(frame5, textvariable = barCode, width = 22)   #creates an entry box and allows the entry of a string variable
+            frame5EntryBox.grid(row = 0, column = 1, padx = 5, pady = 5)
+
+            frame5Spacer = tk.Label(frame5, text = "", font = NORMAL_FONT, bg = "pink")
+            frame5Spacer.grid(row = 0, column = 2, padx=20, pady=5, sticky = W)
+
+            frame5Label2 = tk.Label(frame5, text = "Quantity", font = NORMAL_FONT)
+            frame5Label2.grid(row = 0, column = 3, padx=5, pady=5, sticky = W)
+
+            quantity = tk.IntVar()    #creates the object barCode with a string variable type
+            quantity.set(1)
+            frame5EntryBox2 = ttk.Entry(frame5, textvariable = quantity, width = 8)   #creates an entry box and allows the entry of a string variable
+            frame5EntryBox2.grid(row = 0, column = 4, padx = 5, pady = 5)
+
+            frame5Button = ttk.Button(frame5, text = "Add Item", command = lambda: updateCustomerList(barCode, quantity)) #NEED TO CHECK IF BAR CODE WORKS FIRST!!! MAY NEED TO GO SOMEWHERE OTHER THAN MAIN PAGE
+            frame5Button.grid(row = 0, column = 5, padx = 90, pady = 10)
+    #---------------------------------------------------------------------------------------------#
+
+
+    # FRAME6 -------------------------- PROCESS AND REFRESH ------------------------------------#
+            #Sixth frame inside the current MainPage Window Frame
+            frame6 = Frame(self, bg = "yellow")
+            frame6.pack(fill = BOTH)
+
+            frame6Button = ttk.Button(frame6, text = "Refresh", command=refreshMainFrame)
+            frame6Button.grid(row = 0, column = 0, padx = 125, pady = 10)
+
+            frame6Button = ttk.Button(frame6, text = "Process", command=ProcessPage)   #DOESN'T WORKS           #STILL NEED TO MAKE PROCESS FRAME
+            frame6Button.grid(row = 0, column = 1, padx = 125, pady = 10)
+    #--------------------------------------------------------------------------------------------#   
 
 
 
@@ -282,9 +457,29 @@ class ErrorPage(tk.Frame):          #NEED TO CHANGE THIS INTO A POP UP WINDOW IN
             label = tk.Label(frame, text="Error! Please input a correct Master File Document", font=SMALL_FONT)
             label.pack(pady=10, padx=10)
 
-        button1 = ttk.Button(frame, text = "OK", command = MasterFilePopUp) #One can also do command=quit to quit out of the program
+        button1 = ttk.Button(frame, text = "OK", command = MasterFilePopUp(1)) #One can also do command=quit to quit out of the program
         button1.pack(pady=5, padx=10)
 
+
+
+
+#Start popup to allow the user to either choose Inventory mode or Transaction mode
+def startPopup():
+    startPopup = tk.Toplevel()
+
+    startPopup.wm_title("FONZY")
+
+    #Need to include check box
+
+    label = ttk.Label(startPopup, text="Please choose the correct application mode", font=SMALL_FONT)
+    label.grid(row = 0, column = 0, pady=10, padx=10, columnspan = 2)
+
+    button1 = ttk.Button(startPopup, text = "Inventory", command = lambda: MasterFilePopUp(0) or startPopup.destroy())
+    button1.grid(row = 1, column = 0, pady = 10, padx = 10)
+
+    button2 = ttk.Button(startPopup, text = "Transaction", command = lambda: MasterFilePopUp(1) or startPopup.destroy())
+    button2.grid(row = 1, column = 1, pady = 10, padx = 10)    
+    
 
 
 
@@ -303,6 +498,7 @@ def ProcessPage():
     time = datetime.datetime.now() #time.time()
     print(time.time())
     #once button is clicked, it prompts user to find file then it outputs the contents of the file
+    
 
 
 
@@ -310,6 +506,7 @@ def ProcessPage():
 def fileExplorer():
     #intializes another instance of tkinter
     global masterList   #allows user to add item to masterList global variable
+    global customerList
     global filename
     try:    
         filename = filedialog.askopenfilename(initialdir = "/",title = "Select file",filetypes = (("XLS files","*.xls"),("XLSX files","*.xlsx")))
@@ -318,21 +515,34 @@ def fileExplorer():
             sheet = pe.get_array(file_name=filename) #puts data into array
             masterList = sheet
             errorCode = 0 #resets errorCode
-            cashierStartPopup()
-
+            if modeCode == 1:
+                cashierStartPopup()
+            if modeCode == 0:
+                count = 0
+                for i in range(len(masterList)):
+                    if isinstance(masterList[i][4], int):
+                        customerList.append(masterList[i][:])
+                        customerList[count].append(i+1)
+                        count += 1
+                refreshMainFrame()
+                #print(customerList)
         else:
             errorCode = 1
     
     except ValueError:
         errorCode = 1
+    
 
 
 
 
-def MasterFilePopUp():
+def MasterFilePopUp(mode):
+    global modeCode
+
     masterPopup = tk.Toplevel()
-
     masterPopup.wm_title("FONZY")
+
+    modeCode = mode #inherits either 0 or 1
     label = ttk.Label(masterPopup, text = "Please specify the product master file", font = NORMAL_FONT)
     label.pack(side = "top", fill = "x", padx = 5)
 
@@ -343,7 +553,7 @@ def MasterFilePopUp():
         return 1
     else:
         popupmsg("Please input the correct Master File")
-        MasterFilePopUp()
+        MasterFilePopUp(mode)
 
 
 
@@ -386,7 +596,6 @@ def cashierStartPopup():
         workbook.close()
 
 
-
 #Creates popup message bars
 def popupmsg(msg):
     popup = tk.Toplevel()
@@ -415,7 +624,7 @@ def updateCustomerList(barCode, quantity):
                     customerList.append(masterList[i][:])  #adds a masterList object inside customerList
                     customerList[0].append(quantity.get())   #gives a quantifiable value to number of products the customer wants to purchase
                     
-                    if customerList[0][5] <= 0: #deletes element if item quantity value is 0 or less than 0
+                    if customerList[0][6] <= 0: #deletes element if item quantity value is 0 or less than 0
                         del customerList[0]
                     refreshMainFrame()  #sends back to MainPage Frame
 
@@ -423,9 +632,9 @@ def updateCustomerList(barCode, quantity):
                     for j in range(len(customerList)):    #searches through customerList to see if item is already inside; checks for repeats
                         
                         if int(barCode.get()) == customerList[j][4]:   #if is a repeated barCode
-                            customerList[j][5] += quantity.get()
+                            customerList[j][6] += quantity.get()
                             
-                            if customerList[j][5] <= 0: #deletes element if item quantity value is 0 or less than 0
+                            if customerList[j][6] <= 0: #deletes element if item quantity value is 0 or less than 0
                                 del customerList[j]
                             refreshMainFrame()  #sends back to MainPage Frame
                             return
@@ -433,7 +642,7 @@ def updateCustomerList(barCode, quantity):
                     customerList.append(masterList[i][:])  #adds a masterList object inside customerList
                     customerList[len(customerList)-1].append(quantity.get())   #gives a quantifiable value to number of products the customer wants to purchase
                     
-                    if customerList[len(customerList)-1][5] <= 0: #deletes element if item quantity value is 0 or less than 0
+                    if customerList[len(customerList)-1][6] <= 0: #deletes element if item quantity value is 0 or less than 0
                         del customerList[len(customerList)-1]
                     refreshMainFrame()  #sends back to MainPage Frame
 
@@ -464,5 +673,5 @@ app.resizable(False, False) #window isn't resizable. Makes it easier for the own
 
 #finds Master File first
 # run after `POS` will be created and `app.mainloop()` will start
-app.after(100, MasterFilePopUp)
+app.after(100, startPopup)
 app.mainloop()
