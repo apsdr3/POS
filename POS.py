@@ -590,7 +590,10 @@ def cashierStartPopup():
         #gets excel string to create excel file for the day
         excelString = cashierString.get() + "-" + eventString.get() + "-" + str(datetime.datetime.today().strftime('%d,%m,%Y') + ".xlsx")
         #creates work book inside the filepath given, need to fix filename to imitate the same filepath of the materfilePopup using .split()
-        workbook = xw.Workbook("C:/Users/hedce/OneDrive/Desktop/" + excelString)
+        excelFilePathArray = filename.split("/")
+        excelFilePathArray = excelFilePathArray[:-1]
+        excelFilePath = '/'.join(excelFilePathArray)
+        workbook = xw.Workbook(excelFilePath + "/" + excelString)
         worksheet = workbook.add_worksheet()
 
         workbook.close()
