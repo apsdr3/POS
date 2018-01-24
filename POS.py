@@ -3,12 +3,13 @@
 #NEED TO pip install XlsxWriter    allows user to create excel files
 #NEED TO pip install openpyxl   allows user to modify excel files
 import tkinter as tk
-from tkinter import ttk
 import pyexcel as pe
 import xlsxwriter as xw
 import datetime
 import time
 
+from tkinter import ttk
+from openpyxl import load_workbook,Workbook
 from tkinter import filedialog
 from tkinter import *
 
@@ -257,7 +258,7 @@ class MainPage(tk.Frame):
             frame5EntryBox2 = ttk.Entry(frame5, textvariable = quantity, width = 8)   #creates an entry box and allows the entry of a string variable
             frame5EntryBox2.grid(row = 0, column = 4, padx = 5, pady = 5)
 
-            frame5Button = ttk.Button(frame5, text = "Add Item", command = lambda: updateCustomerList(barCode, quantity)) #NEED TO CHECK IF BAR CODE WORKS FIRST!!! MAY NEED TO GO SOMEWHERE OTHER THAN MAIN PAGE
+            frame5Button = ttk.Button(frame5, text = "Add Item", command = lambda: updateCustomerList(barCode, quantity))
             frame5Button.grid(row = 0, column = 5, padx = 90, pady = 10)
     #---------------------------------------------------------------------------------------------#
 
@@ -270,7 +271,7 @@ class MainPage(tk.Frame):
             frame6Button = ttk.Button(frame6, text = "Refresh", command=refreshMainFrame)
             frame6Button.grid(row = 0, column = 0, padx = 125, pady = 10)
 
-            frame6Button = ttk.Button(frame6, text = "Process", command=ProcessPage)   #DOESN'T WORKS           #STILL NEED TO MAKE PROCESS FRAME
+            frame6Button = ttk.Button(frame6, text = "Process", command=processPagePopup)
             frame6Button.grid(row = 0, column = 1, padx = 125, pady = 10)
     #--------------------------------------------------------------------------------------------#   
 
@@ -350,29 +351,27 @@ class MainPage(tk.Frame):
             frame3Label4.grid(row = 0, column = 3)
 
             
-            #Need to create a "Dynamically allocated grid view entry boxes" for next boxes with scroll wheel
             rowNum = 1
             totalCost = 0
             totalQuantity = 0
             for i in range(len(customerList)):
+                if isinstance(customerList[i][4], int):
+                    barCodeString = str(customerList[i][4])
+                    frame3BarCode = tk.Label(frame3Frame, text = barCodeString, font = NORMAL_FONT, relief = SUNKEN, width = 15)
+                    frame3BarCode.grid(row = rowNum, column = 0)
 
-                barCodeString = str(customerList[i][4])
-                frame3BarCode = tk.Label(frame3Frame, text = barCodeString, font = NORMAL_FONT, relief = SUNKEN, width = 15)
-                frame3BarCode.grid(row = rowNum, column = 0)
+                    prodDesc = customerList[i][1]
+                    frame3ProdDesc = tk.Label(frame3Frame, text = prodDesc, font = NORMAL_FONT, relief = SUNKEN, width = 40)
+                    frame3ProdDesc.grid(row = rowNum, column = 1)
 
-                prodDesc = customerList[i][1]
-                frame3ProdDesc = tk.Label(frame3Frame, text = prodDesc, font = NORMAL_FONT, relief = SUNKEN, width = 40)
-                frame3ProdDesc.grid(row = rowNum, column = 1)
+                    frame3Price = tk.Label(frame3Frame, text = "{:,}".format(customerList[i][2]), font = NORMAL_FONT, relief = SUNKEN, width = 13)
+                    frame3Price.grid(row = rowNum, column = 2)
 
-                frame3Price = tk.Label(frame3Frame, text = "{:,}".format(customerList[i][2]), font = NORMAL_FONT, relief = SUNKEN, width = 13)
-                frame3Price.grid(row = rowNum, column = 2)
+                    totalQuantity += customerList[i][5]
+                    frame3Quantity = ttk.Label(frame3Frame, text = "{:,}".format(customerList[i][5]), font = NORMAL_FONT, relief = SUNKEN, width = 12)   #creates an entry box and allows the entry of a string variable
+                    frame3Quantity.grid(row = rowNum, column = 3)
 
-                #NEED TO MAKE THIS SO THAT ANY UPDATE HERE WOULD CHANGE THE QUANTITY IN THE EXCEL DOCUMENT
-                totalQuantity += customerList[i][5]
-                frame3Quantity = ttk.Label(frame3Frame, text = "{:,}".format(customerList[i][5]), font = NORMAL_FONT, relief = SUNKEN, width = 12)   #creates an entry box and allows the entry of a string variable
-                frame3Quantity.grid(row = rowNum, column = 3)
-
-                rowNum += 1        
+                    rowNum += 1        
     #--------------------------------------------------------------------------------------#
 
 
@@ -425,7 +424,7 @@ class MainPage(tk.Frame):
             frame5EntryBox2 = ttk.Entry(frame5, textvariable = quantity, width = 8)   #creates an entry box and allows the entry of a string variable
             frame5EntryBox2.grid(row = 0, column = 4, padx = 5, pady = 5)
 
-            frame5Button = ttk.Button(frame5, text = "Add Item", command = lambda: updateCustomerList(barCode, quantity)) #NEED TO CHECK IF BAR CODE WORKS FIRST!!! MAY NEED TO GO SOMEWHERE OTHER THAN MAIN PAGE
+            frame5Button = ttk.Button(frame5, text = "Add Item", command = lambda: updateCustomerList(barCode, quantity))
             frame5Button.grid(row = 0, column = 5, padx = 90, pady = 10)
     #---------------------------------------------------------------------------------------------#
 
@@ -438,7 +437,7 @@ class MainPage(tk.Frame):
             frame6Button = ttk.Button(frame6, text = "Refresh", command=refreshMainFrame)
             frame6Button.grid(row = 0, column = 0, padx = 125, pady = 10)
 
-            frame6Button = ttk.Button(frame6, text = "Process", command=ProcessPage)   #DOESN'T WORKS           #STILL NEED TO MAKE PROCESS FRAME
+            frame6Button = ttk.Button(frame6, text = "Process", command=processPagePopup)
             frame6Button.grid(row = 0, column = 1, padx = 125, pady = 10)
     #--------------------------------------------------------------------------------------------#   
 
@@ -484,22 +483,46 @@ def startPopup():
 
 
 #process purchase page for when a purchase is to be made
-def ProcessPage():
+def processPagePopup():
     processPopup = tk.Toplevel()
 
     processPopup.wm_title("FONZY")
 
-    #Need to include check box
+    if modeCode == 1:   #Inventory Mode
+        #Need to include check box
 
-    label = ttk.Label(processPopup, text="PAYMENT HERE!", font=SMALL_FONT)
-    label.pack(pady=10, padx=10)
+        label = ttk.Label(processPopup, text="PAYMENT HERE!", font=SMALL_FONT)
+        label.pack(pady=10, padx=10)
 
-    #to get exact time, used for invoicing
-    time = datetime.datetime.now() #time.time()
-    print(time.time())
-    #once button is clicked, it prompts user to find file then it outputs the contents of the file
+        #to get exact time, used for invoicing
+        time = datetime.datetime.now() #time.time()
+        print(time.time())
+        #once button is clicked, it prompts user to find file then it outputs the contents of the file
     
+    else:   #Transaction mode
+        #UPDATE EXCEL FILE then ASK USER ONE MORE TIME BEFORE EXIT
+        label = ttk.Label(processPopup, text="Are you sure you are finished taking inventory?", font=SMALL_FONT)
+        label.grid(row = 0, column = 0, pady=10, padx=10, columnspan = 2)
 
+        button1 = ttk.Button(processPopup, text = "Yes", command = lambda: updateExcel() or processPopup.destroy())
+        button1.grid(row = 1, column = 0, pady = 10, padx = 10)
+
+        button2 = ttk.Button(processPopup, text = "No", command = lambda: refreshMainFrame() or processPopup.destroy())
+        button2.grid(row = 1, column = 1, pady = 10, padx = 10)
+
+        def updateExcel():
+            
+            wbName = filename.split("/")    #gets masterFile name
+            wbNameString = wbName[-1]   #gets last element in list
+
+            wb=load_workbook(wbNameString)  #opens masterFile
+            activeWS=wb.active   #uses active workbook for edits
+
+            for r in range(0,len(customerList)):
+                activeWS.cell(row=r+1,column=6).value=customerList[r][5]
+
+            wb.save(wbNameString)  #saves masterFile with edits
+            return
 
 
 
@@ -517,15 +540,13 @@ def fileExplorer():
             errorCode = 0 #resets errorCode
             if modeCode == 1:
                 cashierStartPopup()
-            if modeCode == 0:
-                count = 0
-                for i in range(len(masterList)):
-                    if isinstance(masterList[i][4], int):
-                        customerList.append(masterList[i][:])
-                        customerList[count].append(i+1)
-                        count += 1
+
+            if modeCode == 0:   #sets customer list dependent on master list data with row number on last index element of customer list
+                for i in range(len(masterList)):    #sets customerList to equal values of masterList
+                    customerList.append(masterList[i][:])
+                    customerList[i].append(i+1)
+
                 refreshMainFrame()
-                #print(customerList)
         else:
             errorCode = 1
     
@@ -615,39 +636,57 @@ def popupmsg(msg):
 
 def updateCustomerList(barCode, quantity):
     global customerList   #global variable to allow user to update updateCustomerList
-    if not barCode.get():   #checks if barCode is empty
-        return  
-    else:   #finds barCode inside masterList
-        #print(masterList)
-        for i in range(len(masterList)):    #searches through master list to see if barCode is inside masterList
-           
-            if int(barCode.get()) == masterList[i][4]:   #if bar code is inside the masterList
 
-                if len(customerList) == 0:   #if customerList is empty
-                    customerList.append(masterList[i][:])  #adds a masterList object inside customerList
-                    customerList[0].append(quantity.get())   #gives a quantifiable value to number of products the customer wants to purchase
-                    
-                    if customerList[0][6] <= 0: #deletes element if item quantity value is 0 or less than 0
-                        del customerList[0]
-                    refreshMainFrame()  #sends back to MainPage Frame
+    if modeCode == 1:   #Transaction Mode
+        if not barCode.get():   #checks if barCode is empty
+            return  
+        else:   #finds barCode inside masterList
+            #print(masterList)
+            for i in range(len(masterList)):    #searches through master list to see if barCode is inside masterList
+               
+                if int(barCode.get()) == masterList[i][4]:   #if bar code is inside the masterList
 
-                else:   #if customerList is not empty
-                    for j in range(len(customerList)):    #searches through customerList to see if item is already inside; checks for repeats
+                    if len(customerList) == 0:   #if customerList is empty
+                        customerList.append(masterList[i][:])  #adds a masterList object inside customerList
+                        customerList[0].append(quantity.get())   #gives a quantifiable value to number of products the customer wants to purchase
                         
-                        if int(barCode.get()) == customerList[j][4]:   #if is a repeated barCode
-                            customerList[j][6] += quantity.get()
-                            
-                            if customerList[j][6] <= 0: #deletes element if item quantity value is 0 or less than 0
-                                del customerList[j]
-                            refreshMainFrame()  #sends back to MainPage Frame
-                            return
+                        if customerList[0][6] <= 0: #deletes element if item quantity value is 0 or less than 0
+                            del customerList[0]
+                        refreshMainFrame()  #sends back to MainPage Frame
 
-                    customerList.append(masterList[i][:])  #adds a masterList object inside customerList
-                    customerList[len(customerList)-1].append(quantity.get())   #gives a quantifiable value to number of products the customer wants to purchase
+                    else:   #if customerList is not empty
+                        for j in range(len(customerList)):    #searches through customerList to see if item is already inside; checks for repeats
+                            
+                            if int(barCode.get()) == customerList[j][4]:   #if is a repeated barCode
+                                customerList[j][6] += quantity.get()
+                                
+                                if customerList[j][6] <= 0: #deletes element if item quantity value is 0 or less than 0
+                                    del customerList[j]
+                                refreshMainFrame()  #sends back to MainPage Frame
+                                return
+
+                        customerList.append(masterList[i][:])  #adds a masterList object inside customerList
+                        customerList[len(customerList)-1].append(quantity.get())   #gives a quantifiable value to number of products the customer wants to purchase
+                        
+                        if customerList[len(customerList)-1][6] <= 0: #deletes element if item quantity value is 0 or less than 0
+                            del customerList[len(customerList)-1]
+                        refreshMainFrame()  #sends back to MainPage Frame
+    else:   #Inventory Mode
+        if not barCode.get():   #checks if barCode is empty
+            return  
+        
+        else:   #finds barCode inside customerList
+
+            for i in range(len(customerList)):    #searches through master list to see if barCode is inside customerList
+
+                if int(barCode.get()) == customerList[i][4]:   #if bar code is inside the customerList    
+                    customerList[i][5] += quantity.get()
+
+                    if customerList[i][5] <= 0: #sets quantity field back to 0 if the value is a negative number, doesn't delete the field entirely
+                        customerList[i][5] = 0
                     
-                    if customerList[len(customerList)-1][6] <= 0: #deletes element if item quantity value is 0 or less than 0
-                        del customerList[len(customerList)-1]
                     refreshMainFrame()  #sends back to MainPage Frame
+                    return
 
     refreshMainFrame()
     return            
