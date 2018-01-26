@@ -19,7 +19,7 @@ SMALL_FONT = ("Verdana", 8)
 
 #GLOBAL VARIABLES
 masterList = [] #list of objects from Master File
-customerList = []#[36218745, 'KER ELIX ULTI CH FINS 100ML US V315', 350, 0, 3474636218745, 1], [36382682, 'NUT BAIN SATIN 2 250ML', 400, 0, 3474636382682, 1], [36397983, 'RES THERAPISTE MASQ 200ML', 550, 0, 3474636397983, 1], [36398850, 'REF CHROMACAPTIVE MASQ 200ML', 550, 0, 3474636398850, 2], [36382668, 'NUT OLEO RELAX MASQ 200ML', 550, 0, 3474636382668, 1], [36397952, 'RES FORCE ARCH MASQ 200ML', 550, 0, 3474636397952, 2], [30458222, 'REF FONDANT CHROMACAPTIVE 1000ML', 800, 0, 3474630458222, 2], [30458062, 'REF CHROMACAPTIVE MASQ 500ML', 950, 0, 3474630458062, 1], [36356003, 'DENSIFIQUE FEMME 30X6ML', 1500, 0, 3474636356003, 3], [30525658, 'SE PRO KERATIN REFILL SHMP 250ML        ', 55, 0, 3474630525658, 2], [26404810, 'HAIR SPA OIL 100ML                      ', 70, 0, 8901526404810, 1], [30641044, 'SE ABS REPAIR LIPIDIUM THER CRM 125ML   ', 85, 0, 3474630641044, 1], [30525870, 'SE PRO KERATIN REFILL COND 150ML        ', 85, 0, 3474630525870, 1], [30640702, 'SE ABS REPAIR LIPIDIUM MASQ 200ML       ', 90, 0, 3474630640702, 2], [30640504, 'SE ABS REPAIR LIPIDIUM SHMP 250ML       ', 90, 0, 3474630640504, 1], [30714946, 'SE VITAMINO COLOR AOX SULFAT FREE 150ML ', 110, 0, 3474630714946, 4], [36202430, 'SE VITAMINO COLOR AOX FRESH MASQ 150ML  ', 115, 0, 3474636202430, 2], [30632196, 'TNA PLAYBALL DEVIATION PASTE 100ML      ', 125, 0, 3474630632196, 1], [36501960, 'MYTHIC OIL HUILE ORIGINAL 100ML         ', 150, 0, 3474636501960, 1], [30643659, 'SERIOXYL THICKER HAIR 90ML              ', 170, 0, 3474630643659, 1], [30633629, 'MYTHIC OIL SERUM DE FORCE 50ML          ', 180, 0, 3474630633629, 2], [36494859, 'REF CHROMACAPTIVE MASQ CX FINS 200ML', 550, 0, 3474636494859, 1], [18251615, 'HAIR SPA NOURISHING MASQ 1000ML         ', 350, 0, 6955818251615, 2], [86130594, 'FIBERSTRONG BRILT MASQ 150ML            ', 90, 0, 884486130594, 1]]
+customerList = []
 container = 0
 excelString = " "
 filename = " "
@@ -492,13 +492,47 @@ def processPagePopup():
         #Need to include check box
 
         label = ttk.Label(processPopup, text="PAYMENT HERE!", font=SMALL_FONT)
-        label.pack(pady=10, padx=10)
+        label.grid(row = 0, column = 0, pady=10, padx=10)
 
         #to get exact time, used for invoicing
         time = datetime.datetime.now() #time.time()
-        print(time.time())
+        #print(time.time())
+
         #once button is clicked, it prompts user to find file then it outputs the contents of the file
-    
+        #Made all of the checkButtons rely on the checkBox object so it is easier to manage within loops.
+        checkBox = ["","","","",""]
+        checkBox[0] = StringVar()
+        cButton1 = Checkbutton(processPopup, text = "Cash", variable = checkBox[0], onvalue = "CASH", offvalue = "")
+        cButton1.grid(row = 1, column = 0, sticky = "W")
+
+        checkBox[1] = StringVar()
+        cButton2 = Checkbutton(processPopup, text = "Credit", variable = checkBox[1], onvalue = "CREDIT", offvalue = "")
+        cButton2.grid(row = 2, column = 0, sticky = "W")
+
+        checkBox[2] = StringVar()
+        cButton3 = Checkbutton(processPopup, text = "Debit", variable = checkBox[2], onvalue = "DEBIT", offvalue = "")
+        cButton3.grid(row = 3, column = 0, sticky = "W")
+
+        checkBox[3] = StringVar()
+        cButton4 = Checkbutton(processPopup, text = "Check", variable = checkBox[3], onvalue = "CHECK", offvalue = "")
+        cButton4.grid(row = 4, column = 0, sticky = "W")
+
+        checkBox[4] = StringVar()
+        cButton5 = Checkbutton(processPopup, text = "Salary Deduction", variable = checkBox[4], onvalue = "SALARY DEDUCTION", offvalue = "")
+        cButton5.grid(row = 5, column = 0)
+
+        button = ttk.Button(processPopup, text = "OK", command = lambda: printString() or processPopup.destroy())
+        button.grid(row = 6, column = 0, pady = 10, padx = 10)
+
+        def printString():
+            paymentString = ""
+            for i in range(len(checkBox)):  #sets payment string to the types of payments going to be used
+                if checkBox[i].get() != "":
+                    paymentString += checkBox[i].get()
+                    paymentString += " "
+            finalPayment(checkBox)
+            return
+
     else:   #Transaction mode
         #UPDATE EXCEL FILE then ASK USER ONE MORE TIME BEFORE EXIT
         label = ttk.Label(processPopup, text="Are you sure you are finished taking inventory?", font=SMALL_FONT)
@@ -526,6 +560,125 @@ def processPagePopup():
 
 
 
+#Payment page after Payment type popup
+def finalPayment(checkBox):
+    paymentPopup = tk.Toplevel()
+    paymentPopup.wm_title("FONZY")
+    costTotal = 0
+    for i in range(len(customerList)):  #finds total price of transaction
+        costTotal += (customerList[i][6]*customerList[i][2])-((customerList[i][3]/100)*(customerList[i][6]*customerList[i][2]))
+
+
+    #variable declarations
+    cashAmount = IntVar()
+    cashAmount.set(0)
+    creditAmount = IntVar()
+    creditAmount.set(0)
+    debitAmount = IntVar()
+    debitAmount.set(0)
+    checkAmount = IntVar()
+    checkAmount.set(0)
+    sDeductionAmount = IntVar()
+    sDeductionAmount.set(0)
+    def finalPaymentBuild(checkBox, stateBuild):
+
+        label = ttk.Label(paymentPopup, text="Total Amount", font=SMALL_FONT)
+        label.grid(row = 0, column = 0, pady=10, padx=10, sticky = "W")
+
+        label2 = ttk.Label(paymentPopup, text="{:,}".format(costTotal), font=SMALL_FONT)
+        label2.grid(row = 0, column = 1, pady=10, padx=10, sticky = "W", columnspan = 2)
+
+        #CASH
+        label3 = ttk.Label(paymentPopup, text="Cash", font=SMALL_FONT)
+        label3.grid(row = 1, column = 0, pady=10, padx=10, sticky = "W")    
+
+        EntryBox1 = ttk.Entry(paymentPopup, textvariable = cashAmount, width = 15)
+        if checkBox[0].get() == "":    #disables entry box if checkbox isn't == 1
+            EntryBox1.config(state="disabled")
+        EntryBox1.grid(row = 1, column = 1, padx = 5, pady = 5, sticky = "W", columnspan = 2)
+
+
+        #CREDIT
+        label4 = ttk.Label(paymentPopup, text="Credit", font=SMALL_FONT)
+        label4.grid(row = 2, column = 0, pady=10, padx=10, sticky = "W")    
+
+        EntryBox2 = ttk.Entry(paymentPopup, textvariable = creditAmount, width = 15)
+        if checkBox[1].get() == "":    #disables entry box if checkbox isn't == 1
+            EntryBox2.config(state="disabled")    
+        EntryBox2.grid(row = 2, column = 1, padx = 5, pady = 5, sticky = "W", columnspan = 2)
+
+
+        #DEBIT
+        label5 = ttk.Label(paymentPopup, text="Debit", font=SMALL_FONT)
+        label5.grid(row = 3, column = 0, pady=10, padx=10, sticky = "W")    
+
+        EntryBox3 = ttk.Entry(paymentPopup, textvariable = debitAmount, width = 15)
+        if checkBox[2].get() == "":    #disables entry box if checkbox isn't == 1
+            EntryBox3.config(state="disabled")
+        EntryBox3.grid(row = 3, column = 1, padx = 5, pady = 5, sticky = "W", columnspan = 2)
+
+
+        #CHECK
+        label6 = ttk.Label(paymentPopup, text="Check", font=SMALL_FONT)
+        label6.grid(row = 4, column = 0, pady=10, padx=10, sticky = "W")    
+
+        EntryBox4 = ttk.Entry(paymentPopup, textvariable = checkAmount, width = 15)
+        if checkBox[3].get() == "":    #disables entry box if checkbox isn't == 1
+            EntryBox4.config(state="disabled")
+        EntryBox4.grid(row = 4, column = 1, padx = 5, pady = 5, sticky = "W", columnspan = 2)
+
+
+        #SALARY DEDUCTION
+        label7 = ttk.Label(paymentPopup, text="Salary Deduction", font=SMALL_FONT)
+        label7.grid(row = 5, column = 0, pady=10, padx=10, sticky = "W")    
+
+        EntryBox5 = ttk.Entry(paymentPopup, textvariable = sDeductionAmount, width = 15)
+        if checkBox[4].get() == "":    #disables entry box if checkbox isn't == 1
+            EntryBox5.config(state="disabled")
+        EntryBox5.grid(row = 5, column = 1, padx = 5, pady = 5, sticky = "W", columnspan = 2)
+
+
+        #TOTAL CUSTOMER PAYMENT (only updated after Calculate button is pressed)
+        label8 = ttk.Label(paymentPopup, text="Total Customer Payment", font=SMALL_FONT)
+        label8.grid(row = 6, column = 0, pady=10, padx=10, sticky = "W")
+
+        totalCP = IntVar()
+        totalCP = 0
+        if stateBuild == 1:
+            totalCP = cashAmount.get() + debitAmount.get() + creditAmount.get() + checkAmount.get() + sDeductionAmount.get()    #gets sum of list
+
+        label9 = ttk.Label(paymentPopup, text="{:,}".format(totalCP), font=SMALL_FONT)
+        label9.grid(row = 6, column = 1, pady=10, padx=10, sticky = "W", columnspan = 2)        
+
+
+        #CHANGE
+        label8 = ttk.Label(paymentPopup, text="Change", font=SMALL_FONT)
+        label8.grid(row = 7, column = 0, pady=10, padx=10, sticky = "W")
+
+        totalChange = IntVar()
+        totalChange = 0
+        if stateBuild == 1: #calculates totalChange
+            totalChange = totalCP - costTotal    #gets total change (customer payment - total cost)
+
+        label9 = ttk.Label(paymentPopup, text="{:,}".format(totalChange), font=SMALL_FONT)
+        label9.grid(row = 7, column = 1, pady=10, padx=10, sticky = "W", columnspan = 2)
+
+        state = 0   #sets state back to 0 to refresh data input
+
+        #BUTTONS Calculate, OK, and Cancel
+        button1 = ttk.Button(paymentPopup, text = "Calculate", command = lambda: finalPaymentBuild(checkBox, 1))
+        button1.grid(row = 8, column = 0, pady = 10, padx = 10)    
+
+        button2 = ttk.Button(paymentPopup, text = "Proceed", command = lambda: print("HELLO") or paymentPopup.destroy())
+        button2.grid(row = 8, column = 1, pady = 10, padx = 10)
+
+        button3 = ttk.Button(paymentPopup, text = "Cancel", command = lambda: paymentPopup.destroy())
+        button3.grid(row = 8, column = 2, pady = 10, padx = 10)
+
+    finalPaymentBuild(checkBox, 0)  #starts payment calculator
+
+
+#opens file explorer for the cashier to choose which masterfile to use
 def fileExplorer():
     #intializes another instance of tkinter
     global masterList   #allows user to add item to masterList global variable
@@ -641,7 +794,6 @@ def updateCustomerList(barCode, quantity):
         if not barCode.get():   #checks if barCode is empty
             return  
         else:   #finds barCode inside masterList
-            #print(masterList)
             for i in range(len(masterList)):    #searches through master list to see if barCode is inside masterList
                
                 if int(barCode.get()) == masterList[i][4]:   #if bar code is inside the masterList
