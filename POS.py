@@ -23,12 +23,15 @@ customerList = []
 container = 0
 excelString = " "
 filename = " "
-modeCode = 0
-"""
-modeCode Legend:
-0 = Inventory Mode
-1 = Transaction Mode
-"""
+
+mainPageState = 0 
+#state 0 = editable entry boxes for customer name, phone and address 
+#state 1 = non-editable entry boxes.
+
+#sets customer info
+customerName = " "
+phone = 0
+address = " "
 
 errorCode = 0
 """
@@ -37,6 +40,12 @@ Error Code Legend:
 1 = Master File Error
 """
 
+modeCode = 0
+"""
+modeCode Legend:
+0 = Inventory Mode
+1 = Transaction Mode
+"""
 
 
 class POS(tk.Tk):
@@ -92,6 +101,12 @@ class POS(tk.Tk):
 class MainPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self,parent)
+        global customerName
+        global phone
+        global address
+        global customerName
+        global phone
+        global address
 
         if modeCode == 1: #Transaction mode
     # FRAME1 ------------------ CUSTOMER NAME, TELEPHONE NUMBER ----------------------#
@@ -100,21 +115,37 @@ class MainPage(tk.Frame):
             frame1 = Frame(self, bg = "green")
             frame1.pack(fill = BOTH)
             
+            if mainPageState == 0:        
     #CUSTOMER NAME
-            frame1Label = tk.Label(frame1, text = "Customer Name", font = SMALL_FONT)
-            frame1Label.grid(row = 0, column = 0, padx = 5, pady = 5, sticky = W)
+                frame1Label = tk.Label(frame1, text = "Customer Name", font = SMALL_FONT)
+                frame1Label.grid(row = 0, column = 0, padx = 5, pady = 5, sticky = W)
 
-            customerName = StringVar()    #creates the object customerName with a string variable type
-            frame1EntryBox1 = ttk.Entry(frame1, textvariable = customerName, width = 40)   #creates an entry box and allows the entry of a string variable
-            frame1EntryBox1.grid(row = 0, column = 1, padx = 5, pady = 5, sticky = W)
+                customerName = StringVar()
+                frame1EntryBox1 = ttk.Entry(frame1, textvariable = customerName, width = 40)   #creates an entry box and allows the entry of a string variable
+                frame1EntryBox1.grid(row = 0, column = 1, padx = 5, pady = 5, sticky = W)
 
     #PHONE
-            frame1Label2 = tk.Label(frame1, text="Phone", font=SMALL_FONT)
-            frame1Label2.grid(row = 0, column = 2, padx = 5, pady = 5, sticky = W)
-            
-            phone = StringVar()    #creates the object phone with a string variable type
-            frame1EntryBox2 = ttk.Entry(frame1, textvariable = phone, width = 40)   #creates an entry box and allows the entry of a string variable
-            frame1EntryBox2.grid(row = 0, column = 3, padx = 5, pady = 5, sticky = W)
+                frame1Label2 = tk.Label(frame1, text="Phone", font=SMALL_FONT)
+                frame1Label2.grid(row = 0, column = 2, padx = 5, pady = 5, sticky = W)
+                
+                phone = IntVar()
+                frame1EntryBox2 = ttk.Entry(frame1, textvariable = phone, width = 40)   #creates an entry box and allows the entry of a string variable
+                frame1EntryBox2.grid(row = 0, column = 3, padx = 5, pady = 5, sticky = W)
+            else:   #main page state = 1, non-editable
+
+                frame1Label = tk.Label(frame1, text = "Customer Name", font = SMALL_FONT)
+                frame1Label.grid(row = 0, column = 0, padx = 5, pady = 5, sticky = W)
+
+                frame1EntryBox1 = ttk.Label(frame1, text = customerName.get(), width = 40)   #creates an entry box and allows the entry of a string variable
+                frame1EntryBox1.grid(row = 0, column = 1, padx = 5, pady = 5, sticky = W)
+
+    #PHONE
+                frame1Label2 = tk.Label(frame1, text="Phone", font=SMALL_FONT)
+                frame1Label2.grid(row = 0, column = 2, padx = 5, pady = 5, sticky = W)
+                
+                frame1EntryBox2 = ttk.Label(frame1, text = phone.get(), width = 40)   #creates an entry box and allows the entry of a string variable
+                frame1EntryBox2.grid(row = 0, column = 3, padx = 5, pady = 5, sticky = W)
+
     #-----------------------------------------------------------------------------#
 
 
@@ -125,12 +156,20 @@ class MainPage(tk.Frame):
             frame2.pack(fill = BOTH)
 
     #ADDRESS
-            frame2.label = tk.Label(frame2, text="Address", font=SMALL_FONT)
-            frame2.label.grid(row = 1, column = 0, padx=5, pady=5, sticky = W)
+            if mainPageState == 0:
+                frame2.label = tk.Label(frame2, text="Address", font=SMALL_FONT)
+                frame2.label.grid(row = 1, column = 0, padx=5, pady=5, sticky = W)
+                
+                address = StringVar()
+                frame2EntryBox = ttk.Entry(frame2, textvariable = address, width = 99)   #creates an entry box and allows the entry of a string variable
+                frame2EntryBox.grid(row = 1, column = 1, padx = 5, pady = 5, sticky = W)
+            
+            else:   #main page state = 1, non-editable
+                frame2.label = tk.Label(frame2, text="Address", font=SMALL_FONT)
+                frame2.label.grid(row = 1, column = 0, padx=5, pady=5, sticky = W)
 
-            address = StringVar()    #creates the object address with a string variable type
-            frame2EntryBox = ttk.Entry(frame2, textvariable = address, width = 99)   #creates an entry box and allows the entry of a string variable
-            frame2EntryBox.grid(row = 1, column = 1, padx = 5, pady = 5, sticky = W)
+                frame2EntryBox = ttk.Label(frame2, text = address.get(), width = 99)   #creates an entry box and allows the entry of a string variable
+                frame2EntryBox.grid(row = 1, column = 1, padx = 5, pady = 5, sticky = W)
     #-----------------------------------------------------------------------------------#
 
 
@@ -257,7 +296,7 @@ class MainPage(tk.Frame):
             quantity.set(1)
             frame5EntryBox2 = ttk.Entry(frame5, textvariable = quantity, width = 8)   #creates an entry box and allows the entry of a string variable
             frame5EntryBox2.grid(row = 0, column = 4, padx = 5, pady = 5)
-
+            
             frame5Button = ttk.Button(frame5, text = "Add Item", command = lambda: updateCustomerList(barCode, quantity))
             frame5Button.grid(row = 0, column = 5, padx = 90, pady = 10)
     #---------------------------------------------------------------------------------------------#
@@ -580,6 +619,7 @@ def finalPayment(checkBox):
     checkAmount.set(0)
     sDeductionAmount = IntVar()
     sDeductionAmount.set(0)
+
     def finalPaymentBuild(checkBox, stateBuild):
 
         label = ttk.Label(paymentPopup, text="Total Amount", font=SMALL_FONT)
@@ -659,23 +699,72 @@ def finalPayment(checkBox):
         totalChange = 0
         if stateBuild == 1: #calculates totalChange
             totalChange = totalCP - costTotal    #gets total change (customer payment - total cost)
+            print("Calculate " + str(totalChange))
 
         label9 = ttk.Label(paymentPopup, text="{:,}".format(totalChange), font=SMALL_FONT)
         label9.grid(row = 7, column = 1, pady=10, padx=10, sticky = "W", columnspan = 2)
 
-        state = 0   #sets state back to 0 to refresh data input
-
+        #sets variable states back to 0 to refresh data input
+        state = 0
+        print(totalChange)
         #BUTTONS Calculate, OK, and Cancel
         button1 = ttk.Button(paymentPopup, text = "Calculate", command = lambda: finalPaymentBuild(checkBox, 1))
         button1.grid(row = 8, column = 0, pady = 10, padx = 10)    
 
-        button2 = ttk.Button(paymentPopup, text = "Proceed", command = lambda: print("HELLO") or paymentPopup.destroy())
+        button2 = ttk.Button(paymentPopup, text = "Proceed", command = lambda: paymentContinue() or paymentPopup.destroy())
         button2.grid(row = 8, column = 1, pady = 10, padx = 10)
 
         button3 = ttk.Button(paymentPopup, text = "Cancel", command = lambda: paymentPopup.destroy())
         button3.grid(row = 8, column = 2, pady = 10, padx = 10)
 
     finalPaymentBuild(checkBox, 0)  #starts payment calculator
+
+
+
+
+#Continue question after Payment popup
+def paymentContinue():
+    pContinuePopup = tk.Toplevel()
+    pContinuePopup.wm_title("FONZY")
+
+    label = ttk.Label(pContinuePopup, text="Are you sure about the purchase details?", font=SMALL_FONT)
+    label.grid(row = 0, column = 0, pady=10, padx=10, columnspan = 2)
+
+    button1 = ttk.Button(pContinuePopup, text = "Yes", command = lambda: excelCheckoutUpdate() or pContinuePopup.destroy())
+    button1.grid(row = 1, column = 0, pady = 10, padx = 10)    
+
+    button2 = ttk.Button(pContinuePopup, text = "No", command = lambda: pContinuePopup.destroy())
+    button2.grid(row = 1, column = 1, pady = 10, padx = 10)    
+
+    def excelCheckoutUpdate():
+        global filename
+        #finds work book, opens workbook, edits workbook.
+        excelFilePathArray = filename.split("/")
+        excelFilePathArray = excelFilePathArray[:-1]
+        excelFilePath = '/'.join(excelFilePathArray)
+        excelFile = excelFilePath + "/" + excelString
+        print(excelFile)
+        print(" ")
+        print(customerName.get())
+        print(address.get())
+        print(phone.get())
+        """
+        STEPS:
+        -Find last row of workbook (i.e. max_row)
+        -if max_row == 0, then create headers: Customer Name | Barcode Number | Product Description | Price | Quantity | Total Amount | Customer Type | Payment Form | Date | Time
+        -For loop to input values
+        """
+        #workbook = xw.Workbook(excelFilePath + "/" + excelString)
+        #worksheet = workbook.add_worksheet()
+        #workbook.close()
+
+        #after excel update is finished, create and update word document, ready for printing
+        #wordCheckoutUpdate()
+
+    #def wordCheckoutUpdate():
+        #Do word document stuffs
+        #Print word document stuffs
+
 
 
 #opens file explorer for the cashier to choose which masterfile to use
@@ -848,6 +937,8 @@ def updateCustomerList(barCode, quantity):
 
 def refreshMainFrame():
     global app
+    global mainPageState
+    mainPageState = 1   #makes sure that user input on customer name, phone and address is saved
     app.frames[MainPage].destroy()
     app.frames[MainPage] = MainPage(container, app)
     app.frames[MainPage].grid(row=0, column = 0, sticky = "nsew")
