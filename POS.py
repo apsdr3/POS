@@ -23,6 +23,7 @@ customerList = []
 container = 0
 excelString = " "
 filename = " "
+paymentString = ""
 
 #sets customer info
 customerName = " "
@@ -545,7 +546,7 @@ def processPagePopup():
         button.grid(row = 6, column = 0, pady = 10, padx = 10)
 
         def printString():
-            paymentString = ""
+            global paymentString
             for i in range(len(checkBox)):  #sets payment string to the types of payments going to be used
                 if checkBox[i].get() != "":
                     paymentString += checkBox[i].get()
@@ -680,14 +681,13 @@ def finalPayment(checkBox):
         totalChange = 0
         if stateBuild == 1: #calculates totalChange
             totalChange = totalCP - costTotal    #gets total change (customer payment - total cost)
-            print("Calculate " + str(totalChange))
 
         label9 = ttk.Label(paymentPopup, text="{:,}".format(totalChange), font=SMALL_FONT)
         label9.grid(row = 7, column = 1, pady=10, padx=10, sticky = "W", columnspan = 2)
 
         #sets variable states back to 0 to refresh data input
         state = 0
-        print(totalChange)
+
         #BUTTONS Calculate, OK, and Cancel
         button1 = ttk.Button(paymentPopup, text = "Calculate", command = lambda: finalPaymentBuild(checkBox, 1))
         button1.grid(row = 8, column = 0, pady = 10, padx = 10)    
@@ -718,21 +718,77 @@ def paymentContinue():
     button2.grid(row = 1, column = 1, pady = 10, padx = 10)    
 
     def excelCheckoutUpdate():
-        global filename
-        #finds work book, opens workbook, edits workbook.
-        excelFilePathArray = filename.split("/")
-        excelFilePathArray = excelFilePathArray[:-1]
-        excelFilePath = '/'.join(excelFilePathArray)
-        excelFile = excelFilePath + "/" + excelString
-        print(excelFile)
-        print(" ")
-        print(customerName.get())
-        print(address.get())
-        print(phone.get())
+        #Gets last row of workbook to figure out if program needs to create headers (max row <= 1) or just add to current workbook
+        #opens and edits workbook
+        wb = load_workbook(excelString, read_only = True)
+        ws = wb.active
+        
+        row_count = ws.max_row
+        col_count = ws.max_column
+
+        print(row_count)
+        print(col_count)
+
+        if row_count == 1:  #headers: Customer Name | Barcode Number | Product Description | Price | Quantity | Total Amount | Customer Type | Payment Form | Date | Time
+            ws.cell(row = row_count, column = col_count).value = "Customer Name"
+            col_count += 1
+            ws.cell(row = row_count, column = col_count).value = "Barcode Number"
+            col_count += 1
+            ws.cell(row = row_count, column = col_count).value = "Product Description"
+            col_count += 1
+            ws.cell(row = row_count, column = col_count).value = "Price"
+            col_count += 1
+            ws.cell(row = row_count, column = col_count).value = "Quantity"
+            col_count += 1
+            ws.cell(row = row_count, column = col_count).value = "Total Amount"
+            col_count += 1
+            ws.cell(row = row_count, column = col_count).value = "Customer Type"
+            col_count += 1
+            ws.cell(row = row_count, column = col_count).value = "Payment Form"
+            col_count += 1
+            ws.cell(row = row_count, column = col_count).value = "Date"
+            col_count += 1
+            ws.cell(row = row_count, column = col_count).value = "Time"
+            
+            row_count += 1  #updates row_count
+            col_count = 1  #resets column back to zero
+
+        now = datetime.datetime.now()   #gets date-time
+        nowDate = now.strftime("%Y-%m-%d")
+        nowTime = now.strftime("%H:%M")
+
+        #inputs customer purchase data
+        for r in range(0,len(customerList)):
+            ws.cell(row = row_count, column = col_count).value = customerName.get() #customer name
+            col_count += 1
+            ws.cell(row = row_count, column = col_count).value = customerList[r][0] #barcode number
+            col_count += 1
+            ws.cell(row = row_count, column = col_count).value = customerList[r][1] #product description
+            col_count += 1
+            ws.cell(row = row_count, column = col_count).value = customerList[r][2] #product price
+            col_count += 1
+            ws.cell(row = row_count, column = col_count).value = customerList[r][6] #product quantity
+            col_count += 1
+            totAmount = customerList[r][2] * customerList[r][6]
+            ws.cell(row = row_count, column = col_count).value = totAmount  #product total cost
+            col_count += 1
+            ws.cell(row = row_count, column = col_count).value = "Customer Type"    #customer type to be added later
+            col_count += 1
+            ws.cell(row = row_count, column = col_count).value = paymentString
+            col_count += 1
+            ws.cell(row = row_count, column = col_count).value = nowDate
+            col_count += 1
+            ws.cell(row = row_count, column = col_count).value = nowTime
+            
+            row_count += 1  #updates row_count
+            col_count = 1  #resets column back to zero
+
+        wb.save(excelString)
+        
         """
         STEPS:
         -Find last row of workbook (i.e. max_row)
-        -if max_row == 0, then create headers: Customer Name | Barcode Number | Product Description | Price | Quantity | Total Amount | Customer Type | Payment Form | Date | Time
+        -if max_row == 0, then create
         -For loop to input values
         """
         #workbook = xw.Workbook(excelFilePath + "/" + excelString)
