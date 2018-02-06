@@ -811,7 +811,7 @@ def fileExplorer():
     global customerList
     global filename
     try:    
-        filename = filedialog.askopenfilename(initialdir = "/",title = "Select file",filetypes = (("XLS files","*.xls"),("XLSX files","*.xlsx")))
+        filename = filedialog.askopenfilename(initialdir = "/",title = "Select file",filetypes = (("XLSX files","*.xlsx"),("All Files","*.*")))
             
         if re.match("[A-Za-z0-9]",filename):
             sheet = pe.get_array(file_name=filename) #puts data into array
