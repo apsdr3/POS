@@ -12,6 +12,7 @@ from tkinter import ttk
 from openpyxl import load_workbook,Workbook
 from tkinter import filedialog
 from tkinter import *
+from pathlib import Path
 
 LARGE_FONT = ("Verdana", 12)
 NORMAL_FONT = ("Verdana", 10)
@@ -720,16 +721,20 @@ def paymentContinue():
     def excelCheckoutUpdate():
         #Gets last row of workbook to figure out if program needs to create headers (max row <= 1) or just add to current workbook
         #opens and edits workbook
-        wb = load_workbook(excelString, read_only = True)
+        excelFilePathArray = filename.split("/")
+        excelFilePathArray = excelFilePathArray[:-1]
+        excelFilePath = '/'.join(excelFilePathArray)
+        excelFile = excelFilePath + "/" + excelString
+
+        wb = load_workbook(excelFile)
         ws = wb.active
         
-        row_count = ws.max_row
-        col_count = ws.max_column
+        row_count = ws.max_row + 1
+        col_count = 1
 
         print(row_count)
-        print(col_count)
 
-        if row_count == 1:  #headers: Customer Name | Barcode Number | Product Description | Price | Quantity | Total Amount | Customer Type | Payment Form | Date | Time
+        if row_count <= 2:  #headers: Customer Name | Barcode Number | Product Description | Price | Quantity | Total Amount | Customer Type | Payment Form | Date | Time
             ws.cell(row = row_count, column = col_count).value = "Customer Name"
             col_count += 1
             ws.cell(row = row_count, column = col_count).value = "Barcode Number"
@@ -754,8 +759,9 @@ def paymentContinue():
             col_count = 1  #resets column back to zero
 
         now = datetime.datetime.now()   #gets date-time
-        nowDate = now.strftime("%Y-%m-%d")
+        nowDate = now.strftime("%d-%m-%Y")
         nowTime = now.strftime("%H:%M")
+        #row_count += 1
 
         #inputs customer purchase data
         for r in range(0,len(customerList)):
@@ -783,7 +789,7 @@ def paymentContinue():
             row_count += 1  #updates row_count
             col_count = 1  #resets column back to zero
 
-        wb.save(excelString)
+        wb.save(excelFile)
         
         """
         STEPS:
@@ -889,14 +895,20 @@ def cashierStartPopup():
         global excelString
         #gets excel string to create excel file for the day
         excelString = cashierString.get() + "-" + eventString.get() + "-" + str(datetime.datetime.today().strftime('%d,%m,%Y') + ".xlsx")
+        
         #creates work book inside the filepath given, need to fix filename to imitate the same filepath of the materfilePopup using .split()
         excelFilePathArray = filename.split("/")
         excelFilePathArray = excelFilePathArray[:-1]
         excelFilePath = '/'.join(excelFilePathArray)
-        workbook = xw.Workbook(excelFilePath + "/" + excelString)
-        worksheet = workbook.add_worksheet()
+        #checks if the file already exists, if it doesn't then it creates the file, if it does then it continues on in the program.
+        filePath = Path(excelFilePath + "/" + excelString)
+        print(not filePath.is_file())
+        if not filePath.is_file():
+            workbook = xw.Workbook(excelFilePath + "/" + excelString)
+            worksheet = workbook.add_worksheet()
 
-        workbook.close()
+            workbook.close()
+
 
 
 #Creates popup message bars
