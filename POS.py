@@ -30,6 +30,7 @@ paymentString = ""
 customerName = " "
 phone = 0
 address = " "
+customerType = "New"
 
 errorCode = 0
 """
@@ -513,8 +514,8 @@ def processPagePopup():
     if modeCode == 1:   #Inventory Mode
         #Need to include check box
 
-        label = ttk.Label(processPopup, text="PAYMENT HERE!", font=SMALL_FONT)
-        label.grid(row = 0, column = 0, pady=10, padx=10)
+        label = ttk.Label(processPopup, text="Payment Type", font=SMALL_FONT)
+        label.grid(row = 0, column = 0, sticky = "s", pady = 10, padx = 10)
 
         #to get exact time, used for invoicing
         time = datetime.datetime.now() #time.time()
@@ -541,17 +542,33 @@ def processPagePopup():
 
         checkBox[4] = StringVar()
         cButton5 = Checkbutton(processPopup, text = "Salary Deduction", variable = checkBox[4], onvalue = "SALARY DEDUCTION", offvalue = "")
-        cButton5.grid(row = 5, column = 0)
+        cButton5.grid(row = 5, column = 0, rowspan = 2)
+
+
+        label2 = ttk.Label(processPopup, text="Customer Type", font=SMALL_FONT)
+        label2.grid(row = 7, column = 0, sticky = "s", pady = 10, padx = 10)
+
+        #Determines customer type, default is new
+        listBox = Listbox(processPopup, selectmode = SINGLE, width = 0, height = 5)
+        listBox.insert(1, "New")
+        listBox.insert(2, "Old")
+        listBox.insert(3, "Employee")
+        listBox.insert(4, "Guest")
+        listBox.insert(5, "Non-stat/Intern")
+        listBox.grid(row = 8, column = 0, sticky = "nsew", padx = 10)
 
         button = ttk.Button(processPopup, text = "OK", command = lambda: printString() or processPopup.destroy())
-        button.grid(row = 6, column = 0, pady = 10, padx = 10)
+        button.grid(row = 10, column = 0, pady = 20, padx = 10)
 
         def printString():
             global paymentString
+            global customerType
+            customerType = listBox.get(ACTIVE)
             for i in range(len(checkBox)):  #sets payment string to the types of payments going to be used
                 if checkBox[i].get() != "":
                     paymentString += checkBox[i].get()
-                    paymentString += " "
+                    paymentString += "  "
+            
             finalPayment(checkBox)
             return
 
@@ -732,30 +749,27 @@ def paymentContinue():
         row_count = ws.max_row + 1
         col_count = 1
 
-        print(row_count)
-
         if row_count <= 2:  #headers: Customer Name | Barcode Number | Product Description | Price | Quantity | Total Amount | Customer Type | Payment Form | Date | Time
-            ws.cell(row = row_count, column = col_count).value = "Customer Name"
+            ws.cell(row = 1, column = col_count).value = "Customer Name"
             col_count += 1
-            ws.cell(row = row_count, column = col_count).value = "Barcode Number"
+            ws.cell(row = 1, column = col_count).value = "Barcode Number"
             col_count += 1
-            ws.cell(row = row_count, column = col_count).value = "Product Description"
+            ws.cell(row = 1, column = col_count).value = "Product Description"
             col_count += 1
-            ws.cell(row = row_count, column = col_count).value = "Price"
+            ws.cell(row = 1, column = col_count).value = "Price"
             col_count += 1
-            ws.cell(row = row_count, column = col_count).value = "Quantity"
+            ws.cell(row = 1, column = col_count).value = "Quantity"
             col_count += 1
-            ws.cell(row = row_count, column = col_count).value = "Total Amount"
+            ws.cell(row = 1, column = col_count).value = "Total Amount"
             col_count += 1
-            ws.cell(row = row_count, column = col_count).value = "Customer Type"
+            ws.cell(row = 1, column = col_count).value = "Customer Type"
             col_count += 1
-            ws.cell(row = row_count, column = col_count).value = "Payment Form"
+            ws.cell(row = 1, column = col_count).value = "Payment Form"
             col_count += 1
-            ws.cell(row = row_count, column = col_count).value = "Date"
+            ws.cell(row = 1, column = col_count).value = "Date"
             col_count += 1
-            ws.cell(row = row_count, column = col_count).value = "Time"
-            
-            row_count += 1  #updates row_count
+            ws.cell(row = 1, column = col_count).value = "Time"
+
             col_count = 1  #resets column back to zero
 
         now = datetime.datetime.now()   #gets date-time
@@ -778,7 +792,7 @@ def paymentContinue():
             totAmount = customerList[r][2] * customerList[r][6]
             ws.cell(row = row_count, column = col_count).value = totAmount  #product total cost
             col_count += 1
-            ws.cell(row = row_count, column = col_count).value = "Customer Type"    #customer type to be added later
+            ws.cell(row = row_count, column = col_count).value = customerType    #customer type
             col_count += 1
             ws.cell(row = row_count, column = col_count).value = paymentString
             col_count += 1
@@ -902,7 +916,7 @@ def cashierStartPopup():
         excelFilePath = '/'.join(excelFilePathArray)
         #checks if the file already exists, if it doesn't then it creates the file, if it does then it continues on in the program.
         filePath = Path(excelFilePath + "/" + excelString)
-        print(not filePath.is_file())
+
         if not filePath.is_file():
             workbook = xw.Workbook(excelFilePath + "/" + excelString)
             worksheet = workbook.add_worksheet()
