@@ -2,6 +2,7 @@
 #NEED TO pip install pyexcel-xls
 #NEED TO pip install XlsxWriter    allows user to create excel files
 #NEED TO pip install openpyxl   allows user to modify excel files
+#NEED TO pip install python-docx    allows user to create and edit word documents
 import tkinter as tk
 import pyexcel as pe
 import xlsxwriter as xw
@@ -13,6 +14,7 @@ from openpyxl import load_workbook,Workbook
 from tkinter import filedialog
 from tkinter import *
 from pathlib import Path
+from docx import Document
 
 LARGE_FONT = ("Verdana", 12)
 NORMAL_FONT = ("Verdana", 10)
@@ -39,7 +41,7 @@ Error Code Legend:
 1 = Master File Error
 """
 
-modeCode = 0
+modeCode = 1
 """
 modeCode Legend:
 0 = Inventory Mode
@@ -479,7 +481,7 @@ class ErrorPage(tk.Frame):          #NEED TO CHANGE THIS INTO A POP UP WINDOW IN
             label = tk.Label(frame, text="Error! Please input a correct Master File Document", font=SMALL_FONT)
             label.pack(pady=10, padx=10)
 
-        button1 = ttk.Button(frame, text = "OK", command = MasterFilePopUp(1)) #One can also do command=quit to quit out of the program
+        button1 = ttk.Button(frame, text = "OK", command = lambda: MasterFilePopUp(1)) #One can also do command=quit to quit out of the program
         button1.pack(pady=5, padx=10)
 
 
@@ -496,12 +498,34 @@ def startPopup():
     label = ttk.Label(startPopup, text="Please choose the correct application mode", font=SMALL_FONT)
     label.grid(row = 0, column = 0, pady=10, padx=10, columnspan = 2)
 
-    button1 = ttk.Button(startPopup, text = "Inventory", command = lambda: MasterFilePopUp(0) or startPopup.destroy())
+    button1 = ttk.Button(startPopup, text = "Inventory", command = lambda: MasterFilePopUp(0, startPopup) or startPopup.destroy())
     button1.grid(row = 1, column = 0, pady = 10, padx = 10)
 
-    button2 = ttk.Button(startPopup, text = "Transaction", command = lambda: MasterFilePopUp(1) or startPopup.destroy())
+    button2 = ttk.Button(startPopup, text = "Transaction", command = lambda: MasterFilePopUp(1, startPopup) or startPopup.destroy())
     button2.grid(row = 1, column = 1, pady = 10, padx = 10)    
     
+
+
+
+def MasterFilePopUp(mode, startPopup):
+    global modeCode
+
+    masterPopup = tk.Toplevel()
+    masterPopup.wm_title("FONZY")
+
+    modeCode = mode #inherits either 0 or 1
+    label = ttk.Label(masterPopup, text = "Please specify the product master file", font = NORMAL_FONT)
+    label.pack(side = "top", fill = "x", padx = 5)
+
+    button1 = ttk.Button(masterPopup, text = "Okay", command = lambda: fileExplorer() or masterPopup.destroy() or startPopup.destroy())
+    button1.pack(pady = 10)
+
+    if errorCode == 0:
+        return 1
+    else:
+        popupmsg("Please input the correct Master File")
+        MasterFilePopUp(mode)
+
 
 
 
@@ -735,6 +759,11 @@ def paymentContinue():
     button2 = ttk.Button(pContinuePopup, text = "No", command = lambda: pContinuePopup.destroy())
     button2.grid(row = 1, column = 1, pady = 10, padx = 10)    
 
+    now = datetime.datetime.now()   #gets date-time
+    nowDate = now.strftime("%d-%m-%Y")
+    nowTime = now.strftime("%H:%M")
+    nowTimeWord = now.strftime("%H;%M")
+    #Updates excel file to accomodate customer purchases
     def excelCheckoutUpdate():
         #Gets last row of workbook to figure out if program needs to create headers (max row <= 1) or just add to current workbook
         #opens and edits workbook
@@ -772,11 +801,6 @@ def paymentContinue():
 
             col_count = 1  #resets column back to zero
 
-        now = datetime.datetime.now()   #gets date-time
-        nowDate = now.strftime("%d-%m-%Y")
-        nowTime = now.strftime("%H:%M")
-        #row_count += 1
-
         #inputs customer purchase data
         for r in range(0,len(customerList)):
             ws.cell(row = row_count, column = col_count).value = customerName.get() #customer name
@@ -804,16 +828,21 @@ def paymentContinue():
             col_count = 1  #resets column back to zero
 
         wb.save(excelFile)
+        wordCheckoutUpdate()    #Creates printable word document receipt
+
+    def wordCheckoutUpdate():
+        wordString = customerName.get() + "," + "date=" + str(nowDate) + "," + "time=" +str(nowTimeWord) + ".docx"
+
+        wordFilePathArray = filename.split("/")
+        wordFilePathArray = wordFilePathArray[:-1]
+        wordFilePath = '/'.join(wordFilePathArray)
+        wordFile = wordFilePath + "/" + wordString
+
+        document = Document()
         
-        """
-        STEPS:
-        -Find last row of workbook (i.e. max_row)
-        -if max_row == 0, then create
-        -For loop to input values
-        """
-        #workbook = xw.Workbook(excelFilePath + "/" + excelString)
-        #worksheet = workbook.add_worksheet()
-        #workbook.close()
+        document.add_heading('HELLO WORLD!', 0)
+        
+        document.save(wordFile)
 
         #after excel update is finished, create and update word document, ready for printing
         #wordCheckoutUpdate()
@@ -851,29 +880,6 @@ def fileExplorer():
     
     except ValueError:
         errorCode = 1
-    
-
-
-
-
-def MasterFilePopUp(mode):
-    global modeCode
-
-    masterPopup = tk.Toplevel()
-    masterPopup.wm_title("FONZY")
-
-    modeCode = mode #inherits either 0 or 1
-    label = ttk.Label(masterPopup, text = "Please specify the product master file", font = NORMAL_FONT)
-    label.pack(side = "top", fill = "x", padx = 5)
-
-    button1 = ttk.Button(masterPopup, text = "Okay", command = lambda: fileExplorer() or masterPopup.destroy())
-    button1.pack(pady = 10)
-
-    if errorCode == 0:
-        return 1
-    else:
-        popupmsg("Please input the correct Master File")
-        MasterFilePopUp(mode)
 
 
 
