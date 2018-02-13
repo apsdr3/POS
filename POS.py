@@ -15,6 +15,7 @@ from tkinter import filedialog
 from tkinter import *
 from pathlib import Path
 from docx import Document
+from docx.shared import Pt
 
 LARGE_FONT = ("Verdana", 12)
 NORMAL_FONT = ("Verdana", 10)
@@ -839,8 +840,17 @@ def paymentContinue():
         wordFile = wordFilePath + "/" + wordString
 
         document = Document()
-        
-        document.add_heading('HELLO WORLD!', 0)
+
+        #Sets the font and size so that it will be monospace
+        style = document.styles["Normal"]
+        font = style.font
+        font.name = "Consolas"
+        font.size = Pt(10)
+
+        #THERER ARE 78 charaters per line
+        p1 = document.add_paragraph()
+        p1.style = document.styles['Normal']    #sets the style to match the given monospace style mentioned above
+        p1.add_run("spacing 1 2 3 4MORE SPACING TEST")
         
         document.save(wordFile)
 
