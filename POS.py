@@ -16,6 +16,7 @@ from tkinter import *
 from pathlib import Path
 from docx import Document
 from docx.shared import Pt
+from docx.enum.text import WD_LINE_SPACING
 
 LARGE_FONT = ("Verdana", 12)
 NORMAL_FONT = ("Verdana", 10)
@@ -849,17 +850,23 @@ def paymentContinue():
 
         #THERER ARE 78 charaters per line
         p1 = document.add_paragraph()
-        p1.style = document.styles['Normal']    #sets the style to match the given monospace style mentioned above
+        p1.style = document.styles["Normal"]    #sets the style to match the given monospace style mentioned above
+        pFormat = p1.paragraph_format
+        pFormat.space_before = Pt(0)
+        pFormat.space_after = Pt(0)    #sets line spacing to 0 instead of the default 1.5
         p1.add_run("spacing 1 2 3 4MORE SPACING TEST")
+
+        p2 = document.add_paragraph()
+        p2.style = document.styles["Normal"]
+        pFormat = p1.paragraph_format
+        pFormat.space_before = Pt(0)
+        pFormat.space_after = Pt(0)    #sets line spacing to 0 instead of the default 1.5       
+        p2.add_run("TESTING THE LINE SPACING")
         
         document.save(wordFile)
+        #NEED TO REFRESH, DELETE AND RECREATE EVERYTHING ONCE THIS FUNCTION FINISHES
 
-        #after excel update is finished, create and update word document, ready for printing
-        #wordCheckoutUpdate()
 
-    #def wordCheckoutUpdate():
-        #Do word document stuffs
-        #Print word document stuffs
 
 
 
