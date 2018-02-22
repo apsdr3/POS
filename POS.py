@@ -287,6 +287,13 @@ class MainPage(tk.Frame):
 
             frame5Button = ttk.Button(frame5, text = "Add Item", command = lambda: updateCustomerList(barCode, quantity))
             frame5Button.grid(row = 0, column = 5, padx = 90, pady = 10)
+
+            def bindUpdateCustomerList(event=None):
+                print("HELLO " + str(barCode) + " " + str(quantity))
+                updateCustomerList(barCode, quantity)
+                return
+
+            frame5.bind('<Return>', lambda e: bindUpdateCustomerList())    #binds enter/return key to add the barcode given in the entry box
     #---------------------------------------------------------------------------------------------#
 
 
@@ -453,6 +460,13 @@ class MainPage(tk.Frame):
 
             frame5Button = ttk.Button(frame5, text = "Add Item", command = lambda: updateCustomerList(barCode, quantity))
             frame5Button.grid(row = 0, column = 5, padx = 90, pady = 10)
+
+            def bindUpdateCustomerList(event=None):
+                print("HELLO " + str(barCode) + " " + str(quantity))
+                updateCustomerList(barCode, quantity)
+                return
+
+            frame5.bind('<Return>', lambda e: bindUpdateCustomerList())    #binds enter/return key to add the barcode given in the entry box
     #---------------------------------------------------------------------------------------------#
 
 
@@ -467,8 +481,6 @@ class MainPage(tk.Frame):
             frame6Button = ttk.Button(frame6, text = "Process", command=processPagePopup)
             frame6Button.grid(row = 0, column = 1, padx = 125, pady = 10)
     #--------------------------------------------------------------------------------------------#   
-
-
 
 
 #error page for when there is a possible error
@@ -848,24 +860,68 @@ def paymentContinue():
         font.name = "Consolas"
         font.size = Pt(10)
 
+        #Adds 9 blank paragraphs for structure
+        for i in range(8):
+            blankParagraph = document.add_paragraph()
+            blankParagraph.style = document.styles["Normal"]    #sets the style to match the given monospace style mentioned above
+            pFormat = blankParagraph.paragraph_format
+            pFormat.space_before = Pt(0)
+            pFormat.space_after = Pt(0)    #sets line spacing to 0 instead of the default 1.5
+
+
         #THERER ARE 78 charaters per line
-        p1 = document.add_paragraph()
-        p1.style = document.styles["Normal"]    #sets the style to match the given monospace style mentioned above
-        pFormat = p1.paragraph_format
+        #13 spaces needed before name and etc is printed
+        #52 spaces before top right section
+        #57 for date, 58 for terms, 69 for OSCA,ID number
+        #22 paragraphs for items only! i.e. max 21 items
+
+        #8 spaces for name
+        pName = document.add_paragraph()
+        pName.style = document.styles["Normal"]    #sets the style to match the given monospace style mentioned above
+        pFormat = pName.paragraph_format
         pFormat.space_before = Pt(0)
         pFormat.space_after = Pt(0)    #sets line spacing to 0 instead of the default 1.5
-        p1.add_run("spacing 1 2 3 4MORE SPACING TEST")
+        pName.add_run("        " + str(customerName.get()))    #NEED TO FIX THS AS WELL SO THAT IT TAKES CHARACTERS PUT INTO CHAR ARRAY
 
-        p2 = document.add_paragraph()
-        p2.style = document.styles["Normal"]
-        pFormat = p1.paragraph_format
+        #8 spaces for address
+        pAddress = document.add_paragraph()
+        pAddress.style = document.styles["Normal"]    #sets the style to match the given monospace style mentioned above
+        pFormat = pAddress.paragraph_format
         pFormat.space_before = Pt(0)
-        pFormat.space_after = Pt(0)    #sets line spacing to 0 instead of the default 1.5       
-        p2.add_run("TESTING THE LINE SPACING")
+        pFormat.space_after = Pt(0)    #sets line spacing to 0 instead of the default 1.5
+        pAddress.add_run("        " + str(address.get()))    #NEED TO FIX THS AS WELL SO THAT IT TAKES CHARACTERS PUT INTO CHAR ARRAY
         
+
+
         document.save(wordFile)
         #NEED TO REFRESH, DELETE AND RECREATE EVERYTHING ONCE THIS FUNCTION FINISHES
+        #ADD PRINT FUNCTON HERE!
+        clearCustomerInfo()
 
+
+
+#function that clears customer info for next purchase
+def clearCustomerInfo():
+    global customerList
+    global customerName
+    global phone
+    global address
+    global customerType
+
+    #resets customer info
+    customerList[:] = []    #deletes all elements in list and recreates the list
+    
+    customerName = StringVar()
+    customerName.set("")
+    phone = IntVar()
+    phone.set(0)
+    address = StringVar()
+    address.set("")
+
+    customerType = "New"
+
+    refreshMainFrame()
+    return
 
 
 
@@ -961,7 +1017,7 @@ def popupmsg(msg):
 
 
 
-
+#NEED TO ADD CHECK IF BARCODE IS AN INT, NEED TO DISCARD IF IT IS NOT AN INT
 def updateCustomerList(barCode, quantity):
     global customerList   #global variable to allow user to update updateCustomerList
 
