@@ -875,13 +875,18 @@ def paymentContinue():
         #57 for date, 58 for terms, 69 for OSCA,ID number
         #22 paragraphs for items only! i.e. max 21 items
 
-        #8 spaces for name
+
+        #8 spaces before name input; max 42 character for name; 8 spaces before date input
+        #NAME
+        #customerNameList = list(customerName.get()) #creates a list for the customerName string
+        p1 = buildCharacterParagraphArray(8, list(str(customerName.get())), 42, 8, list(str(nowDate)))
         pName = document.add_paragraph()
         pName.style = document.styles["Normal"]    #sets the style to match the given monospace style mentioned above
         pFormat = pName.paragraph_format
         pFormat.space_before = Pt(0)
         pFormat.space_after = Pt(0)    #sets line spacing to 0 instead of the default 1.5
-        pName.add_run("        " + str(customerName.get()))    #NEED TO FIX THS AS WELL SO THAT IT TAKES CHARACTERS PUT INTO CHAR ARRAY
+        pName.add_run(p1)
+        #pName.add_run("        " + str(customerName.get()))    #NEED TO FIX THS AS WELL SO THAT IT TAKES CHARACTERS PUT INTO CHAR ARRAY
 
         #8 spaces for address
         pAddress = document.add_paragraph()
@@ -890,13 +895,48 @@ def paymentContinue():
         pFormat.space_before = Pt(0)
         pFormat.space_after = Pt(0)    #sets line spacing to 0 instead of the default 1.5
         pAddress.add_run("        " + str(address.get()))    #NEED TO FIX THS AS WELL SO THAT IT TAKES CHARACTERS PUT INTO CHAR ARRAY
-        
+                
 
 
         document.save(wordFile)
         #NEED TO REFRESH, DELETE AND RECREATE EVERYTHING ONCE THIS FUNCTION FINISHES
         #ADD PRINT FUNCTON HERE!
         clearCustomerInfo()
+
+
+
+
+#builds a one line paragraph
+def buildCharacterParagraphArray(initialSpaceNumber, initialStringValue, stringSpaceAllowanceNumber, secondarySpaceNumber, finalStringValue):
+    #builds array with 78 character elements
+    j = 0
+    k = 0
+    arrayList = []
+
+    for i in range(78):
+        if i <= initialSpaceNumber:
+            arrayList.append(" ")
+        
+        else:
+            if i < (stringSpaceAllowanceNumber+initialSpaceNumber):
+                if j < len(initialStringValue):
+                    arrayList.append(initialStringValue[j])
+                    j += 1
+                else:
+                    arrayList.append(" ")
+
+            else:
+                if i < (stringSpaceAllowanceNumber + initialSpaceNumber + secondarySpaceNumber):
+                    arrayList.append(" ")
+                
+                else:
+                    if k < len(finalStringValue):
+                        arrayList.append(finalStringValue[k])
+                        k += 1
+                    else:
+                        arrayList.append(" ")
+    return arrayList
+
 
 
 
