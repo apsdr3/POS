@@ -852,6 +852,17 @@ def paymentContinue():
         wordFilePath = '/'.join(wordFilePathArray)
         wordFile = wordFilePath + "/" + wordString
 
+        #adds paragraph spacing
+        def addParagraphSpace(numberOfSpaces):
+            #Adds 9 blank paragraphs for structure
+            for i in range(numberOfSpaces):
+                blankParagraph = document.add_paragraph()
+                blankParagraph.style = document.styles["Normal"]    #sets the style to match the given monospace style mentioned above
+                pFormat = blankParagraph.paragraph_format
+                pFormat.space_before = Pt(0)
+                pFormat.space_after = Pt(0)    #sets line spacing to 0 instead of the default 1.5
+            return
+
         document = Document()
 
         #Sets the font and size so that it will be monospace
@@ -860,14 +871,7 @@ def paymentContinue():
         font.name = "Consolas"
         font.size = Pt(10)
 
-        #Adds 9 blank paragraphs for structure
-        for i in range(8):
-            blankParagraph = document.add_paragraph()
-            blankParagraph.style = document.styles["Normal"]    #sets the style to match the given monospace style mentioned above
-            pFormat = blankParagraph.paragraph_format
-            pFormat.space_before = Pt(0)
-            pFormat.space_after = Pt(0)    #sets line spacing to 0 instead of the default 1.5
-
+        addParagraphSpace(8)    #Adds 8 blank paragraphs for structure
 
         #THERER ARE 78 charaters per line
         #13 spaces needed before name and etc is printed
@@ -875,27 +879,77 @@ def paymentContinue():
         #57 for date, 58 for terms, 69 for OSCA,ID number
         #22 paragraphs for items only! i.e. max 21 items
 
-
-        #8 spaces before name input; max 42 character for name; 8 spaces before date input
-        #NAME
-        #customerNameList = list(customerName.get()) #creates a list for the customerName string
-        p1 = buildCharacterParagraphArray(8, list(str(customerName.get())), 42, 8, list(str(nowDate)))
-        pName = document.add_paragraph()
-        pName.style = document.styles["Normal"]    #sets the style to match the given monospace style mentioned above
-        pFormat = pName.paragraph_format
+        #1ST PART OF THE LINE IS 50 SPACES, THEN 2ND PART OF THE LINE IS 27 SPACES
+        #13 spaces before name input; max 37 character for name; 8 spaces before date input
+        #Name and date paragraph
+        p1 = buildCharacterParagraphArray(13, list(str(customerName.get())), 37, 8, list(str(nowDate)))
+        pNameDate = document.add_paragraph()
+        pNameDate.style = document.styles["Normal"]    #sets the style to match the given monospace style mentioned above
+        pFormat = pNameDate.paragraph_format
         pFormat.space_before = Pt(0)
         pFormat.space_after = Pt(0)    #sets line spacing to 0 instead of the default 1.5
-        pName.add_run(p1)
-        #pName.add_run("        " + str(customerName.get()))    #NEED TO FIX THS AS WELL SO THAT IT TAKES CHARACTERS PUT INTO CHAR ARRAY
+        pNameDate.add_run(p1)
 
-        #8 spaces for address
-        pAddress = document.add_paragraph()
-        pAddress.style = document.styles["Normal"]    #sets the style to match the given monospace style mentioned above
-        pFormat = pAddress.paragraph_format
+        #13 spaces for address; max 37 characters for address; 10 spaces before terms input
+        p2 = buildCharacterParagraphArray(13, list(str(address.get())), 37, 8, "TERMS")
+        pAddressTerms = document.add_paragraph()
+        pAddressTerms.style = document.styles["Normal"]    #sets the style to match the given monospace style mentioned above
+        pFormat = pAddressTerms.paragraph_format
         pFormat.space_before = Pt(0)
         pFormat.space_after = Pt(0)    #sets line spacing to 0 instead of the default 1.5
-        pAddress.add_run("        " + str(address.get()))    #NEED TO FIX THS AS WELL SO THAT IT TAKES CHARACTERS PUT INTO CHAR ARRAY
-                
+        pAddressTerms.add_run(p2)                
+
+        #13 spaces for TIN; max 37 characters for TIN; 20 spaces before PWD ID input; max 8 spaces before PWD ID input
+        p3 = buildCharacterParagraphArray(13, "TIN", 37, 20, "PWD ID")
+        pTinPwd = document.add_paragraph()
+        pTinPwd.style = document.styles["Normal"]    #sets the style to match the given monospace style mentioned above
+        pFormat = pTinPwd.paragraph_format
+        pFormat.space_before = Pt(0)
+        pFormat.space_after = Pt(0)    #sets line spacing to 0 instead of the default 1.5
+        pTinPwd.add_run(p3)
+
+        #13 spaces for TIN; max 37 characters for TIN; 20 spaces before PWD ID input; max 8 spaces before PWD ID input
+        p4 = buildCharacterParagraphArray(13, "BUSINESS STYLE", 37, 22, "SIGNATURE")
+        pBStyleSignature = document.add_paragraph()
+        pBStyleSignature.style = document.styles["Normal"]    #sets the style to match the given monospace style mentioned above
+        pFormat = pBStyleSignature.paragraph_format
+        pFormat.space_before = Pt(0)
+        pFormat.space_after = Pt(0)    #sets line spacing to 0 instead of the default 1.5
+        pBStyleSignature.add_run(p4)
+
+        addParagraphSpace(2)    #Adds 2 blank paragraphs for structure
+
+        #TITLE INPUT
+        pTitle = document.add_paragraph()
+        pTitle.style = document.styles["Normal"]    #sets the style to match the given monospace style mentioned above
+        pFormat = pTitle.paragraph_format
+        pFormat.space_before = Pt(0)
+        pFormat.space_after = Pt(0)    #sets line spacing to 0 instead of the default 1.5
+        pTitle.add_run("TEST TITLE")
+
+        addParagraphSpace(1)    #Adds 1 blank paragraphs for structure
+
+        #BODY INPUT
+        pTitle = document.add_paragraph()
+        pTitle.style = document.styles["Normal"]    #sets the style to match the given monospace style mentioned above
+        pFormat = pTitle.paragraph_format
+        pFormat.space_before = Pt(0)
+        pFormat.space_after = Pt(0)    #sets line spacing to 0 instead of the default 1.5
+        pTitle.add_run("TEST TITLE")        
+
+        addParagraphSpace(19)   #adds 19 blank paragraphs for structure
+
+        addParagraphSpace(8)   #adds 8 blank paragraphs for structure
+
+
+        p4 = buildCharacterParagraphArray(13, "", 37, 6, "PRICE")
+        pPrice = document.add_paragraph()
+        pPrice.style = document.styles["Normal"]    #sets the style to match the given monospace style mentioned above
+        pFormat = pPrice.paragraph_format
+        pFormat.space_before = Pt(0)
+        pFormat.space_after = Pt(0)    #sets line spacing to 0 instead of the default 1.5
+        pPrice.add_run(p4)
+
 
 
         document.save(wordFile)
