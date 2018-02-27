@@ -925,21 +925,89 @@ def paymentContinue():
         pFormat = pTitle.paragraph_format
         pFormat.space_before = Pt(0)
         pFormat.space_after = Pt(0)    #sets line spacing to 0 instead of the default 1.5
-        pTitle.add_run("TEST TITLE")
+        pTitle.add_run("Item Number       Description                   Qty    Price      Amount")
 
         addParagraphSpace(1)    #Adds 1 blank paragraphs for structure
 
-        #BODY INPUT
-        pTitle = document.add_paragraph()
-        pTitle.style = document.styles["Normal"]    #sets the style to match the given monospace style mentioned above
-        pFormat = pTitle.paragraph_format
+        #CREATES BODY INPUT PARAGRAPHS
+        for i in range(len(customerList)):
+            
+            pBody = document.add_paragraph()
+            pBody.style = document.styles["Normal"]    #sets the style to match the given monospace style mentioned above
+            pFormat = pBody.paragraph_format
+            pFormat.space_before = Pt(0)
+            pFormat.space_after = Pt(0)    #sets line spacing to 0 instead of the default 1.5
+
+            customerBarCodeString = str(customerList[i][4]).strip()    #strips the EAN bar code string value to make sure that there aren't any white spaces
+            customerDescriptionString = str(customerList[i][1]).strip()    #strips the Material Description string value to make sure that there aren't any white spaces
+
+            pBodyArrayList = buildBodyParagraphArray(i, customerBarCodeString, customerDescriptionString)
+
+            pBody.add_run(pBodyArrayList)
+
+
+
+
+
+
+
+        totalQuantity = 0
+        totalCost = 0
+        for j in range(len(customerList)):
+            #gets total individual item quantity
+            totalQuantity += customerList[i][5]
+
+            #gets total cost
+            cost = (customerList[i][6]*customerList[i][2])-((customerList[i][3]/100)*(customerList[i][6]*customerList[i][2]))   #gets cost estimate with given mathematical values
+            totalCost += cost
+        
+        #converts quantity and cost to string, ready for char input
+        totalQuantityString = str(totalQuantity)
+        totalCostString = str(totalCost)
+        
+        #paragraph for total number of items sold and price, difference is the 5PT space before and after
+        pTotal = document.add_paragraph()
+        pTotal.style = document.styles["Normal"]    #sets the style to match the given monospace style mentioned above
+        pFormat = pTotal.paragraph_format
+        pFormat.space_before = Pt(5)
+        pFormat.space_after = Pt(5)    #sets line spacing to 0 instead of the default 1.5
+        pTotal.add_run("                                        Total   ")
+
+        #adds total quantity to the single line paragraph; has 18 allotted spaces
+        for k in range(len(totalQuantityString)):
+            pTotal.add_run(totalQuantityString[k])
+        if (18 - len(totalQuantityString)) > 0: 
+            for l in range(18 - len(totalQuantityString)):  #adds space in the paragraph
+                pTotal.add_run(" ")
+        #adds total amount/price to the single line paragraph; has 12 allotted spaces
+        for m in range(len(totalCostString)):
+            pTotal.add_run(totalCostString[m])
+
+
+        #adds spaces after total quantity and amount is inputted into a paragraph
+        if (20 - len(customerList)) > 0:
+            spaceAfterCustomerList = 20 - len(customerList)
+            addParagraphSpace(spaceAfterCustomerList)   #adds a dynamically sized blank paragraphs for structure
+
+
+        #TAX INFO
+        #VATable Sales = costTotal / 1.12
+        #Add: Vat Amount = costTotal - VATable Sales
+        #Total Amount due = costTotal
+        costTotal = 0
+        for i in range(len(customerList)):  #finds total price of transaction
+            costTotal += (customerList[i][6]*customerList[i][2])-((customerList[i][3]/100)*(customerList[i][6]*customerList[i][2]))
+
+
+        #paragraph space for amount paid, difference is the 5PT space after
+        blankParagraph = document.add_paragraph()
+        blankParagraph.style = document.styles["Normal"]    #sets the style to match the given monospace style mentioned above
+        pFormat = blankParagraph.paragraph_format
         pFormat.space_before = Pt(0)
-        pFormat.space_after = Pt(0)    #sets line spacing to 0 instead of the default 1.5
-        pTitle.add_run("TEST TITLE")        
+        pFormat.space_after = Pt(5)    #sets line spacing to 0 instead of the default 1.5        
 
-        addParagraphSpace(19)   #adds 19 blank paragraphs for structure
 
-        addParagraphSpace(8)   #adds 8 blank paragraphs for structure
+        #addParagraphSpace(8)   #adds 8 blank paragraphs for structure
 
 
         p4 = buildCharacterParagraphArray(13, "", 37, 6, "PRICE")
@@ -960,7 +1028,64 @@ def paymentContinue():
 
 
 
-#builds a one line paragraph
+#builds a one line generalized paragraph
+def buildBodyParagraphArray(customerListIndexValue, customerBarCodeString, customerDescriptionString):
+    arrayList = []
+    #APPENDS BARCODE
+    for i in range(15):
+        if i < len(customerBarCodeString):
+            arrayList.append(customerBarCodeString[i])
+        else:
+            arrayList.append(" ")
+    for j in range(3):
+        arrayList.append(" ")
+
+    #APPENDS ITEM DESCRIPTION STIRNG
+    for k in range(27):
+        if k < len(customerDescriptionString):
+            arrayList.append(customerDescriptionString[k])
+        else:
+            arrayList.append(" ")
+    for l in range(3):
+        arrayList.append(" ")    
+        
+    #APPENDS QUANTITY
+    quantityString = str(customerList[customerListIndexValue][5])
+    for m in range(4):
+        if m < len(quantityString):
+            arrayList.append(quantityString[m])
+        else:
+            arrayList.append(" ")
+    for n in range(3):
+        arrayList.append(" ")
+
+    #APPENDS PRICE
+    priceString = str(customerList[customerListIndexValue][6])
+    #priceString = "{:,}".format(priceStringValue)
+    for p in range(8):
+        if p < len(priceString):
+            arrayList.append(priceString[p])
+        else:
+            arrayList.append(" ")
+    for q in range(3):
+        arrayList.append(" ")
+
+    #APPENDS AMOUNT
+    amount = (customerList[customerListIndexValue][6]*customerList[customerListIndexValue][2])-((customerList[customerListIndexValue][3]/100)*(customerList[customerListIndexValue][6]*customerList[customerListIndexValue][2]))
+    amountString = str(amount)
+    #amountString = "{:,}".format(amountStringValue)
+    for r in range(12):
+        if r < len(amountString):
+            arrayList.append(amountString[r])
+        else:
+            pass
+
+    return arrayList
+
+
+
+
+#builds a one line generalized paragraph
 def buildCharacterParagraphArray(initialSpaceNumber, initialStringValue, stringSpaceAllowanceNumber, secondarySpaceNumber, finalStringValue):
     #builds array with 78 character elements
     j = 0
