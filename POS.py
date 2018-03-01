@@ -24,7 +24,8 @@ SMALL_FONT = ("Verdana", 8)
 
 #GLOBAL VARIABLES
 masterList = [] #list of objects from Master File
-customerList = []
+#customerList = []
+customerList = [[20297939, 'AC EDT 75ML SPRAY TEST', 250, 0, 3605520297939, 2, 1], [72728313, 'ADG HOMME DEMO.TOIL.WAT.SPRAY 100ML', 250, 0, 3360372728313, 1, 1], [20267093, 'ACF EDP 75ML SPRAY TEST', 300, 0, 3605520267093, 0, 1], [20297878, 'AM EDT 100ML SPRAY TEST', 350, 0, 3605520297878, 0, 1], [70638152, 'ADGA JASMINE V100ML TEST OS', 400, 0, 3614270638152, 0, 1], [71381477, 'SUN DI GIOIA EDP V30ML', 700, 0, 3614271381477, 0, 1], [71381538, 'SUN DI GIOIA EDP V50ML TEST', 1000, 0, 3614271381538, 0, 1], [71381392, 'AIR DI GIOIA EDP V50ML', 1000, 0, 3614271381392, 0, 1], [71381491, 'SUN DI GIOIA EDP V100ML', 1300, 0, 3614271381491, 0, 1], [70157639, 'ADGH PROFUMO SP75ML', 1350, 0, 3614270157639, 0, 1], [22035423, 'SI EDT SP100ML', 1500, 0, 3605522035423, 0, 1], [71214799, 'SI EDP ROSE V100ML OS', 2200, 0, 3614271214799, 0, 1], [21583413, 'AP FIGUE EDEN EDT SP100ML', 2500, 0, 3605521583413, 0, 1], [72009436, 'DKN EDT 100ML SPRAY', 700, 0, 3360372009436, 0, 1], [30655201, 'FLUDLST SCELLG FLUID SPRAY RET 150ML', 200, 0, 3474630655201, 0, 1], [30543003, 'STY FORME FATALE 125ML', 200, 0, 3474630543003, 0, 1], [30542709, 'STY LAQUE COUTURE 300ML', 200, 0, 3474630542709, 0, 1], [36382378, 'NUT MAGISTRAL SOIN N2 CONCENT 500ML', 250, 0, 3474636382378, 0, 1], [36382361, 'NUT MAGISTRAL SOIN N1 ANCREUR 500ML', 250, 0, 3474636382361, 0, 1]]
 container = 0
 excelString = " "
 filename = " "
@@ -35,6 +36,7 @@ customerName = " "
 phone = 0
 address = " "
 customerType = "New"
+totalCustomerPayment = 0
 
 errorCode = 0
 """
@@ -723,7 +725,9 @@ def finalPayment(checkBox):
         totalCP = IntVar()
         totalCP = 0
         if stateBuild == 1:
+            global totalCustomerPayment
             totalCP = cashAmount.get() + debitAmount.get() + creditAmount.get() + checkAmount.get() + sDeductionAmount.get()    #gets sum of list
+            totalCustomerPayment = totalCP
 
         label9 = ttk.Label(paymentPopup, text="{:,}".format(totalCP), font=SMALL_FONT)
         label9.grid(row = 6, column = 1, pady=10, padx=10, sticky = "W", columnspan = 2)        
@@ -917,7 +921,7 @@ def paymentContinue():
         pFormat.space_after = Pt(0)    #sets line spacing to 0 instead of the default 1.5
         pBStyleSignature.add_run(p4)
 
-        addParagraphSpace(2)    #Adds 2 blank paragraphs for structure
+        addParagraphSpace(1)    #Adds 2 blank paragraphs for structure
 
         #TITLE INPUT
         pTitle = document.add_paragraph()
@@ -985,8 +989,8 @@ def paymentContinue():
 
 
         #adds spaces after total quantity and amount is inputted into a paragraph
-        if (20 - len(customerList)) > 0:
-            spaceAfterCustomerList = 20 - len(customerList)
+        if (21 - len(customerList)) > 0:
+            spaceAfterCustomerList = 21 - len(customerList)
             addParagraphSpace(spaceAfterCustomerList)   #adds a dynamically sized blank paragraphs for structure
 
 
@@ -997,32 +1001,93 @@ def paymentContinue():
         costTotal = 0
         for i in range(len(customerList)):  #finds total price of transaction
             costTotal += (customerList[i][6]*customerList[i][2])-((customerList[i][3]/100)*(customerList[i][6]*customerList[i][2]))
+        VATableSales = costTotal / 1.12 #gets total price for item without VAT
+        VATableSales = round(VATableSales, 2)
+        VATAmount = costTotal - VATableSales    #gets VAT price for item
+        VATAmount = round(VATAmount, 2)
 
+        #68 spaces for VATable sales; max 12 characters for VATable sales
+        pVAT = buildCharacterParagraphArray(66, str(VATableSales), 12, 0, "")
+        pVATableSales = document.add_paragraph()
+        pVATableSales.style = document.styles["Normal"]    #sets the style to match the given monospace style mentioned above
+        pFormat = pVATableSales.paragraph_format
+        pFormat.space_before = Pt(0)
+        pFormat.space_after = Pt(0)    #sets line spacing to 0 instead of the default 1.5
+        pVATableSales.add_run(pVAT)
+
+        #paragraph space
+        blankParagraph = document.add_paragraph()
+        blankParagraph.style = document.styles["Normal"]    #sets the style to match the given monospace style mentioned above
+        pFormat = blankParagraph.paragraph_format
+        pFormat.space_before = Pt(0)
+        pFormat.space_after = Pt(0)    #sets line spacing to 0 instead of the default 1.5
+        
+        #paragraph space
+        blankParagraph = document.add_paragraph()
+        blankParagraph.style = document.styles["Normal"]    #sets the style to match the given monospace style mentioned above
+        pFormat = blankParagraph.paragraph_format
+        pFormat.space_before = Pt(0)
+        pFormat.space_after = Pt(0)    #sets line spacing to 0 instead of the default 1.5
+
+        #64 spaces for VATable sales; max 12 characters
+        pTSales = buildCharacterParagraphArray(64, str(costTotal), 14, 0, "")
+        pTotalSales = document.add_paragraph()
+        pTotalSales.style = document.styles["Normal"]    #sets the style to match the given monospace style mentioned above
+        pFormat = pTotalSales.paragraph_format
+        pFormat.space_before = Pt(0)
+        pFormat.space_after = Pt(0)    #sets line spacing to 0 instead of the default 1.5
+        pTotalSales.add_run(pTSales)
+
+        #64 spaces for VATable sales; max 12 characters
+        pVAmount = buildCharacterParagraphArray(68, str(VATAmount), 10, 0, "")
+        pVATAmount = document.add_paragraph()
+        pVATAmount.style = document.styles["Normal"]    #sets the style to match the given monospace style mentioned above
+        pFormat = pVATAmount.paragraph_format
+        pFormat.space_before = Pt(0)
+        pFormat.space_after = Pt(0)    #sets line spacing to 0 instead of the default 1.5
+        pVATAmount.add_run(pVAmount)
 
         #paragraph space for amount paid, difference is the 5PT space after
         blankParagraph = document.add_paragraph()
         blankParagraph.style = document.styles["Normal"]    #sets the style to match the given monospace style mentioned above
         pFormat = blankParagraph.paragraph_format
         pFormat.space_before = Pt(0)
-        pFormat.space_after = Pt(5)    #sets line spacing to 0 instead of the default 1.5        
+        pFormat.space_after = Pt(5)    #sets line spacing to 5 instead of the default 1.5        
 
-
-        #addParagraphSpace(8)   #adds 8 blank paragraphs for structure
-
-
-        p4 = buildCharacterParagraphArray(13, "", 37, 6, "PRICE")
-        pPrice = document.add_paragraph()
-        pPrice.style = document.styles["Normal"]    #sets the style to match the given monospace style mentioned above
-        pFormat = pPrice.paragraph_format
+        #68 spaces for VATable sales; max 12 characters
+        pADue = buildCharacterParagraphArray(56, str(round(costTotal, 2)), 22, 0, "")
+        pAmountDue = document.add_paragraph()
+        pAmountDue.style = document.styles["Normal"]    #sets the style to match the given monospace style mentioned above
+        pFormat = pAmountDue.paragraph_format
         pFormat.space_before = Pt(0)
         pFormat.space_after = Pt(0)    #sets line spacing to 0 instead of the default 1.5
-        pPrice.add_run(p4)
+        pAmountDue.add_run(pADue)
 
 
+        #65 spaces for Customer Payment; max 13 characters
+        pTotalCP = buildCharacterParagraphArray(65, str(round(totalCustomerPayment, 2)), 13, 0, "")
+        pTotalCustomerPayment = document.add_paragraph()
+        pTotalCustomerPayment.style = document.styles["Normal"]    #sets the style to match the given monospace style mentioned above
+        pFormat = pTotalCustomerPayment.paragraph_format
+        pFormat.space_before = Pt(0)
+        pFormat.space_after = Pt(0)    #sets line spacing to 0 instead of the default 1.5
+        pTotalCustomerPayment.add_run(pTotalCP)
 
+        #65 spaces for Customer Change; max 13 characters
+        totalCustomerChange = totalCustomerPayment - costTotal
+        pTotalChange = buildCharacterParagraphArray(65, str(round(totalCustomerChange, 2)), 13, 0, "")
+        pTotalCustomerChange = document.add_paragraph()
+        pTotalCustomerChange.style = document.styles["Normal"]    #sets the style to match the given monospace style mentioned above
+        pFormat = pTotalCustomerChange.paragraph_format
+        pFormat.space_before = Pt(0)
+        pFormat.space_after = Pt(0)    #sets line spacing to 0 instead of the default 1.5
+        pTotalCustomerChange.add_run(pTotalChange)        
+
+        #saves document
         document.save(wordFile)
-        #NEED TO REFRESH, DELETE AND RECREATE EVERYTHING ONCE THIS FUNCTION FINISHES
+
         #ADD PRINT FUNCTON HERE!
+
         clearCustomerInfo()
 
 
