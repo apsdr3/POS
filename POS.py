@@ -37,6 +37,12 @@ phone = 0
 address = " "
 customerType = "New"
 totalCustomerPayment = 0
+tinValue = "N/A"
+BStyleValue = "N/A"
+termsValue = "N/A"
+PWDValue = "N/A"
+cashierString = ""
+
 
 errorCode = 0
 """
@@ -307,7 +313,7 @@ class MainPage(tk.Frame):
             frame6Button = ttk.Button(frame6, text = "Refresh", command=refreshMainFrame)
             frame6Button.grid(row = 0, column = 0, padx = 125, pady = 10)
 
-            frame6Button = ttk.Button(frame6, text = "Process", command=processPagePopup)
+            frame6Button = ttk.Button(frame6, text = "Process", command=beforeProcessPagePopup)
             frame6Button.grid(row = 0, column = 1, padx = 125, pady = 10)
     #--------------------------------------------------------------------------------------------#   
 
@@ -480,7 +486,7 @@ class MainPage(tk.Frame):
             frame6Button = ttk.Button(frame6, text = "Refresh", command=refreshMainFrame)
             frame6Button.grid(row = 0, column = 0, padx = 125, pady = 10)
 
-            frame6Button = ttk.Button(frame6, text = "Process", command=processPagePopup)
+            frame6Button = ttk.Button(frame6, text = "Process", command=beforeProcessPagePopup)
             frame6Button.grid(row = 0, column = 1, padx = 125, pady = 10)
     #--------------------------------------------------------------------------------------------#   
 
@@ -541,6 +547,60 @@ def MasterFilePopUp(mode, startPopup):
     else:
         popupmsg("Please input the correct Master File")
         MasterFilePopUp(mode)
+
+
+
+
+#popup that requires the user to input certain information for receipt generation, default is N/A        
+def beforeProcessPagePopup():
+    beforeProcessPopup = tk.Toplevel()
+    beforeProcessPopup.wm_title("FONZY")
+
+    global tinValue
+    global BStyleValue
+    global termsValue
+    global PWDValue
+
+    label = ttk.Label(beforeProcessPopup, text="TIN", font=SMALL_FONT)
+    label.grid(row = 0, column = 0, sticky = "s", pady = 10, padx = 10)
+
+    tinValue = StringVar()
+    tinValue.set("N/A")
+    entryBox1 = ttk.Entry(beforeProcessPopup, textvariable = tinValue, width = 20)
+    entryBox1.grid(row = 0, column = 1, padx = 10, pady = 10)
+
+
+    label2 = ttk.Label(beforeProcessPopup, text="Business Style", font=SMALL_FONT)
+    label2.grid(row = 1, column = 0, sticky = "s", pady = 10, padx = 10)
+
+    BStyleValue = StringVar()
+    BStyleValue.set("N/A")
+    entryBox2 = ttk.Entry(beforeProcessPopup, textvariable = BStyleValue, width = 20)
+    entryBox2.grid(row = 1, column = 1, padx = 10, pady = 10)
+
+
+    label3 = ttk.Label(beforeProcessPopup, text="Terms", font=SMALL_FONT)
+    label3.grid(row = 2, column = 0, sticky = "s", pady = 10, padx = 10)
+
+    termsValue = StringVar()
+    termsValue.set("N/A")
+    entryBox3 = ttk.Entry(beforeProcessPopup, textvariable = termsValue, width = 20)
+    entryBox3.grid(row = 2, column = 1, padx = 10, pady = 10)
+
+
+    label4 = ttk.Label(beforeProcessPopup, text="OSCA/PWD ID No.", font=SMALL_FONT)
+    label4.grid(row = 3, column = 0, sticky = "s", pady = 10, padx = 10)
+
+    PWDValue = StringVar()
+    PWDValue.set("N/A")
+    entryBox4 = ttk.Entry(beforeProcessPopup, textvariable = PWDValue, width = 20)
+    entryBox4.grid(row = 3, column = 1, padx = 10, pady = 10)
+
+    button1 = ttk.Button(beforeProcessPopup, text = "Continue", command = lambda: processPagePopup() or beforeProcessPopup.destroy())
+    button1.grid(row = 4, column = 0, padx = 10, pady = 10)
+
+    button2 = ttk.Button(beforeProcessPopup, text = "Exit", command = lambda: beforeProcessPopup.destroy())
+    button2.grid(row = 4, column = 1, padx = 10, pady = 10)
 
 
 
@@ -875,18 +935,47 @@ def paymentContinue():
         font.name = "Consolas"
         font.size = Pt(10)
 
-        addParagraphSpace(8)    #Adds 8 blank paragraphs for structure
+        addParagraphSpace(5)    #Adds 8 blank paragraphs for structure
 
         #THERER ARE 78 charaters per line
-        #13 spaces needed before name and etc is printed
         #52 spaces before top right section
         #57 for date, 58 for terms, 69 for OSCA,ID number
-        #22 paragraphs for items only! i.e. max 21 items
+        #22 paragraphs for items only! i.e. max 20 items
+
+        #Cashier  name
+        cashierStringName = "Cashier: " + str(cashierString.get())
+        pCashierString = buildCharacterParagraphArray(0, cashierStringName, 76, 0, "")
+        pCashierName = document.add_paragraph()
+        pCashierName.style = document.styles["Normal"]    #sets the style to match the given monospace style mentioned above
+        pFormat = pCashierName.paragraph_format
+        pFormat.space_before = Pt(0)
+        pFormat.space_after = Pt(0)    #sets line spacing to 0 instead of the default 1.5
+        pCashierName.add_run(pCashierString)
+
+        #Time
+        timeString = "Time: " + str(nowTime)
+        pTimeString = buildCharacterParagraphArray(0, timeString, 76, 0, "")
+        pTime = document.add_paragraph()
+        pTime.style = document.styles["Normal"]    #sets the style to match the given monospace style mentioned above
+        pFormat = pTime.paragraph_format
+        pFormat.space_before = Pt(0)
+        pFormat.space_after = Pt(0)    #sets line spacing to 0 instead of the default 1.5
+        pTime.add_run(pTimeString)
+
+        #Phone number
+        phoneString = "Customer Phone: " + str(phone.get())
+        pPhone = buildCharacterParagraphArray(0, phoneString, 76, 0, "")
+        pPhoneNumber = document.add_paragraph()
+        pPhoneNumber.style = document.styles["Normal"]    #sets the style to match the given monospace style mentioned above
+        pFormat = pPhoneNumber.paragraph_format
+        pFormat.space_before = Pt(0)
+        pFormat.space_after = Pt(0)    #sets line spacing to 0 instead of the default 1.5
+        pPhoneNumber.add_run(pPhone)
 
         #1ST PART OF THE LINE IS 50 SPACES, THEN 2ND PART OF THE LINE IS 27 SPACES
-        #13 spaces before name input; max 37 character for name; 8 spaces before date input
+        #8 spaces before name input; max 42 character for name; 8 spaces before date input
         #Name and date paragraph
-        p1 = buildCharacterParagraphArray(13, list(str(customerName.get())), 37, 8, list(str(nowDate)))
+        p1 = buildCharacterParagraphArray(8, list(str(customerName.get())), 42, 8, list(str(nowDate)))
         pNameDate = document.add_paragraph()
         pNameDate.style = document.styles["Normal"]    #sets the style to match the given monospace style mentioned above
         pFormat = pNameDate.paragraph_format
@@ -894,8 +983,8 @@ def paymentContinue():
         pFormat.space_after = Pt(0)    #sets line spacing to 0 instead of the default 1.5
         pNameDate.add_run(p1)
 
-        #13 spaces for address; max 37 characters for address; 10 spaces before terms input
-        p2 = buildCharacterParagraphArray(13, list(str(address.get())), 37, 8, "TERMS")
+        #9 spaces for address; max 41 characters for address; 10 spaces before terms input
+        p2 = buildCharacterParagraphArray(9, list(str(address.get())), 41, 8, str(termsValue.get()))
         pAddressTerms = document.add_paragraph()
         pAddressTerms.style = document.styles["Normal"]    #sets the style to match the given monospace style mentioned above
         pFormat = pAddressTerms.paragraph_format
@@ -903,8 +992,8 @@ def paymentContinue():
         pFormat.space_after = Pt(0)    #sets line spacing to 0 instead of the default 1.5
         pAddressTerms.add_run(p2)                
 
-        #13 spaces for TIN; max 37 characters for TIN; 20 spaces before PWD ID input; max 8 spaces before PWD ID input
-        p3 = buildCharacterParagraphArray(13, "TIN", 37, 20, "PWD ID")
+        #5 spaces for TIN; max 45 characters for TIN; 20 spaces before PWD ID input; max 8 spaces before PWD ID input
+        p3 = buildCharacterParagraphArray(5, str(tinValue.get()), 45, 20, str(PWDValue.get()))
         pTinPwd = document.add_paragraph()
         pTinPwd.style = document.styles["Normal"]    #sets the style to match the given monospace style mentioned above
         pFormat = pTinPwd.paragraph_format
@@ -913,7 +1002,7 @@ def paymentContinue():
         pTinPwd.add_run(p3)
 
         #13 spaces for TIN; max 37 characters for TIN; 20 spaces before PWD ID input; max 8 spaces before PWD ID input
-        p4 = buildCharacterParagraphArray(13, "BUSINESS STYLE", 37, 22, "SIGNATURE")
+        p4 = buildCharacterParagraphArray(13, str(BStyleValue.get()), 37, 22,"")
         pBStyleSignature = document.add_paragraph()
         pBStyleSignature.style = document.styles["Normal"]    #sets the style to match the given monospace style mentioned above
         pFormat = pBStyleSignature.paragraph_format
@@ -935,39 +1024,27 @@ def paymentContinue():
 
         #CREATES BODY INPUT PARAGRAPHS
         for i in range(len(customerList)):
-            
             pBody = document.add_paragraph()
             pBody.style = document.styles["Normal"]    #sets the style to match the given monospace style mentioned above
             pFormat = pBody.paragraph_format
             pFormat.space_before = Pt(0)
             pFormat.space_after = Pt(0)    #sets line spacing to 0 instead of the default 1.5
-
             customerBarCodeString = str(customerList[i][4]).strip()    #strips the EAN bar code string value to make sure that there aren't any white spaces
             customerDescriptionString = str(customerList[i][1]).strip()    #strips the Material Description string value to make sure that there aren't any white spaces
-
             pBodyArrayList = buildBodyParagraphArray(i, customerBarCodeString, customerDescriptionString)
-
             pBody.add_run(pBodyArrayList)
 
 
+        quantityTotal = 0
+        costTotal = 0
+        for a in range(len(customerList)):  #finds total price of transaction
+            quantityTotal += customerList[a][6]
+            costTotal += (customerList[a][6]*customerList[a][2])-((customerList[a][3]/100)*(customerList[a][6]*customerList[a][2]))            
 
 
-
-
-
-        totalQuantity = 0
-        totalCost = 0
-        for j in range(len(customerList)):
-            #gets total individual item quantity
-            totalQuantity += customerList[i][5]
-
-            #gets total cost
-            cost = (customerList[i][6]*customerList[i][2])-((customerList[i][3]/100)*(customerList[i][6]*customerList[i][2]))   #gets cost estimate with given mathematical values
-            totalCost += cost
-        
         #converts quantity and cost to string, ready for char input
-        totalQuantityString = str(totalQuantity)
-        totalCostString = str(totalCost)
+        totalQuantityString = str(quantityTotal)
+        totalCostString = str(costTotal)
         
         #paragraph for total number of items sold and price, difference is the 5PT space before and after
         pTotal = document.add_paragraph()
@@ -998,9 +1075,6 @@ def paymentContinue():
         #VATable Sales = costTotal / 1.12
         #Add: Vat Amount = costTotal - VATable Sales
         #Total Amount due = costTotal
-        costTotal = 0
-        for i in range(len(customerList)):  #finds total price of transaction
-            costTotal += (customerList[i][6]*customerList[i][2])-((customerList[i][3]/100)*(customerList[i][6]*customerList[i][2]))
         VATableSales = costTotal / 1.12 #gets total price for item without VAT
         VATableSales = round(VATableSales, 2)
         VATAmount = costTotal - VATableSales    #gets VAT price for item
@@ -1115,7 +1189,7 @@ def buildBodyParagraphArray(customerListIndexValue, customerBarCodeString, custo
         arrayList.append(" ")    
         
     #APPENDS QUANTITY
-    quantityString = str(customerList[customerListIndexValue][5])
+    quantityString = str(customerList[customerListIndexValue][6])
     for m in range(4):
         if m < len(quantityString):
             arrayList.append(quantityString[m])
@@ -1125,7 +1199,7 @@ def buildBodyParagraphArray(customerListIndexValue, customerBarCodeString, custo
         arrayList.append(" ")
 
     #APPENDS PRICE
-    priceString = str(customerList[customerListIndexValue][6])
+    priceString = str(customerList[customerListIndexValue][2])
     #priceString = "{:,}".format(priceStringValue)
     for p in range(8):
         if p < len(priceString):
@@ -1244,14 +1318,15 @@ def fileExplorer():
 #Creates popup frame to get Cashier name, Event name and date
 def cashierStartPopup():
     cashierPopup = tk.Toplevel()
-
     cashierPopup.wm_title("FONZY")
+    global cashierString
 
     #For cashier name
     label = ttk.Label(cashierPopup, text = "Cashier Name: ", font = NORMAL_FONT)
     label.grid(row = 0, column = 0, sticky = "nsew", padx = 5, pady = 5)
 
     cashierString = tk.StringVar()
+    cashierString.set("")
     cashierEntryBox = ttk.Entry(cashierPopup, textvariable = cashierString, width = 25)
     cashierEntryBox.grid(row = 0, column = 1, padx = 5, pady = 5)
 
