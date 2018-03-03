@@ -1,40 +1,86 @@
-import xlsxwriter as xw
 import tkinter as tk
-from tkinter import ttk
-import datetime
+from tkinter import *
 
-#rootdir = r'C:/Users/hedce/OneDrive/Desktop/POS'
+class POS(tk.Tk):
+    def __init__(self,*args,**kwargs):
+        tk.Tk.__init__(self, *args, **kwargs)
+        
+        container = tk.Frame(self)
+        container.pack(side = "top", fill = "both", expand = True)
 
-def programStart():
-    startPopup = tk.Toplevel()
+        container.grid_rowconfigure(0, weight = 1)
+        container.grid_columnconfigure(0, weight = 1)
 
-    label = ttk.Label(startPopup, text = "Cashier Name: ")
-    label.grid(row = 0, column = 0, sticky = "nsew", padx = 5, pady = 5)
+        self.frames = {}
 
-    cashierString = tk.StringVar()
-    cashierEntryBox = ttk.Entry(startPopup, textvariable = cashierString, width = 25)
-    cashierEntryBox.grid(row = 0, column = 1, padx = 5, pady = 5)
+        for F in (ErrorPage, MainPage):
+            frame = F(container, self)
+            self.frames[F] = frame
+            frame.grid(row=0, column = 0, sticky = "nsew")
+        
+        self.show_frame(MainPage)
 
-    label2 = ttk.Label(startPopup, text = "Event Name:  ")
-    label2.grid(row = 1, column = 0, sticky = "nsew", padx = 5, pady = 5)
+    def show_frame(self,cont):
+        frame = self.frames[cont]
+        frame.tkraise() 
 
-    eventString = tk.StringVar()
-    eventEntryBox = ttk.Entry(startPopup, textvariable = eventString, width = 25)
-    eventEntryBox.grid(row = 1, column = 1, padx = 5, pady = 5)
 
-    button1 = ttk.Button(startPopup, text = "Okay", command = lambda: setProgramStartData() or startPopup.destroy())
-    button1.grid(row = 2, padx = 5, pady = 5, sticky = "nsew")
+class MainPage(tk.Frame):
+    entry = "N/A"
 
-    def setProgramStartData():
-        global excelString
-        #gets excel string to create excel file for the day
-        excelString = cashierString.get() + "-" + eventString.get() + "-" + str(datetime.datetime.today().strftime('%d,%m,%Y') + ".xlsx")
-        #goes to MasterFilePopUp()
-        workbook = xw.Workbook("C:/Users/hedce/OneDrive/Desktop/" + excelString)
-        worksheet = workbook.add_worksheet()
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self,parent)
+        
+        global entry
 
-        workbook.close()
+        frame = tk.Frame(self)
+        frame.pack(fill = BOTH)
 
-app = tk.Frame()
-app.after(100, programStart)
+        button = Button(frame, text = "OK", command = self.bindHello)
+        button.pack(pady=10, padx=10)
+
+        entry = StringVar()
+        e = Entry(frame, textvariable = entry, width = 15)
+        e.pack(pady = 10, padx = 10)
+
+        frame.winfo_toplevel().bind('<Return>', self.bindHello)
+
+    def bindHello(self, event=None):
+        print("HELLO " + entry.get())
+
+#Yes this doesn't do anything but I need it for the frame container as set before
+class ErrorPage(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self,parent)
+        frame = tk.Frame(self)
+        frame.pack(fill = BOTH)
+
+        button = Button(frame, text = "OK", command = self.bindHello)
+        button.pack(pady=5, padx=10)
+
+        frame.bind("<Return>", self.bindHello)
+
+    def bindHello(self, event=None):
+        print("HELLO2")
+
+
+app = POS()
 app.mainloop()
+
+
+"""
+from tkinter import *
+master = Tk()
+
+def callback(event=None):
+    print("Hello " + entry.get())
+
+entry = StringVar()
+e = Entry(master, textvariable = entry, width = 15)
+e.pack()
+
+b = Button(master, text="OK", command = callback)
+b.pack()
+master.bind("<Return>", callback)
+
+mainloop()"""

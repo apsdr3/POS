@@ -43,7 +43,6 @@ termsValue = "N/A"
 PWDValue = "N/A"
 cashierString = ""
 
-
 errorCode = 0
 """
 Error Code Legend:
@@ -73,23 +72,6 @@ class POS(tk.Tk):
 
         container.grid_rowconfigure(0, weight = 1)
         container.grid_columnconfigure(0, weight = 1)
-
-        """
-        menubar = tk.Menu(container)    #adds menu
-        
-        #NEED TO CHECK IF I CAN USE MENU BUTTONS INSTEAD OF MENU!
-        filemenu = tk.Menu(menubar, tearoff = 0)    #creates a menubar on the app
-        filemenu.add_command(label = "Main", command = lambda: popupmsg("Not supported just yet!"))    #need to create this to change windows between frames
-        filemenu.add_separator()    #adds separator between different file menus
-        menubar.add_cascade(label= "Main", menu = filemenu) #adds filemenu bar to the program menubar
-
-        filemenu2 = tk.Menu(menubar, tearoff = 0)
-        filemenu2.add_command(label = "Reports", command = lambda: popupmsg("Not supported just yet!!"))    #need to create this to change windows between frames
-        filemenu2.add_separator()
-        menubar.add_cascade(label= "Reports", menu = filemenu2)
-
-        tk.Tk.config(self, menu = menubar)
-        """
 
         #sets customer info
         global customerName
@@ -280,6 +262,7 @@ class MainPage(tk.Frame):
 
             barCode = tk.StringVar()    #creates the object barCode with a string variable type
             frame5EntryBox = ttk.Entry(frame5, textvariable = barCode, width = 22)   #creates an entry box and allows the entry of a string variable
+            frame5EntryBox.focus_set()  #cursor default on entry box
             frame5EntryBox.grid(row = 0, column = 1, padx = 5, pady = 5)
 
             frame5Spacer = tk.Label(frame5, text = "", font = NORMAL_FONT, bg = "pink")
@@ -296,12 +279,7 @@ class MainPage(tk.Frame):
             frame5Button = ttk.Button(frame5, text = "Add Item", command = lambda: updateCustomerList(barCode, quantity))
             frame5Button.grid(row = 0, column = 5, padx = 90, pady = 10)
 
-            def bindUpdateCustomerList(event=None):
-                print("HELLO " + str(barCode) + " " + str(quantity))
-                updateCustomerList(barCode, quantity)
-                return
-
-            frame5.bind('<Return>', lambda e: bindUpdateCustomerList())    #binds enter/return key to add the barcode given in the entry box
+            self.winfo_toplevel().bind("<Return>", lambda event: updateCustomerList(barCode=barCode, quantity=quantity))    #binds enter/return key to add the barcode given in the entry box
     #---------------------------------------------------------------------------------------------#
 
 
@@ -453,6 +431,7 @@ class MainPage(tk.Frame):
 
             barCode = tk.StringVar()    #creates the object barCode with a string variable type
             frame5EntryBox = ttk.Entry(frame5, textvariable = barCode, width = 22)   #creates an entry box and allows the entry of a string variable
+            frame5EntryBox.focus_set()  #cursor default on entry box
             frame5EntryBox.grid(row = 0, column = 1, padx = 5, pady = 5)
 
             frame5Spacer = tk.Label(frame5, text = "", font = NORMAL_FONT, bg = "pink")
@@ -469,12 +448,7 @@ class MainPage(tk.Frame):
             frame5Button = ttk.Button(frame5, text = "Add Item", command = lambda: updateCustomerList(barCode, quantity))
             frame5Button.grid(row = 0, column = 5, padx = 90, pady = 10)
 
-            def bindUpdateCustomerList(event=None):
-                print("HELLO " + str(barCode) + " " + str(quantity))
-                updateCustomerList(barCode, quantity)
-                return
-
-            frame5.bind('<Return>', lambda e: bindUpdateCustomerList())    #binds enter/return key to add the barcode given in the entry box
+            self.winfo_toplevel().bind("<Return>", lambda event: updateCustomerList(barCode=barCode, quantity=quantity))    #binds enter/return key to add the barcode given in the entry box            self.winfo_toplevel().bind("<Return>", lambda event: updateCustomerList(barCode = barCode, quantity = quantity))    #binds enter/return key to add the barcode given in the entry box
     #---------------------------------------------------------------------------------------------#
 
 
@@ -489,6 +463,8 @@ class MainPage(tk.Frame):
             frame6Button = ttk.Button(frame6, text = "Process", command=beforeProcessPagePopup)
             frame6Button.grid(row = 0, column = 1, padx = 125, pady = 10)
     #--------------------------------------------------------------------------------------------#   
+
+
 
 
 #error page for when there is a possible error
@@ -1328,6 +1304,7 @@ def cashierStartPopup():
     cashierString = tk.StringVar()
     cashierString.set("")
     cashierEntryBox = ttk.Entry(cashierPopup, textvariable = cashierString, width = 25)
+    cashierEntryBox.focus_set() #sets cursor default to this box
     cashierEntryBox.grid(row = 0, column = 1, padx = 5, pady = 5)
 
     #For event name
@@ -1342,8 +1319,10 @@ def cashierStartPopup():
     button1 = ttk.Button(cashierPopup, text = "Okay", command = lambda: setProgramStartData() or cashierPopup.destroy())
     button1.grid(row = 2, padx = 5, pady = 5, sticky = "nsew")
 
+    #cashierPopup.bind("<Return>", setProgramStartData)    #binds enter/return key to continue to setProgramStartDate
+
     #sets the data taken from the entry boes and sets it into the appropriate objects
-    def setProgramStartData():
+    def setProgramStartData(event = None):
         global excelString
         #gets excel string to create excel file for the day
         excelString = cashierString.get() + "-" + eventString.get() + "-" + str(datetime.datetime.today().strftime('%d,%m,%Y') + ".xlsx")
@@ -1360,6 +1339,7 @@ def cashierStartPopup():
             worksheet = workbook.add_worksheet()
 
             workbook.close()
+
 
 
 
