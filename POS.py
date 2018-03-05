@@ -448,7 +448,7 @@ class MainPage(tk.Frame):
             frame5Button = ttk.Button(frame5, text = "Add Item", command = lambda: updateCustomerList(barCode, quantity))
             frame5Button.grid(row = 0, column = 5, padx = 90, pady = 10)
 
-            self.winfo_toplevel().bind("<Return>", lambda event: updateCustomerList(barCode=barCode, quantity=quantity))    #binds enter/return key to add the barcode given in the entry box            self.winfo_toplevel().bind("<Return>", lambda event: updateCustomerList(barCode = barCode, quantity = quantity))    #binds enter/return key to add the barcode given in the entry box
+            self.winfo_toplevel().bind("<Return>", lambda event: updateCustomerList(barCode=barCode, quantity=quantity))    #binds enter/return key to add the barcode given in the entry box 
     #---------------------------------------------------------------------------------------------#
 
 
@@ -488,10 +488,8 @@ class ErrorPage(tk.Frame):          #NEED TO CHANGE THIS INTO A POP UP WINDOW IN
 #Start popup to allow the user to either choose Inventory mode or Transaction mode
 def startPopup():
     startPopup = tk.Toplevel()
-
     startPopup.wm_title("FONZY")
-
-    #Need to include check box
+    startPopup.resizable(False, False) #window isn't resizable. Makes it easier for the owner to manage
 
     label = ttk.Label(startPopup, text="Please choose the correct application mode", font=SMALL_FONT)
     label.grid(row = 0, column = 0, pady=10, padx=10, columnspan = 2)
@@ -501,22 +499,23 @@ def startPopup():
 
     button2 = ttk.Button(startPopup, text = "Transaction", command = lambda: MasterFilePopUp(1, startPopup) or startPopup.destroy())
     button2.grid(row = 1, column = 1, pady = 10, padx = 10)    
-    
+    button2.focus_set()  #cursor default on button    
 
 
 
 def MasterFilePopUp(mode, startPopup):
-    global modeCode
-
     masterPopup = tk.Toplevel()
     masterPopup.wm_title("FONZY")
+    masterPopup.resizable(False, False) #window isn't resizable. Makes it easier for the owner to manage
 
+    global modeCode
     modeCode = mode #inherits either 0 or 1
     label = ttk.Label(masterPopup, text = "Please specify the product master file", font = NORMAL_FONT)
     label.pack(side = "top", fill = "x", padx = 5)
 
     button1 = ttk.Button(masterPopup, text = "Okay", command = lambda: fileExplorer() or masterPopup.destroy() or startPopup.destroy())
     button1.pack(pady = 10)
+    button1.focus_set()  #cursor default on button
 
     if errorCode == 0:
         return 1
@@ -531,6 +530,7 @@ def MasterFilePopUp(mode, startPopup):
 def beforeProcessPagePopup():
     beforeProcessPopup = tk.Toplevel()
     beforeProcessPopup.wm_title("FONZY")
+    beforeProcessPopup.resizable(False, False) #window isn't resizable. Makes it easier for the owner to manage
 
     global tinValue
     global BStyleValue
@@ -578,14 +578,15 @@ def beforeProcessPagePopup():
     button2 = ttk.Button(beforeProcessPopup, text = "Exit", command = lambda: beforeProcessPopup.destroy())
     button2.grid(row = 4, column = 1, padx = 10, pady = 10)
 
-
+    entryBox1.focus_set()  #cursor default on button
+    beforeProcessPopup.winfo_toplevel().bind("<Return>", lambda e: processPagePopup() or beforeProcessPopup.destroy())    #binds enter/return key to exit/destroy the popup message
 
 
 #process purchase page for when a purchase is to be made
 def processPagePopup():
     processPopup = tk.Toplevel()
-
     processPopup.wm_title("FONZY")
+    processPopup.resizable(False, False) #window isn't resizable. Makes it easier for the owner to manage
 
     if modeCode == 1:   #Inventory Mode
         #Need to include check box
@@ -636,6 +637,9 @@ def processPagePopup():
         button = ttk.Button(processPopup, text = "OK", command = lambda: printString() or processPopup.destroy())
         button.grid(row = 10, column = 0, pady = 20, padx = 10)
 
+        button.focus_set()  #cursor default on button
+        processPopup.winfo_toplevel().bind("<Return>", lambda e: printString() or processPopup.destroy())    #binds enter/return key to exit/destroy the popup message
+
         def printString():
             global paymentString
             global customerType
@@ -659,6 +663,9 @@ def processPagePopup():
         button2 = ttk.Button(processPopup, text = "No", command = lambda: refreshMainFrame() or processPopup.destroy())
         button2.grid(row = 1, column = 1, pady = 10, padx = 10)
 
+        button1.focus_set()  #cursor default on button
+        processPopup.winfo_toplevel().bind("<Return>", lambda e: updateExcel() or processPopup.destroy())    #binds enter/return key to exit/destroy the popup message
+
         def updateExcel():
             
             wbName = filename.split("/")    #gets masterFile name
@@ -679,6 +686,8 @@ def processPagePopup():
 def finalPayment(checkBox):
     paymentPopup = tk.Toplevel()
     paymentPopup.wm_title("FONZY")
+    paymentPopup.resizable(False, False) #window isn't resizable. Makes it easier for the owner to manage
+
     costTotal = 0
     for i in range(len(customerList)):  #finds total price of transaction
         costTotal += (customerList[i][6]*customerList[i][2])-((customerList[i][3]/100)*(customerList[i][6]*customerList[i][2]))
@@ -794,6 +803,9 @@ def finalPayment(checkBox):
         button3 = ttk.Button(paymentPopup, text = "Cancel", command = lambda: paymentPopup.destroy())
         button3.grid(row = 8, column = 2, pady = 10, padx = 10)
 
+        button1.focus_set()  #cursor default on button
+        paymentPopup.winfo_toplevel().bind("<Return>", lambda e: finalPaymentBuild(checkBox, 1))    #binds enter/return key to exit/destroy the popup message
+
     finalPaymentBuild(checkBox, 0)  #starts payment calculator
 
 
@@ -803,6 +815,7 @@ def finalPayment(checkBox):
 def paymentContinue():
     pContinuePopup = tk.Toplevel()
     pContinuePopup.wm_title("FONZY")
+    pContinuePopup.resizable(False, False) #window isn't resizable. Makes it easier for the owner to manage
 
     label = ttk.Label(pContinuePopup, text="Are you sure about the purchase details?", font=SMALL_FONT)
     label.grid(row = 0, column = 0, pady=10, padx=10, columnspan = 2)
@@ -812,6 +825,9 @@ def paymentContinue():
 
     button2 = ttk.Button(pContinuePopup, text = "No", command = lambda: pContinuePopup.destroy())
     button2.grid(row = 1, column = 1, pady = 10, padx = 10)    
+
+    button1.focus_set()  #cursor default on button
+    pContinuePopup.winfo_toplevel().bind("<Return>", lambda e: excelCheckoutUpdate() or pContinuePopup.destroy())    #binds enter/return key to exit/destroy the popup message
 
     now = datetime.datetime.now()   #gets date-time
     nowDate = now.strftime("%d-%m-%Y")
@@ -1135,10 +1151,15 @@ def paymentContinue():
 
         #saves document
         document.save(wordFile)
+        printCheckoutUpdate(wordFile)   #allows user to print document
 
-        #ADD PRINT FUNCTON HERE!
 
-        clearCustomerInfo()
+
+
+#allows the user to print or reprint the current receipt
+def printCheckoutUpdate(wordFile):
+    #NEED TO WATCH VIDEO ABOUT PRINTING WORD DOCUMENT!
+    clearCustomerInfo()
 
 
 
@@ -1295,6 +1316,8 @@ def fileExplorer():
 def cashierStartPopup():
     cashierPopup = tk.Toplevel()
     cashierPopup.wm_title("FONZY")
+    cashierPopup.resizable(False, False) #window isn't resizable. Makes it easier for the owner to manage
+
     global cashierString
 
     #For cashier name
@@ -1302,7 +1325,7 @@ def cashierStartPopup():
     label.grid(row = 0, column = 0, sticky = "nsew", padx = 5, pady = 5)
 
     cashierString = tk.StringVar()
-    cashierString.set("")
+    cashierString.set("Cashier Name")
     cashierEntryBox = ttk.Entry(cashierPopup, textvariable = cashierString, width = 25)
     cashierEntryBox.focus_set() #sets cursor default to this box
     cashierEntryBox.grid(row = 0, column = 1, padx = 5, pady = 5)
@@ -1312,6 +1335,7 @@ def cashierStartPopup():
     label2.grid(row = 1, column = 0, sticky = "nsew", padx = 5, pady = 5)
 
     eventString = tk.StringVar()
+    eventString.set("Event Name")
     eventEntryBox = ttk.Entry(cashierPopup, textvariable = eventString, width = 25)
     eventEntryBox.grid(row = 1, column = 1, padx = 5, pady = 5)
 
@@ -1319,10 +1343,11 @@ def cashierStartPopup():
     button1 = ttk.Button(cashierPopup, text = "Okay", command = lambda: setProgramStartData() or cashierPopup.destroy())
     button1.grid(row = 2, padx = 5, pady = 5, sticky = "nsew")
 
-    #cashierPopup.bind("<Return>", setProgramStartData)    #binds enter/return key to continue to setProgramStartDate
+    cashierEntryBox.focus_set()  #cursor default on button
+    cashierPopup.winfo_toplevel().bind("<Return>", lambda e: setProgramStartData() or cashierPopup.destroy())    #binds enter/return key to exit/destroy the popup message
 
     #sets the data taken from the entry boes and sets it into the appropriate objects
-    def setProgramStartData(event = None):
+    def setProgramStartData():
         global excelString
         #gets excel string to create excel file for the day
         excelString = cashierString.get() + "-" + eventString.get() + "-" + str(datetime.datetime.today().strftime('%d,%m,%Y') + ".xlsx")
@@ -1346,53 +1371,61 @@ def cashierStartPopup():
 #Creates popup message bars
 def popupmsg(msg):
     popup = tk.Toplevel()
-
     popup.wm_title("FONZY")
+    popup.resizable(False, False) #window isn't resizable. Makes it easier for the owner to manage
+    
     label = ttk.Label(popup, text = msg, font = NORMAL_FONT)
     label.pack(side = "top", fill = "x", pady = 10)
 
     button1 = ttk.Button(popup, text = "Okay", command = popup.destroy)
     button1.pack()
 
+    button1.focus_set()  #cursor default on button
+    denyPopup.winfo_toplevel().bind("<Return>", lambda e: popup.destroy())    #binds enter/return key to exit/destroy the popup message
 
 
-#NEED TO ADD CHECK IF BARCODE IS AN INT, NEED TO DISCARD IF IT IS NOT AN INT
+
+
 def updateCustomerList(barCode, quantity):
     global customerList   #global variable to allow user to update updateCustomerList
 
     if modeCode == 1:   #Transaction Mode
-        if not barCode.get():   #checks if barCode is empty
-            return  
-        else:   #finds barCode inside masterList
-            for i in range(len(masterList)):    #searches through master list to see if barCode is inside masterList
-               
-                if int(barCode.get()) == masterList[i][4]:   #if bar code is inside the masterList
+    
+        if (len(customerList) == 20) and (quantity.get() > 0): #cashier is notified that max number of items is already on the list
+            denyUpdateCustomerList()
+        else:    
+            if not barCode.get():   #checks if barCode is empty
+                return  
+            else:   #finds barCode inside masterList
+                for i in range(len(masterList)):    #searches through master list to see if barCode is inside masterList
+                   
+                    if int(barCode.get()) == masterList[i][4]:   #if bar code is inside the masterList
 
-                    if len(customerList) == 0:   #if customerList is empty
-                        customerList.append(masterList[i][:])  #adds a masterList object inside customerList
-                        customerList[0].append(quantity.get())   #gives a quantifiable value to number of products the customer wants to purchase
-                        
-                        if customerList[0][6] <= 0: #deletes element if item quantity value is 0 or less than 0
-                            del customerList[0]
-                        refreshMainFrame()  #sends back to MainPage Frame
-
-                    else:   #if customerList is not empty
-                        for j in range(len(customerList)):    #searches through customerList to see if item is already inside; checks for repeats
+                        if len(customerList) == 0:   #if customerList is empty
+                            customerList.append(masterList[i][:])  #adds a masterList object inside customerList
+                            customerList[0].append(quantity.get())   #gives a quantifiable value to number of products the customer wants to purchase
                             
-                            if int(barCode.get()) == customerList[j][4]:   #if is a repeated barCode
-                                customerList[j][6] += quantity.get()
-                                
-                                if customerList[j][6] <= 0: #deletes element if item quantity value is 0 or less than 0
-                                    del customerList[j]
-                                refreshMainFrame()  #sends back to MainPage Frame
-                                return
+                            if customerList[0][6] <= 0: #deletes element if item quantity value is 0 or less than 0
+                                del customerList[0]
+                            refreshMainFrame()  #sends back to MainPage Frame
 
-                        customerList.append(masterList[i][:])  #adds a masterList object inside customerList
-                        customerList[len(customerList)-1].append(quantity.get())   #gives a quantifiable value to number of products the customer wants to purchase
-                        
-                        if customerList[len(customerList)-1][6] <= 0: #deletes element if item quantity value is 0 or less than 0
-                            del customerList[len(customerList)-1]
-                        refreshMainFrame()  #sends back to MainPage Frame
+                        else:   #if customerList is not empty
+                            for j in range(len(customerList)):    #searches through customerList to see if item is already inside; checks for repeats
+                                
+                                if int(barCode.get()) == customerList[j][4]:   #if is a repeated barCode
+                                    customerList[j][6] += quantity.get()
+                                    
+                                    if customerList[j][6] <= 0: #deletes element if item quantity value is 0 or less than 0
+                                        del customerList[j]
+                                    refreshMainFrame()  #sends back to MainPage Frame
+                                    return
+
+                            customerList.append(masterList[i][:])  #adds a masterList object inside customerList
+                            customerList[len(customerList)-1].append(quantity.get())   #gives a quantifiable value to number of products the customer wants to purchase
+                            
+                            if customerList[len(customerList)-1][6] <= 0: #deletes element if item quantity value is 0 or less than 0
+                                del customerList[len(customerList)-1]
+                            refreshMainFrame()  #sends back to MainPage Frame
     else:   #Inventory Mode
         if not barCode.get():   #checks if barCode is empty
             return  
@@ -1415,7 +1448,27 @@ def updateCustomerList(barCode, quantity):
 
 
 
+#user is notified that he/she cannot add more items inside the list
+def denyUpdateCustomerList():
+    denyPopup = tk.Toplevel()
+    denyPopup.wm_title("FONZY")
+    denyPopup.resizable(False, False) #window isn't resizable. Makes it easier for the owner to manage
 
+    label = ttk.Label(denyPopup, text = "Customer purchase list has reached maximum capacity", font = NORMAL_FONT)
+    label.pack(side = "top", padx = 10)
+
+    label2 = ttk.Label(denyPopup, text = "Please delete some items or process this purchase", font = NORMAL_FONT)
+    label2.pack(side = "top", padx = 10)
+
+    button = ttk.Button(denyPopup, text = "Okay", command = denyPopup.destroy)
+    button.pack()    
+
+    button.focus_set()  #cursor default on button
+    denyPopup.winfo_toplevel().bind("<Return>", lambda e: denyPopup.destroy())    #binds enter/return key to exit/destroy the popup message
+
+
+
+#deletes and rebuilds the app i.e. refresh
 def refreshMainFrame():
     global app
     app.frames[MainPage].destroy()
