@@ -25,7 +25,7 @@ SMALL_FONT = ("Verdana", 8)
 #GLOBAL VARIABLES
 masterList = [] #list of objects from Master File
 #customerList = []
-customerList = [[20297939, 'AC EDT 75ML SPRAY TEST', 250, 0, 3605520297939, 2, 1], [72728313, 'ADG HOMME DEMO.TOIL.WAT.SPRAY 100ML', 250, 0, 3360372728313, 1, 1], [20267093, 'ACF EDP 75ML SPRAY TEST', 300, 0, 3605520267093, 0, 1], [20297878, 'AM EDT 100ML SPRAY TEST', 350, 0, 3605520297878, 0, 1], [70638152, 'ADGA JASMINE V100ML TEST OS', 400, 0, 3614270638152, 0, 1], [71381477, 'SUN DI GIOIA EDP V30ML', 700, 0, 3614271381477, 0, 1], [71381538, 'SUN DI GIOIA EDP V50ML TEST', 1000, 0, 3614271381538, 0, 1], [71381392, 'AIR DI GIOIA EDP V50ML', 1000, 0, 3614271381392, 0, 1], [71381491, 'SUN DI GIOIA EDP V100ML', 1300, 0, 3614271381491, 0, 1], [70157639, 'ADGH PROFUMO SP75ML', 1350, 0, 3614270157639, 0, 1], [22035423, 'SI EDT SP100ML', 1500, 0, 3605522035423, 0, 1], [71214799, 'SI EDP ROSE V100ML OS', 2200, 0, 3614271214799, 0, 1], [21583413, 'AP FIGUE EDEN EDT SP100ML', 2500, 0, 3605521583413, 0, 1], [72009436, 'DKN EDT 100ML SPRAY', 700, 0, 3360372009436, 0, 1], [30655201, 'FLUDLST SCELLG FLUID SPRAY RET 150ML', 200, 0, 3474630655201, 0, 1], [30543003, 'STY FORME FATALE 125ML', 200, 0, 3474630543003, 0, 1], [30542709, 'STY LAQUE COUTURE 300ML', 200, 0, 3474630542709, 0, 1], [36382378, 'NUT MAGISTRAL SOIN N2 CONCENT 500ML', 250, 0, 3474636382378, 0, 1], [36382361, 'NUT MAGISTRAL SOIN N1 ANCREUR 500ML', 250, 0, 3474636382361, 0, 1]]
+customerList = []#[[20297939, 'AC EDT 75ML SPRAY TEST', 250, 0, 3605520297939, 2, 1], [72728313, 'ADG HOMME DEMO.TOIL.WAT.SPRAY 100ML', 250, 0, 3360372728313, 1, 1], [20267093, 'ACF EDP 75ML SPRAY TEST', 300, 0, 3605520267093, 0, 1], [20297878, 'AM EDT 100ML SPRAY TEST', 350, 0, 3605520297878, 0, 1], [70638152, 'ADGA JASMINE V100ML TEST OS', 400, 0, 3614270638152, 0, 1], [71381477, 'SUN DI GIOIA EDP V30ML', 700, 0, 3614271381477, 0, 1], [71381538, 'SUN DI GIOIA EDP V50ML TEST', 1000, 0, 3614271381538, 0, 1], [71381392, 'AIR DI GIOIA EDP V50ML', 1000, 0, 3614271381392, 0, 1], [71381491, 'SUN DI GIOIA EDP V100ML', 1300, 0, 3614271381491, 0, 1], [70157639, 'ADGH PROFUMO SP75ML', 1350, 0, 3614270157639, 0, 1], [22035423, 'SI EDT SP100ML', 1500, 0, 3605522035423, 0, 1], [71214799, 'SI EDP ROSE V100ML OS', 2200, 0, 3614271214799, 0, 1], [21583413, 'AP FIGUE EDEN EDT SP100ML', 2500, 0, 3605521583413, 0, 1], [72009436, 'DKN EDT 100ML SPRAY', 700, 0, 3360372009436, 0, 1], [30655201, 'FLUDLST SCELLG FLUID SPRAY RET 150ML', 200, 0, 3474630655201, 0, 1], [30543003, 'STY FORME FATALE 125ML', 200, 0, 3474630543003, 0, 1], [30542709, 'STY LAQUE COUTURE 300ML', 200, 0, 3474630542709, 0, 1], [36382378, 'NUT MAGISTRAL SOIN N2 CONCENT 500ML', 250, 0, 3474636382378, 0, 1], [36382361, 'NUT MAGISTRAL SOIN N1 ANCREUR 500ML', 250, 0, 3474636382361, 0, 1]]
 container = 0
 excelString = " "
 filename = " "
@@ -460,7 +460,7 @@ class MainPage(tk.Frame):
             frame6Button = ttk.Button(frame6, text = "Refresh", command=refreshMainFrame)
             frame6Button.grid(row = 0, column = 0, padx = 125, pady = 10)
 
-            frame6Button = ttk.Button(frame6, text = "Process", command=beforeProcessPagePopup)
+            frame6Button = ttk.Button(frame6, text = "Process", command=processPagePopup)
             frame6Button.grid(row = 0, column = 1, padx = 125, pady = 10)
     #--------------------------------------------------------------------------------------------#   
 
@@ -667,7 +667,7 @@ def processPagePopup():
         processPopup.winfo_toplevel().bind("<Return>", lambda e: updateExcel() or processPopup.destroy())    #binds enter/return key to exit/destroy the popup message
 
         def updateExcel():
-            
+            global app
             wbName = filename.split("/")    #gets masterFile name
             wbNameString = wbName[-1]   #gets last element in list
 
@@ -678,6 +678,8 @@ def processPagePopup():
                 activeWS.cell(row=r+1,column=6).value=customerList[r][5]
 
             wb.save(wbNameString)  #saves masterFile with edits
+
+            app.quit()  #quites then destroys the app
             return
 
 
