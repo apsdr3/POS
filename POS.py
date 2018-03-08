@@ -43,6 +43,13 @@ termsValue = "N/A"
 PWDValue = "N/A"
 cashierString = ""
 
+#sets customer payment info
+cashAmount = 0
+debitAmount = 0
+creditAmount = 0
+checkAmount = 0
+sDeductionAmount = 0
+
 errorCode = 0
 """
 Error Code Legend:
@@ -77,15 +84,32 @@ class POS(tk.Tk):
         global customerName
         global phone
         global address
+        global cashAmount
+        global debitAmount
+        global creditAmount
+        global checkAmount
+        global sDeductionAmount
+        global totalCustomerPayment
 
         customerName = StringVar()
         customerName.set("")
-        
-        phone = IntVar()
+        phone = StringVar()
         phone.set(0)
-        
         address = StringVar()
         address.set("")
+
+        totalCustomerPayment = IntVar()
+        totalCustomerPayment.set(0)
+        cashAmount = IntVar()
+        cashAmount.set(0)
+        creditAmount = IntVar()
+        creditAmount.set(0)
+        debitAmount = IntVar()
+        debitAmount.set(0)
+        checkAmount = IntVar()
+        checkAmount.set(0)
+        sDeductionAmount = IntVar()
+        sDeductionAmount.set(0)
 
 
         self.frames = {}    #creates an object to hold multiple frames i.e. more windows/tabs
@@ -188,7 +212,7 @@ class MainPage(tk.Frame):
             frame3Label5 = tk.Label(frame3Frame, text = "Discount", font = NORMAL_FONT, relief = SUNKEN, width = 8)
             frame3Label5.grid(row = 0, column = 4)
 
-            frame3Label6 = tk.Label(frame3Frame, text = "Cost", font = NORMAL_FONT, relief = SUNKEN, width = 10)
+            frame3Label6 = tk.Label(frame3Frame, text = "Amount", font = NORMAL_FONT, relief = SUNKEN, width = 10)
             frame3Label6.grid(row = 0, column = 5)
 
             
@@ -213,11 +237,11 @@ class MainPage(tk.Frame):
                 frame3Quantity = ttk.Label(frame3Frame, text = "{:,}".format(customerList[i][6]), font = NORMAL_FONT, relief = SUNKEN, width = 8)   #creates an entry box and allows the entry of a string variable
                 frame3Quantity.grid(row = rowNum, column = 3)
 
-                discountString = str(customerList[i][3])
+                discountString = str(customerList[i][3]*100)
                 frame3Discount = tk.Label(frame3Frame, text = discountString+"%", font = NORMAL_FONT, relief = SUNKEN, width = 8)
                 frame3Discount.grid(row = rowNum, column = 4)
 
-                cost = (customerList[i][6]*customerList[i][2])-((customerList[i][3]/100)*(customerList[i][6]*customerList[i][2]))   #gets cost estimate with given mathematical values
+                cost = (customerList[i][6]*customerList[i][2])-((customerList[i][3])*(customerList[i][6]*customerList[i][2]))   #gets cost estimate with given mathematical values
                 totalCost += cost
                 frame3Cost = tk.Label(frame3Frame, text = "{:,}".format(cost), font = NORMAL_FONT, relief = SUNKEN, width = 10)
                 frame3Cost.grid(row = rowNum, column = 5)
@@ -541,7 +565,7 @@ def beforeProcessPagePopup():
     label.grid(row = 0, column = 0, sticky = "s", pady = 10, padx = 10)
 
     tinValue = StringVar()
-    tinValue.set("N/A")
+    tinValue.set("")
     entryBox1 = ttk.Entry(beforeProcessPopup, textvariable = tinValue, width = 20)
     entryBox1.grid(row = 0, column = 1, padx = 10, pady = 10)
 
@@ -550,7 +574,7 @@ def beforeProcessPagePopup():
     label2.grid(row = 1, column = 0, sticky = "s", pady = 10, padx = 10)
 
     BStyleValue = StringVar()
-    BStyleValue.set("N/A")
+    BStyleValue.set("")
     entryBox2 = ttk.Entry(beforeProcessPopup, textvariable = BStyleValue, width = 20)
     entryBox2.grid(row = 1, column = 1, padx = 10, pady = 10)
 
@@ -559,7 +583,7 @@ def beforeProcessPagePopup():
     label3.grid(row = 2, column = 0, sticky = "s", pady = 10, padx = 10)
 
     termsValue = StringVar()
-    termsValue.set("N/A")
+    termsValue.set("")
     entryBox3 = ttk.Entry(beforeProcessPopup, textvariable = termsValue, width = 20)
     entryBox3.grid(row = 2, column = 1, padx = 10, pady = 10)
 
@@ -568,7 +592,7 @@ def beforeProcessPagePopup():
     label4.grid(row = 3, column = 0, sticky = "s", pady = 10, padx = 10)
 
     PWDValue = StringVar()
-    PWDValue.set("N/A")
+    PWDValue.set("")
     entryBox4 = ttk.Entry(beforeProcessPopup, textvariable = PWDValue, width = 20)
     entryBox4.grid(row = 3, column = 1, padx = 10, pady = 10)
 
@@ -689,26 +713,19 @@ def finalPayment(checkBox):
     paymentPopup = tk.Toplevel()
     paymentPopup.wm_title("FONZY")
     paymentPopup.resizable(False, False) #window isn't resizable. Makes it easier for the owner to manage
+    
+    global totalCustomerPayment
+    global cashAmount
+    global debitAmount
+    global creditAmount
+    global checkAmount
+    global sDeductionAmount
 
     costTotal = 0
     for i in range(len(customerList)):  #finds total price of transaction
-        costTotal += (customerList[i][6]*customerList[i][2])-((customerList[i][3]/100)*(customerList[i][6]*customerList[i][2]))
-
-
-    #variable declarations
-    cashAmount = IntVar()
-    cashAmount.set(0)
-    creditAmount = IntVar()
-    creditAmount.set(0)
-    debitAmount = IntVar()
-    debitAmount.set(0)
-    checkAmount = IntVar()
-    checkAmount.set(0)
-    sDeductionAmount = IntVar()
-    sDeductionAmount.set(0)
+        costTotal += (customerList[i][6]*customerList[i][2])-((customerList[i][3])*(customerList[i][6]*customerList[i][2]))
 
     def finalPaymentBuild(checkBox, stateBuild):
-
         label = ttk.Label(paymentPopup, text="Total Amount", font=SMALL_FONT)
         label.grid(row = 0, column = 0, pady=10, padx=10, sticky = "W")
 
@@ -718,7 +735,7 @@ def finalPayment(checkBox):
         #CASH
         label3 = ttk.Label(paymentPopup, text="Cash", font=SMALL_FONT)
         label3.grid(row = 1, column = 0, pady=10, padx=10, sticky = "W")    
-
+        
         EntryBox1 = ttk.Entry(paymentPopup, textvariable = cashAmount, width = 15)
         if checkBox[0].get() == "":    #disables entry box if checkbox isn't == 1
             EntryBox1.config(state="disabled")
@@ -769,16 +786,8 @@ def finalPayment(checkBox):
         label8 = ttk.Label(paymentPopup, text="Total Customer Payment", font=SMALL_FONT)
         label8.grid(row = 6, column = 0, pady=10, padx=10, sticky = "W")
 
-        totalCP = IntVar()
-        totalCP = 0
-        if stateBuild == 1:
-            global totalCustomerPayment
-            totalCP = cashAmount.get() + debitAmount.get() + creditAmount.get() + checkAmount.get() + sDeductionAmount.get()    #gets sum of list
-            totalCustomerPayment = totalCP
-
-        label9 = ttk.Label(paymentPopup, text="{:,}".format(totalCP), font=SMALL_FONT)
+        label9 = ttk.Label(paymentPopup, text="{:,}".format(totalCustomerPayment.get()), font=SMALL_FONT)
         label9.grid(row = 6, column = 1, pady=10, padx=10, sticky = "W", columnspan = 2)        
-
 
         #CHANGE
         label8 = ttk.Label(paymentPopup, text="Change", font=SMALL_FONT)
@@ -787,7 +796,7 @@ def finalPayment(checkBox):
         totalChange = IntVar()
         totalChange = 0
         if stateBuild == 1: #calculates totalChange
-            totalChange = totalCP - costTotal    #gets total change (customer payment - total cost)
+            totalChange = totalCustomerPayment.get() - costTotal    #gets total change (customer payment - total cost)
 
         label9 = ttk.Label(paymentPopup, text="{:,}".format(totalChange), font=SMALL_FONT)
         label9.grid(row = 7, column = 1, pady=10, padx=10, sticky = "W", columnspan = 2)
@@ -796,7 +805,7 @@ def finalPayment(checkBox):
         state = 0
 
         #BUTTONS Calculate, OK, and Cancel
-        button1 = ttk.Button(paymentPopup, text = "Calculate", command = lambda: finalPaymentBuild(checkBox, 1))
+        button1 = ttk.Button(paymentPopup, text = "Calculate", command = lambda: calculateTotalCP(checkBox))
         button1.grid(row = 8, column = 0, pady = 10, padx = 10)    
 
         button2 = ttk.Button(paymentPopup, text = "Proceed", command = lambda: paymentContinue() or paymentPopup.destroy())
@@ -806,7 +815,12 @@ def finalPayment(checkBox):
         button3.grid(row = 8, column = 2, pady = 10, padx = 10)
 
         button1.focus_set()  #cursor default on button
-        paymentPopup.winfo_toplevel().bind("<Return>", lambda e: finalPaymentBuild(checkBox, 1))    #binds enter/return key to exit/destroy the popup message
+        paymentPopup.winfo_toplevel().bind("<Return>", lambda e: calculateTotalCP(checkBox))    #binds enter/return key to exit/destroy the popup message
+
+        def calculateTotalCP(checkBox):
+            totalCP = cashAmount.get() + debitAmount.get() + creditAmount.get() + checkAmount.get() + sDeductionAmount.get()    #gets sum of list
+            totalCustomerPayment.set(totalCP)            
+            finalPaymentBuild(checkBox, 1)
 
     finalPaymentBuild(checkBox, 0)  #starts payment calculator
 
@@ -865,13 +879,29 @@ def paymentContinue():
             col_count += 1
             ws.cell(row = 1, column = col_count).value = "Customer Type"
             col_count += 1
-            ws.cell(row = 1, column = col_count).value = "Payment Form"
+            ws.cell(row = 1, column = col_count).value = "Cash"
+            col_count += 1
+            ws.cell(row = 1, column = col_count).value = "Debit"
+            col_count += 1
+            ws.cell(row = 1, column = col_count).value = "Credit"
+            col_count += 1
+            ws.cell(row = 1, column = col_count).value = "Check"
+            col_count += 1
+            ws.cell(row = 1, column = col_count).value = "Salary Deduction"
             col_count += 1
             ws.cell(row = 1, column = col_count).value = "Date"
             col_count += 1
             ws.cell(row = 1, column = col_count).value = "Time"
 
             col_count = 1  #resets column back to zero
+
+        #figures out payment breakdown dependent on payment for each payment type
+        percentCash = cashAmount.get()/totalCustomerPayment.get()
+        percentDebit = debitAmount.get()/totalCustomerPayment.get()
+        percentCredit = creditAmount.get()/totalCustomerPayment.get()
+        percentCheck = checkAmount.get()/totalCustomerPayment.get()
+        percentSDeduction = sDeductionAmount.get()/totalCustomerPayment.get()
+
 
         #inputs customer purchase data
         for r in range(0,len(customerList)):
@@ -885,12 +915,20 @@ def paymentContinue():
             col_count += 1
             ws.cell(row = row_count, column = col_count).value = customerList[r][6] #product quantity
             col_count += 1
-            totAmount = customerList[r][2] * customerList[r][6]
+            totAmount = (customerList[r][6]*customerList[r][2])-((customerList[r][3])*(customerList[r][6]*customerList[r][2]))
             ws.cell(row = row_count, column = col_count).value = totAmount  #product total cost
             col_count += 1
             ws.cell(row = row_count, column = col_count).value = customerType    #customer type
             col_count += 1
-            ws.cell(row = row_count, column = col_count).value = paymentString
+            ws.cell(row = row_count, column = col_count).value = totAmount*percentCash
+            col_count += 1
+            ws.cell(row = row_count, column = col_count).value = totAmount*percentDebit
+            col_count += 1
+            ws.cell(row = row_count, column = col_count).value = totAmount*percentCredit
+            col_count += 1
+            ws.cell(row = row_count, column = col_count).value = totAmount*percentCheck
+            col_count += 1
+            ws.cell(row = row_count, column = col_count).value = totAmount*percentSDeduction
             col_count += 1
             ws.cell(row = row_count, column = col_count).value = nowDate
             col_count += 1
@@ -1012,7 +1050,7 @@ def paymentContinue():
         pFormat = pTitle.paragraph_format
         pFormat.space_before = Pt(0)
         pFormat.space_after = Pt(0)    #sets line spacing to 0 instead of the default 1.5
-        pTitle.add_run("Item Number       Description                   Qty    Price      Amount")
+        pTitle.add_run("Bar Code          Description                   Qty    Price      Amount")
 
         addParagraphSpace(1)    #Adds 1 blank paragraphs for structure
 
@@ -1033,12 +1071,12 @@ def paymentContinue():
         costTotal = 0
         for a in range(len(customerList)):  #finds total price of transaction
             quantityTotal += customerList[a][6]
-            costTotal += (customerList[a][6]*customerList[a][2])-((customerList[a][3]/100)*(customerList[a][6]*customerList[a][2]))            
+            costTotal += (customerList[a][6]*customerList[a][2])-((customerList[a][3])*(customerList[a][6]*customerList[a][2]))            
 
 
         #converts quantity and cost to string, ready for char input
         totalQuantityString = str(quantityTotal)
-        totalCostString = str(costTotal)
+        totalCostString = str("{:,}".format(round(costTotal,2)))
         
         #paragraph for total number of items sold and price, difference is the 5PT space before and after
         pTotal = document.add_paragraph()
@@ -1051,7 +1089,7 @@ def paymentContinue():
         #adds total quantity to the single line paragraph; has 18 allotted spaces
         for k in range(len(totalQuantityString)):
             pTotal.add_run(totalQuantityString[k])
-        if (18 - len(totalQuantityString)) > 0: 
+        if (18 - len(totalQuantityString)) > 0:
             for l in range(18 - len(totalQuantityString)):  #adds space in the paragraph
                 pTotal.add_run(" ")
         #adds total amount/price to the single line paragraph; has 12 allotted spaces
@@ -1073,9 +1111,10 @@ def paymentContinue():
         VATableSales = round(VATableSales, 2)
         VATAmount = costTotal - VATableSales    #gets VAT price for item
         VATAmount = round(VATAmount, 2)
+        costTotal = round(costTotal, 2)
 
-        #68 spaces for VATable sales; max 12 characters for VATable sales
-        pVAT = buildCharacterParagraphArray(66, str(VATableSales), 12, 0, "")
+        #68 spaces before VATable sales; max 10 characters for VATable sales
+        pVAT = buildCharacterParagraphArray(67, str("{:,}".format(VATableSales)), 11, 0, "")
         pVATableSales = document.add_paragraph()
         pVATableSales.style = document.styles["Normal"]    #sets the style to match the given monospace style mentioned above
         pFormat = pVATableSales.paragraph_format
@@ -1097,8 +1136,8 @@ def paymentContinue():
         pFormat.space_before = Pt(0)
         pFormat.space_after = Pt(0)    #sets line spacing to 0 instead of the default 1.5
 
-        #64 spaces for VATable sales; max 12 characters
-        pTSales = buildCharacterParagraphArray(64, str(costTotal), 14, 0, "")
+        #68 spaces before costTotal sales; max 10 characters
+        pTSales = buildCharacterParagraphArray(67, str("{:,}".format(costTotal)), 11, 0, "")
         pTotalSales = document.add_paragraph()
         pTotalSales.style = document.styles["Normal"]    #sets the style to match the given monospace style mentioned above
         pFormat = pTotalSales.paragraph_format
@@ -1106,8 +1145,8 @@ def paymentContinue():
         pFormat.space_after = Pt(0)    #sets line spacing to 0 instead of the default 1.5
         pTotalSales.add_run(pTSales)
 
-        #64 spaces for VATable sales; max 12 characters
-        pVAmount = buildCharacterParagraphArray(68, str(VATAmount), 10, 0, "")
+        #68 spaces before VATAmount; max 10 characters
+        pVAmount = buildCharacterParagraphArray(67, str("{:,}".format(VATAmount)), 11, 0, "")
         pVATAmount = document.add_paragraph()
         pVATAmount.style = document.styles["Normal"]    #sets the style to match the given monospace style mentioned above
         pFormat = pVATAmount.paragraph_format
@@ -1122,8 +1161,8 @@ def paymentContinue():
         pFormat.space_before = Pt(0)
         pFormat.space_after = Pt(5)    #sets line spacing to 5 instead of the default 1.5        
 
-        #68 spaces for VATable sales; max 12 characters
-        pADue = buildCharacterParagraphArray(56, str(round(costTotal, 2)), 22, 0, "")
+        #56 spaces for costTotal; max 22 characters
+        pADue = buildCharacterParagraphArray(56, str("{:,}".format(costTotal)), 22, 0, "")
         pAmountDue = document.add_paragraph()
         pAmountDue.style = document.styles["Normal"]    #sets the style to match the given monospace style mentioned above
         pFormat = pAmountDue.paragraph_format
@@ -1131,9 +1170,8 @@ def paymentContinue():
         pFormat.space_after = Pt(0)    #sets line spacing to 0 instead of the default 1.5
         pAmountDue.add_run(pADue)
 
-
-        #65 spaces for Customer Payment; max 13 characters
-        pTotalCP = buildCharacterParagraphArray(65, str(round(totalCustomerPayment, 2)), 13, 0, "")
+        #63 spaces before Customer Payment; max 15 characters
+        pTotalCP = buildCharacterParagraphArray(63, str("{:,}".format(round(totalCustomerPayment.get(), 2))), 15, 0, "")
         pTotalCustomerPayment = document.add_paragraph()
         pTotalCustomerPayment.style = document.styles["Normal"]    #sets the style to match the given monospace style mentioned above
         pFormat = pTotalCustomerPayment.paragraph_format
@@ -1141,9 +1179,9 @@ def paymentContinue():
         pFormat.space_after = Pt(0)    #sets line spacing to 0 instead of the default 1.5
         pTotalCustomerPayment.add_run(pTotalCP)
 
-        #65 spaces for Customer Change; max 13 characters
-        totalCustomerChange = totalCustomerPayment - costTotal
-        pTotalChange = buildCharacterParagraphArray(65, str(round(totalCustomerChange, 2)), 13, 0, "")
+        #63 spaces before Customer Change; max 15 characters
+        totalCustomerChange = totalCustomerPayment.get() - costTotal
+        pTotalChange = buildCharacterParagraphArray(63, str("{:,}".format(round(totalCustomerChange, 2))), 15, 0, "")
         pTotalCustomerChange = document.add_paragraph()
         pTotalCustomerChange.style = document.styles["Normal"]    #sets the style to match the given monospace style mentioned above
         pFormat = pTotalCustomerChange.paragraph_format
@@ -1185,7 +1223,7 @@ def buildBodyParagraphArray(customerListIndexValue, customerBarCodeString, custo
         else:
             arrayList.append(" ")
     for l in range(3):
-        arrayList.append(" ")    
+        arrayList.append(" ")
         
     #APPENDS QUANTITY
     quantityString = str(customerList[customerListIndexValue][6])
@@ -1198,8 +1236,10 @@ def buildBodyParagraphArray(customerListIndexValue, customerBarCodeString, custo
         arrayList.append(" ")
 
     #APPENDS PRICE
-    priceString = str(customerList[customerListIndexValue][2])
-    #priceString = "{:,}".format(priceStringValue)
+    priceValue = customerList[customerListIndexValue][2]
+    price = round(priceValue, 2)
+    priceString = "{:,}".format(price)
+    priceString = str(priceString)
     for p in range(8):
         if p < len(priceString):
             arrayList.append(priceString[p])
@@ -1209,8 +1249,10 @@ def buildBodyParagraphArray(customerListIndexValue, customerBarCodeString, custo
         arrayList.append(" ")
 
     #APPENDS AMOUNT
-    amount = (customerList[customerListIndexValue][6]*customerList[customerListIndexValue][2])-((customerList[customerListIndexValue][3]/100)*(customerList[customerListIndexValue][6]*customerList[customerListIndexValue][2]))
-    amountString = str(amount)
+    amountValue = (customerList[customerListIndexValue][6]*customerList[customerListIndexValue][2])-((customerList[customerListIndexValue][3])*(customerList[customerListIndexValue][6]*customerList[customerListIndexValue][2]))
+    amount = round(amountValue, 2)
+    amountString = "{:,}".format(amount)
+    amountString = str(amountString)
     #amountString = "{:,}".format(amountStringValue)
     for r in range(12):
         if r < len(amountString):
@@ -1270,7 +1312,7 @@ def clearCustomerInfo():
     
     customerName = StringVar()
     customerName.set("")
-    phone = IntVar()
+    phone = StringVar()
     phone.set(0)
     address = StringVar()
     address.set("")
