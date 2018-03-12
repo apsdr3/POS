@@ -3,11 +3,15 @@
 #NEED TO pip install XlsxWriter    allows user to create excel files
 #NEED TO pip install openpyxl   allows user to modify excel files
 #NEED TO pip install python-docx    allows user to create and edit word documents
+
+#NEED TO pip install pypiwin32  allows user to open and print documents
+
 import tkinter as tk
 import pyexcel as pe
 import xlsxwriter as xw
 import datetime
 import time
+import win32com.client
 
 from tkinter import ttk
 from openpyxl import load_workbook,Workbook
@@ -621,7 +625,6 @@ def processPagePopup():
 
         #to get exact time, used for invoicing
         time = datetime.datetime.now() #time.time()
-        #print(time.time())
 
         #once button is clicked, it prompts user to find file then it outputs the contents of the file
         #Made all of the checkButtons rely on the checkBox object so it is easier to manage within loops.
@@ -1208,8 +1211,35 @@ def paymentContinue():
 
 #allows the user to print or reprint the current receipt
 def printCheckoutUpdate(wordFile):
-    #NEED TO WATCH VIDEO ABOUT PRINTING WORD DOCUMENT!
-    clearCustomerInfo()
+    printCheckoutPopup = tk.Toplevel()
+    printCheckoutPopup.wm_title("FONZY")
+    printCheckoutPopup.resizable(False, False) #window isn't resizable. Makes it easier for the owner to manage
+
+    label = ttk.Label(printCheckoutPopup, text="Would you like to print the Invoice?", font=SMALL_FONT)
+    label.grid(row = 0, column = 0, pady=10, padx=10, columnspan = 3)
+
+    button1 = ttk.Button(printCheckoutPopup, text = "Print", command = lambda: printDocument(wordFile))
+    button1.grid(row = 1, column = 0, pady = 10, padx = 10)
+
+    button2 = ttk.Button(printCheckoutPopup, text = "Open", command = lambda: openDocument(wordFile))
+    button2.grid(row = 1, column = 1, pady = 10, padx = 10)
+
+    button3 = ttk.Button(printCheckoutPopup, text = "Exit", command = lambda: clearCustomerInfo() or printCheckoutPopup.destroy())
+    button3.grid(row = 1, column = 2, pady = 10, padx = 10)
+
+    def printDocument(wordFile):
+        msword1 = win32com.client.Dispatch("Word.Application")
+        msword1.Documents.Open(wordFile)
+        msword1.visible = False
+        time.sleep(2)
+        msword1.ActiveDocument.PrintOut()    
+        msword1.Documents.Close()
+        msword1.Quit()
+
+    def openDocument(wordFile):
+        msword2 = win32com.client.Dispatch("Word.Application")
+        msword2.Documents.Open(wordFile)
+        msword2.visible = True
 
 
 
