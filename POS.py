@@ -49,6 +49,7 @@ debitAmount = 0
 creditAmount = 0
 checkAmount = 0
 sDeductionAmount = 0
+totalCPState = 0
 
 errorCode = 0
 """
@@ -141,7 +142,7 @@ class MainPage(tk.Frame):
     # FRAME1 ------------------ CUSTOMER NAME, TELEPHONE NUMBER ----------------------#
 
             #First frame inside the current MainPage Window Frame
-            frame1 = Frame(self, bg = "green")
+            frame1 = Frame(self, bg = "grey")
             frame1.pack(fill = BOTH)
                    
     #CUSTOMER NAME
@@ -163,7 +164,7 @@ class MainPage(tk.Frame):
     # FRAME2 -------------------------- ADDRESS ------------------------------------#
             
             #Second frame inside the current MainPage Window Frame
-            frame2 = Frame(self, bg = "red")
+            frame2 = Frame(self, bg = "grey")
             frame2.pack(fill = BOTH)
 
     #ADDRESS
@@ -178,7 +179,7 @@ class MainPage(tk.Frame):
     # FRAME3 -------------------------- ENTRY BOX GRID ------------------------------------#
             #Third frame inside the current MainPage Window Frame
 
-            frame3 = Frame(self, bg = "white", width = 690, height = 400, borderwidth = 1)
+            frame3 = Frame(self, bg = "grey", width = 690, height = 400, borderwidth = 1)
             frame3.pack(expand = True, fill = Y)
 
             #Creates a canvas-frame scrollable widget
@@ -252,7 +253,7 @@ class MainPage(tk.Frame):
 
     # FRAME4 -------------------------- TOTAL QUANTITY AND AMOUNT ------------------------------------#
             #Fourth frame inside the current MainPage Window Frame
-            frame4 = Frame(self, bg = "blue")
+            frame4 = Frame(self, bg = "grey")
             frame4.pack(fill = BOTH)
 
             frame4Label1 = tk.Label(frame4, text="Total Quantity", font = NORMAL_FONT)
@@ -264,7 +265,7 @@ class MainPage(tk.Frame):
 
 
             #Frame block to separate the first set of labels above from the second set of labels below
-            frame4LabelBlock = tk.Label(frame4, width = 16, bg = "blue")
+            frame4LabelBlock = tk.Label(frame4, width = 16, bg = "grey")
             frame4LabelBlock.grid(row = 0, column = 2, padx = 45, pady = 5)
 
 
@@ -278,7 +279,7 @@ class MainPage(tk.Frame):
 
     # FRAME5 -------------------------- BAR CODE AND ADD ITEM ------------------------------------#
             #Fifth frame inside the current MainPage Window Frame
-            frame5 = Frame(self, bg = "pink")
+            frame5 = Frame(self, bg = "white")
             frame5.pack(fill = BOTH)
 
             frame5Label1 = tk.Label(frame5, text = "Product Bar Code", font = NORMAL_FONT)
@@ -289,7 +290,7 @@ class MainPage(tk.Frame):
             frame5EntryBox.focus_set()  #cursor default on entry box
             frame5EntryBox.grid(row = 0, column = 1, padx = 5, pady = 5)
 
-            frame5Spacer = tk.Label(frame5, text = "", font = NORMAL_FONT, bg = "pink")
+            frame5Spacer = tk.Label(frame5, text = "", font = NORMAL_FONT, bg = "white")
             frame5Spacer.grid(row = 0, column = 2, padx=20, pady=5, sticky = W)
 
             frame5Label2 = tk.Label(frame5, text = "Quantity", font = NORMAL_FONT)
@@ -309,7 +310,7 @@ class MainPage(tk.Frame):
 
     # FRAME6 -------------------------- PROCESS AND REFRESH ------------------------------------#
             #Sixth frame inside the current MainPage Window Frame
-            frame6 = Frame(self, bg = "yellow")
+            frame6 = Frame(self, bg = "grey")
             frame6.pack(fill = BOTH)
 
             frame6Button = ttk.Button(frame6, text = "Refresh", command=refreshMainFrame)
@@ -323,7 +324,7 @@ class MainPage(tk.Frame):
     # FRAME1 ------------------ CUSTOMER NAME, TELEPHONE NUMBER ----------------------#
 
             #First frame inside the current MainPage Window Frame
-            frame1 = Frame(self, bg = "green")
+            frame1 = Frame(self, bg = "grey")
             frame1.pack(fill = BOTH)
             
     #CUSTOMER NAME
@@ -347,7 +348,7 @@ class MainPage(tk.Frame):
     # FRAME2 -------------------------- ADDRESS ------------------------------------#
             
             #Second frame inside the current MainPage Window Frame
-            frame2 = Frame(self, bg = "red")
+            frame2 = Frame(self, bg = "grey")
             frame2.pack(fill = BOTH)
 
     #ADDRESS
@@ -363,7 +364,7 @@ class MainPage(tk.Frame):
     # FRAME3 -------------------------- ENTRY BOX GRID ------------------------------------#
             #Third frame inside the current MainPage Window Frame
 
-            frame3 = Frame(self, bg = "white", width = 690, height = 400, borderwidth = 1)
+            frame3 = Frame(self, bg = "grey", width = 690, height = 400, borderwidth = 1)
             frame3.pack(expand = True, fill = Y)
 
             #Creates a canvas-frame scrollable widget
@@ -421,7 +422,7 @@ class MainPage(tk.Frame):
 
     # FRAME4 -------------------------- TOTAL QUANTITY AND AMOUNT ------------------------------------#
             #Fourth frame inside the current MainPage Window Frame
-            frame4 = Frame(self, bg = "blue")
+            frame4 = Frame(self, bg = "grey")
             frame4.pack(fill = BOTH)
 
             frame4Label1 = tk.Label(frame4, text="Total Quantity", font = NORMAL_FONT)
@@ -433,7 +434,7 @@ class MainPage(tk.Frame):
 
 
             #Frame block to separate the first set of labels above from the second set of labels below
-            frame4LabelBlock = tk.Label(frame4, width = 16, bg = "blue")
+            frame4LabelBlock = tk.Label(frame4, width = 16, bg = "grey")
             frame4LabelBlock.grid(row = 0, column = 2, padx = 45, pady = 5)
 
 
@@ -447,7 +448,7 @@ class MainPage(tk.Frame):
 
     # FRAME5 -------------------------- BAR CODE AND ADD ITEM ------------------------------------#
             #Fifth frame inside the current MainPage Window Frame
-            frame5 = Frame(self, bg = "pink")
+            frame5 = Frame(self, bg = "white")
             frame5.pack(fill = BOTH)
 
             frame5Label1 = tk.Label(frame5, text = "Product Bar Code", font = NORMAL_FONT)
@@ -458,7 +459,7 @@ class MainPage(tk.Frame):
             frame5EntryBox.focus_set()  #cursor default on entry box
             frame5EntryBox.grid(row = 0, column = 1, padx = 5, pady = 5)
 
-            frame5Spacer = tk.Label(frame5, text = "", font = NORMAL_FONT, bg = "pink")
+            frame5Spacer = tk.Label(frame5, text = "", font = NORMAL_FONT, bg = "white")
             frame5Spacer.grid(row = 0, column = 2, padx=20, pady=5, sticky = W)
 
             frame5Label2 = tk.Label(frame5, text = "Quantity", font = NORMAL_FONT)
@@ -478,7 +479,7 @@ class MainPage(tk.Frame):
 
     # FRAME6 -------------------------- PROCESS AND REFRESH ------------------------------------#
             #Sixth frame inside the current MainPage Window Frame
-            frame6 = Frame(self, bg = "yellow")
+            frame6 = Frame(self, bg = "grey")
             frame6.pack(fill = BOTH)
 
             frame6Button = ttk.Button(frame6, text = "Refresh", command=refreshMainFrame)
@@ -496,7 +497,7 @@ class ErrorPage(tk.Frame):          #NEED TO CHANGE THIS INTO A POP UP WINDOW IN
     def __init__(self, parent, controller):
         tk.Frame.__init__(self,parent)
         
-        frame = Frame(self, bg = "green")
+        frame = Frame(self, bg = "grey")
         frame.pack(fill = BOTH)
 
         if errorCode == 1:
@@ -808,8 +809,12 @@ def finalPayment(checkBox):
         button1 = ttk.Button(paymentPopup, text = "Calculate", command = lambda: calculateTotalCP(checkBox))
         button1.grid(row = 8, column = 0, pady = 10, padx = 10)    
 
-        button2 = ttk.Button(paymentPopup, text = "Proceed", command = lambda: paymentContinue() or paymentPopup.destroy())
-        button2.grid(row = 8, column = 1, pady = 10, padx = 10)
+        if totalCPState == 1:    #change is negative, disables proceed button until cashier inputs correct amount
+            button2 = ttk.Button(paymentPopup, text = "Proceed", command = lambda: paymentContinue() or paymentPopup.destroy())
+            button2.grid(row = 8, column = 1, pady = 10, padx = 10)
+        else:
+            button2 = ttk.Button(paymentPopup, text = "Proceed", state = DISABLED, command = lambda: paymentContinue() or paymentPopup.destroy())
+            button2.grid(row = 8, column = 1, pady = 10, padx = 10)
 
         button3 = ttk.Button(paymentPopup, text = "Cancel", command = lambda: paymentPopup.destroy())
         button3.grid(row = 8, column = 2, pady = 10, padx = 10)
@@ -818,8 +823,13 @@ def finalPayment(checkBox):
         paymentPopup.winfo_toplevel().bind("<Return>", lambda e: calculateTotalCP(checkBox))    #binds enter/return key to exit/destroy the popup message
 
         def calculateTotalCP(checkBox):
+            global totalCPState
             totalCP = cashAmount.get() + debitAmount.get() + creditAmount.get() + checkAmount.get() + sDeductionAmount.get()    #gets sum of list
             totalCustomerPayment.set(totalCP)            
+            if totalCP >= costTotal:
+                totalCPState = 1
+            else:
+                totalCPState = 0
             finalPaymentBuild(checkBox, 1)
 
     finalPaymentBuild(checkBox, 0)  #starts payment calculator
@@ -1369,7 +1379,7 @@ def cashierStartPopup():
     label.grid(row = 0, column = 0, sticky = "nsew", padx = 5, pady = 5)
 
     cashierString = tk.StringVar()
-    cashierString.set("Cashier Name")
+    cashierString.set("")
     cashierEntryBox = ttk.Entry(cashierPopup, textvariable = cashierString, width = 25)
     cashierEntryBox.focus_set() #sets cursor default to this box
     cashierEntryBox.grid(row = 0, column = 1, padx = 5, pady = 5)
@@ -1379,7 +1389,7 @@ def cashierStartPopup():
     label2.grid(row = 1, column = 0, sticky = "nsew", padx = 5, pady = 5)
 
     eventString = tk.StringVar()
-    eventString.set("Event Name")
+    eventString.set("")
     eventEntryBox = ttk.Entry(cashierPopup, textvariable = eventString, width = 25)
     eventEntryBox.grid(row = 1, column = 1, padx = 5, pady = 5)
 
