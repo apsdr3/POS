@@ -3,14 +3,12 @@
 #NEED TO pip install XlsxWriter    allows user to create excel files
 #NEED TO pip install openpyxl   allows user to modify excel files
 #NEED TO pip install python-docx    allows user to create and edit word documents
-
 #NEED TO pip install pypiwin32  allows user to open and print documents
 
 import tkinter as tk
 import pyexcel as pe
 import xlsxwriter as xw
 import datetime
-import time
 import win32com.client
 
 from tkinter import ttk
@@ -247,6 +245,7 @@ class MainPage(tk.Frame):
                 frame3Discount.grid(row = rowNum, column = 4)
 
                 cost = (customerList[i][6]*customerList[i][2])-((customerList[i][3])*(customerList[i][6]*customerList[i][2]))   #gets cost estimate with given mathematical values
+                cost = round(cost, 2)
                 totalCost += cost
                 frame3Cost = tk.Label(frame3Frame, text = "{:,}".format(cost), font = NORMAL_FONT, relief = SUNKEN, width = 10)
                 frame3Cost.grid(row = rowNum, column = 5)
@@ -264,7 +263,7 @@ class MainPage(tk.Frame):
             frame4Label1.grid(row = 0, column = 0, padx = 5, pady = 5)
 
 
-            frame4Label2 = tk.Label(frame4, text = "{:,}".format(totalQuantity), font = NORMAL_FONT, relief = SUNKEN, width = 16)  #NEED TO GET SUM OF TOTAL QUANTITY
+            frame4Label2 = tk.Label(frame4, text = "{:,}".format(totalQuantity), font = NORMAL_FONT, relief = SUNKEN, width = 16)
             frame4Label2.grid(row = 0, column = 1)
 
 
@@ -276,7 +275,7 @@ class MainPage(tk.Frame):
             frame4Label3 = tk.Label(frame4, text = "Total Cost", font=NORMAL_FONT)
             frame4Label3.grid(row = 0, column = 3, padx = 5, pady = 5)
 
-            frame4Label4 = tk.Label(frame4, text = "{:,}".format(totalCost), font = NORMAL_FONT, relief = SUNKEN, width = 16)  #NEED TO GET SUM OF TOTAL COST
+            frame4Label4 = tk.Label(frame4, text = "{:,}".format(round(totalCost, 2)), font = NORMAL_FONT, relief = SUNKEN, width = 16)
             frame4Label4.grid(row = 0, column = 4)
     #-------------------------------------------------------------------------------------------------#
 
@@ -413,10 +412,10 @@ class MainPage(tk.Frame):
                     frame3ProdDesc = tk.Label(frame3Frame, text = prodDesc, font = NORMAL_FONT, relief = SUNKEN, width = 40)
                     frame3ProdDesc.grid(row = rowNum, column = 1)
 
-                    frame3Price = tk.Label(frame3Frame, text = "{:,}".format(customerList[i][2]), font = NORMAL_FONT, relief = SUNKEN, width = 13)
+                    frame3Price = tk.Label(frame3Frame, text = "{:,}".format(round(customerList[i][2], 2)), font = NORMAL_FONT, relief = SUNKEN, width = 13)
                     frame3Price.grid(row = rowNum, column = 2)
 
-                    totalQuantity += customerList[i][5]
+                    totalQuantity += round(customerList[i][5], 2)
                     frame3Quantity = ttk.Label(frame3Frame, text = "{:,}".format(customerList[i][5]), font = NORMAL_FONT, relief = SUNKEN, width = 12)   #creates an entry box and allows the entry of a string variable
                     frame3Quantity.grid(row = rowNum, column = 3)
 
@@ -508,7 +507,7 @@ class ErrorPage(tk.Frame):          #NEED TO CHANGE THIS INTO A POP UP WINDOW IN
             label = tk.Label(frame, text="Error! Please input a correct Master File Document", font=SMALL_FONT)
             label.pack(pady=10, padx=10)
 
-        button1 = ttk.Button(frame, text = "OK", command = lambda: MasterFilePopUp(1)) #One can also do command=quit to quit out of the program
+        button1 = ttk.Button(frame, text = "OK", command = lambda: quit()) #One can also do command=quit to quit out of the program
         button1.pack(pady=5, padx=10)
 
 
@@ -550,7 +549,7 @@ def MasterFilePopUp(mode, startPopup):
         return 1
     else:
         popupmsg("Please input the correct Master File")
-        MasterFilePopUp(mode)
+        MasterFilePopUp(mode, startPopup)
 
 
 
@@ -611,13 +610,15 @@ def beforeProcessPagePopup():
     beforeProcessPopup.winfo_toplevel().bind("<Return>", lambda e: processPagePopup() or beforeProcessPopup.destroy())    #binds enter/return key to exit/destroy the popup message
 
 
+
+
 #process purchase page for when a purchase is to be made
 def processPagePopup():
     processPopup = tk.Toplevel()
     processPopup.wm_title("FONZY")
     processPopup.resizable(False, False) #window isn't resizable. Makes it easier for the owner to manage
 
-    if modeCode == 1:   #Inventory Mode
+    if modeCode == 1:   #Transaction Mode
         #Need to include check box
 
         label = ttk.Label(processPopup, text="Payment Type", font=SMALL_FONT)
@@ -680,7 +681,7 @@ def processPagePopup():
             finalPayment(checkBox)
             return
 
-    else:   #Transaction mode
+    else:   #Inventory mode
         #UPDATE EXCEL FILE then ASK USER ONE MORE TIME BEFORE EXIT
         label = ttk.Label(processPopup, text="Are you sure you are finished taking inventory?", font=SMALL_FONT)
         label.grid(row = 0, column = 0, pady=10, padx=10, columnspan = 2)
@@ -696,19 +697,21 @@ def processPagePopup():
 
         def updateExcel():
             global app
-            wbName = filename.split("/")    #gets masterFile name
-            wbNameString = wbName[-1]   #gets last element in list
+            #print(filename)
+            #wbName = filename.split("/")    #gets masterFile name
+            #wbNameString = wbName[-1]   #gets last element in list
 
-            wb=load_workbook(wbNameString)  #opens masterFile
+            wb=load_workbook(filename)  #opens masterFile
             activeWS=wb.active   #uses active workbook for edits
 
             for r in range(0,len(customerList)):
                 activeWS.cell(row=r+1,column=6).value=customerList[r][5]
 
-            wb.save(wbNameString)  #saves masterFile with edits
+            wb.save(filename)  #saves masterFile with edits
 
             app.quit()  #quites then destroys the app
             return
+
 
 
 
@@ -728,6 +731,7 @@ def finalPayment(checkBox):
     costTotal = 0
     for i in range(len(customerList)):  #finds total price of transaction
         costTotal += (customerList[i][6]*customerList[i][2])-((customerList[i][3])*(customerList[i][6]*customerList[i][2]))
+    costTotal = round(costTotal, 2)
 
     def finalPaymentBuild(checkBox, stateBuild):
         label = ttk.Label(paymentPopup, text="Total Amount", font=SMALL_FONT)
@@ -802,6 +806,7 @@ def finalPayment(checkBox):
         if stateBuild == 1: #calculates totalChange
             totalChange = totalCustomerPayment.get() - costTotal    #gets total change (customer payment - total cost)
 
+        totalChange = round(totalChange, 2)
         label9 = ttk.Label(paymentPopup, text="{:,}".format(totalChange), font=SMALL_FONT)
         label9.grid(row = 7, column = 1, pady=10, padx=10, sticky = "W", columnspan = 2)
 
@@ -1231,7 +1236,6 @@ def printCheckoutUpdate(wordFile):
         msword1 = win32com.client.Dispatch("Word.Application")
         msword1.Documents.Open(wordFile)
         msword1.visible = False
-        time.sleep(2)
         msword1.ActiveDocument.PrintOut()    
         msword1.Documents.Close()
         msword1.Quit()
