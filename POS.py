@@ -682,7 +682,12 @@ def processPagePopup():
             return
 
     else:   #Inventory mode
-        #UPDATE EXCEL FILE then ASK USER ONE MORE TIME BEFORE EXIT
+        global masterList
+        for m in range(len(customerList)):
+            for n in range(len(masterList)):
+                if customerList[m][4] == masterList[n][4]:
+                    masterList[n][5] = customerList[m][5]
+
         label = ttk.Label(processPopup, text="Are you sure you are finished taking inventory?", font=SMALL_FONT)
         label.grid(row = 0, column = 0, pady=10, padx=10, columnspan = 2)
 
@@ -704,8 +709,8 @@ def processPagePopup():
             wb=load_workbook(filename)  #opens masterFile
             activeWS=wb.active   #uses active workbook for edits
 
-            for r in range(0,len(customerList)):
-                activeWS.cell(row=r+1,column=6).value=customerList[r][5]
+            for r in range(0,len(masterList)):
+                activeWS.cell(row=r+1,column=6).value=masterList[r][5]
 
             wb.save(filename)  #saves masterFile with edits
 
@@ -1350,7 +1355,19 @@ def clearCustomerInfo():
     global phone
     global address
     global customerType
-
+    global totalCustomerPayment
+    global tinValue
+    global BStyleValue
+    global termsValue
+    global PWDValue
+    global cashierString
+    global cashAmount
+    global debitAmount
+    global creditAmount
+    global checkAmount
+    global sDeductionAmount
+    global totalCPState
+    
     #resets customer info
     customerList[:] = []    #deletes all elements in list and recreates the list
     
@@ -1361,7 +1378,26 @@ def clearCustomerInfo():
     address = StringVar()
     address.set("")
 
+    tinValue = ""
+    BStyleValue = ""
+    termsValue = ""
+    PWDValue = ""
     customerType = "New"
+
+    totalCustomerPayment = IntVar()
+    totalCustomerPayment.set(0)
+    cashAmount = IntVar()
+    cashAmount.set(0)
+    creditAmount = IntVar()
+    creditAmount.set(0)
+    debitAmount = IntVar()
+    debitAmount.set(0)
+    checkAmount = IntVar()
+    checkAmount.set(0)
+    sDeductionAmount = IntVar()
+    sDeductionAmount.set(0)
+
+    totalCPState = 0
 
     refreshMainFrame()
     return
@@ -1385,17 +1421,21 @@ def fileExplorer():
             if modeCode == 1:
                 cashierStartPopup()
 
+            """
             if modeCode == 0:   #sets customer list dependent on master list data with row number on last index element of customer list
                 for i in range(len(masterList)):    #sets customerList to equal values of masterList
                     customerList.append(masterList[i][:])
                     customerList[i].append(i+1)
 
                 refreshMainFrame()
+            """
         else:
             errorCode = 1
     
     except ValueError:
         errorCode = 1
+
+    refreshMainFrame()
 
 
 
@@ -1478,8 +1518,13 @@ def updateCustomerList(barCode, quantity):
     global customerList   #global variable to allow user to update updateCustomerList
 
     if modeCode == 1:   #Transaction Mode
-    
-        if (len(customerList) == 20) and (quantity.get() > 0): #cashier is notified that max number of items is already on the list
+        count = 0
+        for h in range(len(customerList)):
+            if int(barCode.get()) == customerList[h][4]: #checking if barCode is inside customerList already
+                count = 1
+
+        if (len(customerList) == 20) and (quantity.get() > 0) and (count == 0): #cashier is notified that max number of items is already on the list
+            
             denyUpdateCustomerList()
         else:    
             if not barCode.get():   #checks if barCode is empty
@@ -1514,24 +1559,48 @@ def updateCustomerList(barCode, quantity):
                             if customerList[len(customerList)-1][6] <= 0: #deletes element if item quantity value is 0 or less than 0
                                 del customerList[len(customerList)-1]
                             refreshMainFrame()  #sends back to MainPage Frame
+    
     else:   #Inventory Mode
-        if not barCode.get():   #checks if barCode is empty
-            return  
-        
-        else:   #finds barCode inside customerList
+        count = 0
+        for h in range(len(customerList)):
+            if int(barCode.get()) == customerList[h][4]: #checking if barCode is inside customerList already
+                count = 1
 
-            for i in range(len(customerList)):    #searches through master list to see if barCode is inside customerList
+        if (len(customerList) == 150) and (quantity.get() > 0) and (count == 0): #cashier is notified that max number of items is already on the list
+            denyUpdateCustomerList()
+        else:    
+            if not barCode.get():   #checks if barCode is empty
+                return  
+            else:   #finds barCode inside masterList
+                for i in range(len(masterList)):    #searches through master list to see if barCode is inside masterList
+                    if int(barCode.get()) == masterList[i][4]:   #if bar code is inside the masterList
 
-                if int(barCode.get()) == customerList[i][4]:   #if bar code is inside the customerList    
-                    customerList[i][5] += quantity.get()
+                        if len(customerList) == 0:   #if customerList is empty
+                            customerList.append(masterList[i][:])  #adds a masterList object inside customerList
+                            customerList[0][5] += quantity.get()
 
-                    if customerList[i][5] <= 0: #sets quantity field back to 0 if the value is a negative number, doesn't delete the field entirely
-                        customerList[i][5] = 0
-                    
-                    refreshMainFrame()  #sends back to MainPage Frame
-                    return
+                            if customerList[0][5] <= 0: #deletes element if item quantity value is 0 or less than 0
+                                del customerList[0]
+                            refreshMainFrame()  #sends back to MainPage Frame
 
-    refreshMainFrame()
+                        else:   #if customerList is not empty
+                            for j in range(len(customerList)):    #searches through customerList to see if item is already inside; checks for repeats
+                                
+                                if int(barCode.get()) == customerList[j][4]:   #if is a repeated barCode
+                                    customerList[j][5] += quantity.get()
+                                    
+                                    if customerList[j][5] <= 0: #deletes element if item quantity value is 0 or less than 0
+                                        del customerList[j]
+                                    refreshMainFrame()  #sends back to MainPage Frame
+                                    return
+
+                            #last element inside customerList
+                            customerList.append(masterList[i][:])  #adds a masterList object inside customerList
+                            customerList[len(customerList)-1][5] += quantity.get()
+
+                            if customerList[len(customerList)-1][5] <= 0: #deletes element if item quantity value is 0 or less than 0
+                                del customerList[len(customerList)-1]
+                            refreshMainFrame()  #sends back to MainPage Frame
     return            
 
 
@@ -1553,6 +1622,7 @@ def denyUpdateCustomerList():
 
     button.focus_set()  #cursor default on button
     denyPopup.winfo_toplevel().bind("<Return>", lambda e: denyPopup.destroy())    #binds enter/return key to exit/destroy the popup message
+    refreshMainFrame()
 
 
 
